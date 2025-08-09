@@ -1,0 +1,54 @@
+@import "normalize.css";
+
+:root {
+  --primary: #fe2c55;
+  --dark-background: #1d222b;
+  --dark-text: #303640;
+  --dark-content: #8ba8b5;
+  --light-content: #4d4c51;
+  --light-text: rgb(250, 247, 247);
+  --light-background: #f3f4f7;
+
+  --font-family: "ProximaNova", san-serif;
+  //Default Layout
+  --default-layout-header-height: 60px;
+  --default-layout-width: 1150px;
+  --default-layout-horizontal-spacer: 0px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.breadcrumb-item + .breadcrumb-item {
+  color: gray !important;
+  &::before {
+    color: gray !important;
+  }
+}
+
+.dark_background {
+  background-color: var(--dark-background);
+}
+
+.light_background {
+  background-color: var(--light-background);
+}
+
+.dark_title {
+  color: var(--dark-text);
+}
+
+.light_title {
+  color: var(--light-text);
+}
+
+.dark_content {
+  color: var(--dark-content);
+}
+
+.light_content {
+  color: var(--light-content);
+}
