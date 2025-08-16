@@ -11,13 +11,11 @@ import SiteLayout from "./layouts/site/SiteLayout";
 
 import AppFooter from './components/site/appFooter/AppFooter';
 import AppHeader from './components/site/appHeader/AppHeader';
-import AppLogin from './components/site/appLogin/AppLogin';
+import AppLogin from "./pages/site/auth/appLogin/AppLogin";
 
 function App() {
   return (
     <>
-      <AppHeader />
-
       <Router>
         <Suspense
           fallback={
@@ -33,7 +31,6 @@ function App() {
         </Suspense>
       </Router>
 
-      <AppFooter />
 
       <ToastContainer
         position="top-right"
