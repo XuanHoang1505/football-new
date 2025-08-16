@@ -1,11 +1,10 @@
-import React from "react";
-import Header from "../../components/site/appHeader/Header";
+import AppHeader from "../../components/site/appHeader/AppHeader";
 import Content from "../../components/site/appContent/Content";
 import GlobalStyle from "../../assets/site/scss/GlobalStyles";
 const SiteLayout = () => {
   return (
     <GlobalStyle>
-      <Header />
+      <AppHeader/>
       <Content />
     </GlobalStyle>
   );
