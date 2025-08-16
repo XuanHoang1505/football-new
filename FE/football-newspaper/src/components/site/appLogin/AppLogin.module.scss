@@ -8,20 +8,70 @@
 
 .container {
   position: fixed;
+  padding: 20px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  border: 1px solid #CCCCCC;
   border-radius: 4px;
   background-color: #fff;
 }
 
 .theme{
     display: flex;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
     height: fit-content;
     h4{
-      font-size: 18px;
+      font-size: 16px;
       padding:0px 40px 10px 40px;
       margin: 0;
       border-bottom:1px solid #CCCCCC;
+      cursor: pointer;
     }
+}
+
+.than{
+  margin:10px;
+   max-width: 400px;
+  p{
+    font-weight: bold;
+    margin-left: 2px;
+    margin-top: 20px;
+  }
+  input{
+    margin: 6px auto; 
+    display: block;
+    width: 100%;
+    max-width: 380px;
+    padding: 5px;
+    height:42.62px ;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+  }
+
+  a{
+    display: block;
+    width: fit-content;   /* thu hẹp theo nội dung */
+    margin-left: auto;    /* đẩy sang phải */
+    margin-top: 10px;
+    text-decoration: underline;
+    color: #0085DE;
+  }
+  .nut{
+    margin-top: 15px;
+    border: 0;
+    background: #305197;
+    border-radius: 5px;
+    padding: 13px 15px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+  }
 }

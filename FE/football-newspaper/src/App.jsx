@@ -9,9 +9,15 @@ import { Suspense } from "react";
 import { CSpinner } from "@coreui/react";
 import SiteLayout from "./layouts/site/SiteLayout";
 
+import AppFooter from './components/site/appFooter/AppFooter';
+import AppHeader from './components/site/appHeader/AppHeader';
+import AppLogin from './components/site/appLogin/AppLogin';
+
 function App() {
   return (
     <>
+      <AppHeader />
+
       <Router>
         <Suspense
           fallback={
@@ -22,9 +28,13 @@ function App() {
         >
           <Routes>
             <Route path="/*" element={<SiteLayout />} />
+            <Route path="/login" element={<AppLogin />} />
           </Routes>
         </Suspense>
       </Router>
+
+      <AppFooter />
+
       <ToastContainer
         position="top-right"
         autoClose={5000}

@@ -1,0 +1,13 @@
+.container{
+    margin: 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    gap: 20px;
+}   
+
+.cl1{
+    img{
+        max-width: 200px;
+
+    }
+}
