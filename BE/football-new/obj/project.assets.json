@@ -8405,23 +8405,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\PC\\.nuget\\packages\\": {},
+    "C:\\Users\\ASUS\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Project_BaoBongDa\\Thư mục mới\\football-new\\BE\\football-new\\football-new.csproj",
+      "projectUniqueName": "E:\\UTE\\HK125\\Summer_Project\\football-new\\BE\\football-new\\football-new.csproj",
       "projectName": "football-new",
-      "projectPath": "E:\\Project_BaoBongDa\\Thư mục mới\\football-new\\BE\\football-new\\football-new.csproj",
-      "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-      "outputPath": "E:\\Project_BaoBongDa\\Thư mục mới\\football-new\\BE\\football-new\\obj\\",
+      "projectPath": "E:\\UTE\\HK125\\Summer_Project\\football-new\\BE\\football-new\\football-new.csproj",
+      "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+      "outputPath": "E:\\UTE\\HK125\\Summer_Project\\football-new\\BE\\football-new\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
