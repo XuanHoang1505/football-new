@@ -6,10 +6,21 @@ import iconQc from "../../../assets/site/images/icons/logo_qc.png";
 import iconButChi from "../../../assets/site/images/icons/icon_but_chi.png";
 import iconRegister from "../../../assets/site/images/icons/icon_Register.png";
 import iconLogin from "../../../assets/site/images/icons/icon_login.png";
+import { Modal } from "react-bootstrap";
+import AppLogin from "../../../pages/site/auth/appLogin/AppLogin";
 
 const AppHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
+
+  const [show, setShow] = useState(false);
+  const [tab, setTab] = useState('login');
+
+  const handleClose = () => setShow(false);
+
+  const handleShowLogin = () => { setTab('login'); setShow(true);};
+  const handleShowRegister = () => { setTab('register'); setShow(true); };
+
   const topHeaderRef = useRef(null);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -95,6 +106,18 @@ const AppHeader = () => {
 
   return (
     <div>
+
+      {/* Hiển thị đăng nhập */}
+      <Modal
+        show={show}
+        onHide={handleClose}
+        animation={true}
+        centered    
+      >
+          <AppLogin initialTab={tab} handleClose={handleClose} />
+      </Modal>
+
+
       <div className={styles.container}>
         <div ref={topHeaderRef} className={styles.top_header}>
           <img className={styles.logo} src={logo} />
@@ -111,18 +134,17 @@ const AppHeader = () => {
                 Gửi bài
               </div>
             </a>
-            <a href="#">
-              <div className={styles.item2}>
-                <img className={styles.iconQc} src={iconRegister} />
-                Đăng ký
-              </div>
-            </a>
-            <a href="#">
-              <div className={styles.item2}>
-                <img className={styles.iconQc} src={iconLogin} />
-                Đăng nhập
-              </div>
-            </a>
+
+            <div style={{color: '#254892',fontWeight:'550'}} onClick={handleShowRegister} className={styles.item2} role="button">
+              <img className={styles.iconQc} src={iconRegister} alt="Register" />
+              Đăng ký
+            </div>
+            
+            <div style={{color: '#254892',fontWeight:'550'}} onClick={handleShowLogin} className={styles.item2} role="button">
+              <img className={styles.iconQc} src={iconLogin} alt="login" />
+              Đăng nhập
+            </div>
+
           </div>
         </div>
       </div>
