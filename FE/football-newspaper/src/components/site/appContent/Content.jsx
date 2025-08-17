@@ -2,11 +2,11 @@ import React, { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { CContainer, CSpinner } from "@coreui/react";
 
-import routes from "../../../routes/admin/adminRoutes"
+import routes from "../../../routes/site/siteRoutes";
 
-const AppContent = () => {
+const Content = () => {
   return (
-    <CContainer className="px-4" fluid>
+    <CContainer className="p-0" fluid>
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
           {routes.map((route, index) => {
@@ -27,4 +27,4 @@ const AppContent = () => {
   );
 };
 
-export default React.memo(AppContent);
+export default React.memo(Content);
