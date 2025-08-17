@@ -1,15 +1,35 @@
 import { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import "tippy.js/animations/shift-away.css";
 import logo from "../../../assets/site/images/logo.png";
 import styles from "./AppHeader.module.scss";
 import iconQc from "../../../assets/site/images/icons/logo_qc.png";
 import iconButChi from "../../../assets/site/images/icons/icon_but_chi.png";
 import iconRegister from "../../../assets/site/images/icons/icon_Register.png";
 import iconLogin from "../../../assets/site/images/icons/icon_login.png";
+import { Modal } from "react-bootstrap";
+import AppLogin from "../../../pages/site/auth/appLogin/AppLogin";
 
 const AppHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
+
+  const [show, setShow] = useState(false);
+  const [tab, setTab] = useState("login");
+
+  const handleClose = () => setShow(false);
+
+  const handleShowLogin = () => {
+    setTab("login");
+    setShow(true);
+  };
+  const handleShowRegister = () => {
+    setTab("register");
+    setShow(true);
+  };
+
   const topHeaderRef = useRef(null);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -29,17 +49,46 @@ const AppHeader = () => {
   }, []);
 
   const menuItems = [
-    "lịch thi đấu",
-    "u23 châu á",
-    "bóng đá việt nam",
-    "bóng đá quốc tế",
-    "nhận định",
-    "chuyển nhượng",
-    "thể thao",
-    "bóng chuyền",
-    "pickleball",
-    "xe",
-    "esport",
+    {
+      label: "lịch thi đấu",
+      path: "/lich-thi-dau",
+    },
+    {
+      label: "u23 châu á",
+      path: "/u23",
+    },
+    {
+      label: "bóng đá việt nam",
+      path: "/bong-da-vn",
+      subMenu: [
+        { label: "Đội tuyển Quốc gia", path: "/bong-da-vn/dtqg" },
+        { label: "V-League", path: "/bong-da-vn/vleague" },
+        { label: "Bóng đá nữ", path: "/bong-da-vn/bdn" },
+        { label: "U17 châu Á", path: "/bong-da-vn/bdn" },
+        { label: "Bóng đá trẻ", path: "/bong-da-vn/bdn" },
+        { label: "U20 châu Á", path: "/bong-da-vn/bdn" },
+      ],
+      background: "#05A69D",
+    },
+    {
+      label: "bóng đá quốc tế",
+      path: "/bong-da-qt",
+      subMenu: [
+        { label: "Ngoại hạng Anh", path: "/bong-da-qt/epl" },
+        { label: "La Liga", path: "/bong-da-qt/laliga" },
+        { label: "Serie A", path: "/bong-da-qt/seriea" },
+        { label: "Cúp C1", path: "/bong-da-qt/c1" },
+        { label: "World Cup 2026", path: "/bong-da-qt/wc2026" },
+      ],
+      background: "#9F234E",
+    },
+    { label: "nhận định", path: "/nhan-dinh" },
+    { label: "chuyển nhượng", path: "/chuyen-nhuong" },
+    { label: "thể thao", path: "/the-thao" },
+    { label: "bóng chuyền", path: "/bong-chuyen" },
+    { label: "pickleball", path: "/pickleball" },
+    { label: "xe", path: "/xe" },
+    { label: "esport", path: "/esport" },
   ];
 
   const menuData = [
@@ -95,6 +144,11 @@ const AppHeader = () => {
 
   return (
     <div>
+      {/* Hiển thị đăng nhập */}
+      <Modal show={show} onHide={handleClose} animation={true} centered>
+        <AppLogin initialTab={tab} handleClose={handleClose} />
+      </Modal>
+
       <div className={styles.container}>
         <div ref={topHeaderRef} className={styles.top_header}>
           <img className={styles.logo} src={logo} />
@@ -111,57 +165,114 @@ const AppHeader = () => {
                 Gửi bài
               </div>
             </a>
-            <a href="#">
-              <div className={styles.item2}>
-                <img className={styles.iconQc} src={iconRegister} />
-                Đăng ký
-              </div>
-            </a>
-            <a href="#">
-              <div className={styles.item2}>
-                <img className={styles.iconQc} src={iconLogin} />
-                Đăng nhập
-              </div>
-            </a>
+
+            <div
+              style={{ color: "#254892", fontWeight: "550" }}
+              onClick={handleShowRegister}
+              className={styles.item2}
+              role="button"
+            >
+              <img
+                className={styles.iconQc}
+                src={iconRegister}
+                alt="Register"
+              />
+              Đăng ký
+            </div>
+
+            <div
+              style={{ color: "#254892", fontWeight: "550" }}
+              onClick={handleShowLogin}
+              className={styles.item2}
+              role="button"
+            >
+              <img className={styles.iconQc} src={iconLogin} alt="login" />
+              Đăng nhập
+            </div>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className={`${styles.navigation} ${isFixed ? styles.fixed : ""}`}>
+      <nav className={styles.navigation}>
         <div className={styles.navbar_container}>
+          {/* Icon Home */}
           <i
             className={`bi bi-house-door-fill text-light fs-4 ${styles.icon_home}`}
             style={{ cursor: "pointer" }}
           ></i>
-          <div className={`${styles.nav_content}`}>
-            {menuItems.map((item, idx) => (
-              <NavLink
-                key={idx}
-                to="/"
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles.nav_item} ${styles.active}`
-                    : styles.nav_item
-                }
-              >
-                {item}
-              </NavLink>
-            ))}
+
+          {/* Menu items */}
+          <div className={styles.nav_content}>
+            {menuItems.map((item, idx) => {
+              if (item.subMenu) {
+                return (
+                  <Tippy
+                    key={idx}
+                    interactive={true}
+                    placement="bottom-start"
+                    arrow={false} 
+                    animation="shift-away"
+                    offset={[0, 0]}
+                    delay={[0, 100]}
+                    content={
+                      <div className={styles.subMenu} style={{ background: item.background || "#fff" }}>
+                        {item.subMenu.map((sub, subIdx) => (
+                          <NavLink
+                            key={subIdx}
+                            to={sub.path}
+                            className={styles.sub_item}
+                          >
+                            {sub.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    }
+                  >
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        isActive
+                          ? `${styles.nav_item} ${styles.active}`
+                          : styles.nav_item
+                      }
+                    >
+                      {item.label}
+                    </NavLink>
+                  </Tippy>
+                );
+              }
+              // item không có submenu
+              return (
+                <NavLink
+                  key={idx}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    isActive
+                      ? `${styles.nav_item} ${styles.active}`
+                      : styles.nav_item
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              );
+            })}
+
+            {/* Toggle button */}
+            {menuOpen ? (
+              <i
+                className={`bi bi-x-lg fs-3 text-primary ${styles.icon_toggle}`}
+                onClick={toggleMenu}
+                style={{ cursor: "pointer" }}
+              ></i>
+            ) : (
+              <i
+                className={`bi bi-list fs-3 text-primary ${styles.icon_toggle}`}
+                onClick={toggleMenu}
+                style={{ cursor: "pointer" }}
+              ></i>
+            )}
           </div>
-          {menuOpen ? (
-            <i
-              className={`bi bi-x-lg fs-3 text-primary ${styles.icon_toggle}`}
-              onClick={toggleMenu}
-              style={{ cursor: "pointer" }}
-            ></i>
-          ) : (
-            <i
-              className={`bi bi-list fs-3 text-primary ${styles.icon_toggle}`}
-              onClick={toggleMenu}
-              style={{ cursor: "pointer" }}
-            ></i>
-          )}
         </div>
       </nav>
       <div
