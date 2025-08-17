@@ -112,7 +112,7 @@ const AppHeader = () => {
         show={show}
         onHide={handleClose}
         animation={true}
-        centered    
+        centered   
       >
           <AppLogin initialTab={tab} handleClose={handleClose} />
       </Modal>
