@@ -6,9 +6,7 @@
   font-size: 14px;
 }
 .container {
-  position: relative;
-  margin-left: 200px;
-  margin-right: 200px;
+  padding: 0 90px;
 }
 .logo {
   width: 282px;
@@ -76,6 +74,7 @@ a {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1000;
 }
 .navbar_container {
   display: flex;
@@ -117,10 +116,9 @@ a {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 20px;
-  padding: 20px;
-  margin: 0 auto;
+  padding: 20px 50px;
   background: white;
-  width: 80vw;
+  width: 100vw;
   height: 100vh;
   overflow-y: auto;
   z-index: 2000;

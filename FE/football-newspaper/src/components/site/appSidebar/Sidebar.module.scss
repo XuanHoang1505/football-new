@@ -1,0 +1,57 @@
+.sidebar {
+  background: #fff;
+  padding: 10px 0;
+
+  width: 90%;
+}
+
+.menuList {
+  list-style: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  padding: 0;
+}
+
+.menuItem {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px 12px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.menuLink:hover {
+  background: #f7f7f7;
+  color: #e53935; /* màu đỏ highlight */
+}
+
+.menuLink.active {
+  color: #e53935;
+  font-weight: 600;
+}
+
+.icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  margin-right: 8px;
+}
+
+/* Riêng menu League có thêm style */
+.leagueMenu {
+  margin-top: 20px;
+  border-top: 2px solid #eee;
+}
