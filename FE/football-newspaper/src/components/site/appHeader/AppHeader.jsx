@@ -87,8 +87,8 @@ const AppHeader = () => {
     { label: "thể thao", path: "/the-thao" },
     { label: "bóng chuyền", path: "/bong-chuyen" },
     { label: "pickleball", path: "/pickleball" },
-    { label: "xe", path: "/xe" },
     { label: "esport", path: "/esport" },
+    { label: "xu hướng", path: "/trend" },
   ];
 
   const menuData = [
@@ -141,7 +141,8 @@ const AppHeader = () => {
       ],
     },
   ];
-
+  console.log(isFixed);
+  
   return (
     <div>
       {/* Hiển thị đăng nhập */}
@@ -149,7 +150,7 @@ const AppHeader = () => {
         <AppLogin initialTab={tab} handleClose={handleClose} />
       </Modal>
 
-      <div className={styles.container}>
+      <div className={`${styles.container} container`}>
         <div ref={topHeaderRef} className={styles.top_header}>
           <img className={styles.logo} src={logo} />
           <div className={styles.right}>
@@ -194,7 +195,7 @@ const AppHeader = () => {
       </div>
 
       {/* Navigation */}
-      <nav className={styles.navigation}>
+      <nav className={`${styles.navigation} ${isFixed ? styles.fixed : ""}`}>
         <div className={styles.navbar_container}>
           {/* Icon Home */}
           <i
@@ -278,7 +279,7 @@ const AppHeader = () => {
       <div
         className={`${styles.menuContainer} ${isFixed ? styles.fixed : ""} ${
           menuOpen ? styles.show : styles.hide
-        }`}
+        } container`}
       >
         {menuData.map((menu, index) => (
           <div
