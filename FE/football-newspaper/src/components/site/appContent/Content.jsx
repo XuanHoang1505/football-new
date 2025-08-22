@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { CContainer, CSpinner } from "@coreui/react";
+import AppRank from "../appRank/AppRank"
 
 import routes from "../../../routes/site/siteRoutes";
 
