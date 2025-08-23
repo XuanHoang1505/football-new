@@ -57,9 +57,14 @@ const Home = () => {
           <Sidebar/>
         </div>
         <div className="col-7">
-          <AppRank/>
         </div>
         <div className="col-3"></div>
+      </div>
+      <div className="row">
+        <div className="col-8"></div>
+        <div className="col-4">
+          <AppRank />
+        </div>
       </div>
     </div>
   );
