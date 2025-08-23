@@ -1,0 +1,75 @@
+.container {
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.rankTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px !important;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  th, td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #e6e6e6;
+  }
+
+  thead tr {
+    background: #1a4599 url("https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1")
+    right -855px no-repeat;
+  }
+
+  th {
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fafafa;
+  }
+
+  tbody tr:hover {
+    background: #f1f5ff;
+  }
+}
+
+.th_team {
+  text-align: left !important;
+  width: 60%;
+}
+
+.rankNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1a4599;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+.title{
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 10px 5px;
+  color: #fff;
+  margin-bottom: 20px;
+  background-color: #BC0137;
+}
+
+
+

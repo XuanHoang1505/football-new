@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import Sidebar from "../../../components/site/appSidebar/Sidebar";
 import styles from "./Home.module.scss";
+import AppRank from "../../../components/site/appRank/AppRank"
 const Home = () => {
   const listClub = [
     {
@@ -53,10 +54,17 @@ const Home = () => {
       </div>
       <div className="row">
         <div className="col-2">
-          <Sidebar />
+          <Sidebar/>
         </div>
-        <div className="col-7"></div>
+        <div className="col-7">
+        </div>
         <div className="col-3"></div>
+      </div>
+      <div className="row">
+        <div className="col-8"></div>
+        <div className="col-4">
+          <AppRank />
+        </div>
       </div>
     </div>
   );
