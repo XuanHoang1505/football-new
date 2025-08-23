@@ -9,6 +9,8 @@ using System.Text.Json.Serialization;
 using footballnew.Data;
 using footballnew.Utils;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using footballnew.Services.Interfaces;
+using footballnew.Services.Implementations;
 
 
 
@@ -113,6 +115,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IFootballDataService, FootballDataService>();
+
 
 
 builder.Services.AddSwaggerGen(options =>

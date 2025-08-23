@@ -141,7 +141,6 @@ const AppHeader = () => {
       ],
     },
   ];
-  console.log(isFixed);
   
   return (
     <div>
