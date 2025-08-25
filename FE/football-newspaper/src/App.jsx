@@ -9,24 +9,25 @@ import { Suspense } from "react";
 import { CSpinner } from "@coreui/react";
 import SiteLayout from "./layouts/site/SiteLayout";
 
-import AppLogin from "./pages/site/auth/appLogin/AppLogin";
+import { UserProvider } from "./contexts/UserContext";
 
 function App() {
   return (
     <>
       <Router>
-        <Suspense
-          fallback={
-            <div className="pt-3 text-center">
-              <CSpinner color="primary" variant="grow" />
-            </div>
-          }
-        >
-          <Routes>
-            <Route path="/*" element={<SiteLayout />} />
-            <Route path="/login" element={<AppLogin />} />
-          </Routes>
-        </Suspense>
+        <UserProvider>
+          <Suspense
+            fallback={
+              <div className="pt-3 text-center">
+                <CSpinner color="primary" variant="grow" />
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/*" element={<SiteLayout />} />
+            </Routes>
+          </Suspense>
+        </UserProvider>
       </Router>
       <ToastContainer
         position="top-right"

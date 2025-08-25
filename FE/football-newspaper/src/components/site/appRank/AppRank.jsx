@@ -32,7 +32,6 @@ const AppRank = () => {
     fetchStandings();
   }, []);
 
-  console.log("standings", standings);
 
   return (
     <div className={styles.container}>

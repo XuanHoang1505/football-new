@@ -1,34 +1,75 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
+
+import { UserContext } from "../../../contexts/UserContext";
+import {
+  openModal,
+  closeModal,
+  setOtpInfo,
+  resetAllModals,
+} from "../../../redux/slices/authModalSlice";
+
+import LoginSelectionModal from "../../../pages/site/auth/loginSelectionModal/LoginSelectionModal";
+import LoginModal from "../../../pages/site/auth/loginModal/LoginModal";
+import SignUpSelectionModal from "../../../pages/site/auth/signUpSelectionModal/SignUpSelectionModal";
+import SignUpModal from "../../../pages/site/auth/signUpModal/SignUpModal";
+import VerifyOtpModal from "../../../pages/site/auth/verifyOtpModal/VerifyOtpModal";
+import ForgotPasswordModal from "../../../pages/site/auth/forgotPasswordModal/ForgotPasswordModal";
+import ResetPasswordModal from "../../../pages/site/auth/resetPasswordModal/ResetPasswordModal";
+
+// import { logout } from "../../../services/site/AuthService";
+
 import logo from "../../../assets/site/images/logo.png";
 import styles from "./AppHeader.module.scss";
 import iconQc from "../../../assets/site/images/icons/logo_qc.png";
 import iconButChi from "../../../assets/site/images/icons/icon_but_chi.png";
 import iconRegister from "../../../assets/site/images/icons/icon_Register.png";
 import iconLogin from "../../../assets/site/images/icons/icon_login.png";
-import { Modal } from "react-bootstrap";
-import AppLogin from "../../../pages/site/auth/appLogin/AppLogin";
+
 
 const AppHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
 
-  const [show, setShow] = useState(false);
-  const [tab, setTab] = useState("login");
+  const dispatch = useDispatch();
+  const {
+    showLoginSelectionModal,
+    showLoginModal,
+    showSignUpSelectionModal,
+    showSignUpModal,
+    showVerifyOtpModal,
+    showForgotPasswordModal,
+    showResetPasswordModal,
+    otpInfo,
+  } = useSelector((state) => state.authModal);
+  const { user } = useContext(UserContext);
 
-  const handleClose = () => setShow(false);
+  useEffect(() => {
+    if (!user) {
+      dispatch(resetAllModals());
+    }
+  }, [user, dispatch]);
 
-  const handleShowLogin = () => {
-    setTab("login");
-    setShow(true);
+  const handleSignUpSuccess = (info) => {
+    dispatch(setOtpInfo(info));
+    dispatch(closeModal("showSignUpModal"));
+    dispatch(openModal("showVerifyOtpModal"));
   };
-  const handleShowRegister = () => {
-    setTab("register");
-    setShow(true);
+
+  const handleForgotPassword = (info) => {
+    dispatch(setOtpInfo(info));
+    dispatch(closeModal("showForgotPasswordModal"));
+    dispatch(openModal("showVerifyOtpModal"));
   };
+
+  // const handleLogout = async () => {
+  //   logout(user.userId);
+  //   updateUser(null);
+  // };
 
   const topHeaderRef = useRef(null);
 
@@ -141,19 +182,9 @@ const AppHeader = () => {
       ],
     },
   ];
-  
+
   return (
     <div>
-      {/* Hiển thị đăng nhập */}
-      <Modal
-        show={show}
-        onHide={handleClose}
-        animation={true}
-        centered   
-      >
-          <AppLogin initialTab={tab} handleClose={handleClose} />
-      </Modal>
-
       <div className={`${styles.container} container`}>
         <div ref={topHeaderRef} className={styles.top_header}>
           <img className={styles.logo} src={logo} />
@@ -173,7 +204,7 @@ const AppHeader = () => {
 
             <div
               style={{ color: "#254892", fontWeight: "550" }}
-              onClick={handleShowRegister}
+               onClick={() => dispatch(openModal("showSignUpSelectionModal"))}
               className={styles.item2}
               role="button"
             >
@@ -187,7 +218,7 @@ const AppHeader = () => {
 
             <div
               style={{ color: "#254892", fontWeight: "550" }}
-              onClick={handleShowLogin}
+              onClick={() => dispatch(openModal("showLoginSelectionModal"))}
               className={styles.item2}
               role="button"
             >
@@ -216,12 +247,15 @@ const AppHeader = () => {
                     key={idx}
                     interactive={true}
                     placement="bottom-start"
-                    arrow={false} 
+                    arrow={false}
                     animation="shift-away"
                     offset={[0, 0]}
                     delay={[0, 100]}
                     content={
-                      <div className={styles.subMenu} style={{ background: item.background || "#fff" }}>
+                      <div
+                        className={styles.subMenu}
+                        style={{ background: item.background || "#fff" }}
+                      >
                         {item.subMenu.map((sub, subIdx) => (
                           <NavLink
                             key={subIdx}
@@ -310,6 +344,106 @@ const AppHeader = () => {
           </div>
         ))}
       </div>
+      <LoginSelectionModal
+        show={showLoginSelectionModal}
+        handleClose={() => dispatch(closeModal("showLoginSelectionModal"))}
+        handleShowLoginModal={() => {
+          dispatch(closeModal("showLoginSelectionModal"));
+          dispatch(openModal("showLoginModal"));
+        }}
+        handleShowSignUpModal={() => {
+          dispatch(closeModal("showLoginSelectionModal"));
+          dispatch(openModal("showSignUpSelectionModal"));
+        }}
+      />
+      <SignUpSelectionModal
+        show={showSignUpSelectionModal}
+        handleClose={() => dispatch(closeModal("showSignUpSelectionModal"))}
+        handleShowSignUpModal={() => {
+          dispatch(closeModal("showSignUpSelectionModal"));
+          dispatch(openModal("showSignUpModal"));
+        }}
+        handleShowLoginModal={() => {
+          dispatch(closeModal("showSignUpSelectionModal"));
+          dispatch(openModal("showLoginSelectionModal"));
+        }}
+      />
+      <LoginModal
+        show={showLoginModal}
+        handleClose={() => dispatch(closeModal("showLoginModal"))}
+        handleBack={() => {
+          dispatch(closeModal("showLoginModal"));
+          dispatch(openModal("showLoginSelectionModal"));
+        }}
+        handleShowSignUpModal={() => {
+          dispatch(closeModal("showLoginModal"));
+          dispatch(openModal("showSignUpSelectionModal"));
+        }}
+        handleShowForgotPasswordModal={() => {
+          dispatch(closeModal("showLoginModal"));
+          dispatch(openModal("showForgotPasswordModal"));
+        }}
+      />
+      <SignUpModal
+        show={showSignUpModal}
+        handleClose={() => dispatch(closeModal("showSignUpModal"))}
+        handleBack={() => {
+          dispatch(closeModal("showSignUpModal"));
+          dispatch(openModal("showSignUpSelectionModal"));
+        }}
+        handleShowLoginModal={() => {
+          dispatch(closeModal("showSignUpModal"));
+          dispatch(openModal("showLoginSelectionModal"));
+        }}
+        handleShowVerifyOtpModal={() => {
+          dispatch(closeModal("showSignUpModal"));
+          dispatch(openModal("showVerifyOtpModal"));
+        }}
+        handleSignUpSuccess={handleSignUpSuccess}
+      />
+      <VerifyOtpModal
+        show={showVerifyOtpModal}
+        otpInfo={otpInfo}
+        handleCloseModal={() => dispatch(closeModal("showVerifyOtpModal"))}
+        handleBack={() => {
+          dispatch(closeModal("showVerifyOtpModal"));
+          dispatch(openModal("showSignUpModal"));
+        }}
+        handleShowLoginModal={() => {
+          dispatch(closeModal("showVerifyOtpModal"));
+          dispatch(openModal("showLoginModal"));
+        }}
+        handleShowResetPasswordModal={() => {
+          dispatch(closeModal("showVerifyOtpModal"));
+          dispatch(openModal("showResetPasswordModal"));
+        }}
+      />
+      <ForgotPasswordModal
+        show={showForgotPasswordModal}
+        handleClose={() => dispatch(closeModal("showForgotPasswordModal"))}
+        handleBack={() => {
+          dispatch(closeModal("showForgotPasswordModal"));
+          dispatch(openModal("showLoginModal"));
+        }}
+        handleShowVerifyOtpModal={() => {
+          dispatch(closeModal("showForgotPasswordModal"));
+          dispatch(openModal("showVerifyOtpModal"));
+        }}
+        handleForgotPassword={handleForgotPassword}
+      />
+      <ResetPasswordModal
+        show={showResetPasswordModal}
+        otpInfo={otpInfo}
+        handleClose={() => dispatch(closeModal("showResetPasswordModal"))}
+        handleBack={() => {
+          dispatch(closeModal("showResetPasswordModal"));
+          dispatch(openModal("showVerifyOtpModal"));
+        }}
+        handleShowLoginModal={() => {
+          dispatch(closeModal("showResetPasswordModal"));
+          dispatch(openModal("showLoginModal"));
+        }}
+      />
     </div>
   );
 };
