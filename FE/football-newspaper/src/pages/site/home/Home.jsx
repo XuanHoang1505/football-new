@@ -60,7 +60,7 @@ const Home = () => {
         </div>
         <div className="col-3"></div>
       </div>
-      <div className="row">
+      <div className="row mt-3">
         <div className="col-8"></div>
         <div className="col-4">
           <AppRank />

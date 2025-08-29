@@ -42,7 +42,7 @@ axiosInstance.interceptors.request.use(
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("userDetail");
-            window.location.href = "/login";
+            window.location.href = "/";
             return Promise.reject(error);
           }
         } else {

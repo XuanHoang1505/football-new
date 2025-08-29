@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { CContainer, CSpinner } from "@coreui/react";
-import AppRank from "../appRank/AppRank"
 
 import routes from "../../../routes/site/siteRoutes";
 
@@ -11,13 +10,14 @@ const Content = () => {
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
           {routes.map((route, index) => {
+            const Element = route.element;
             return (
               route.element && (
                 <Route
                   key={index}
                   path={route.path}
                   name={route.name}
-                  element={<route.element />}
+                  element={<Element/>}
                 />
               )
             );

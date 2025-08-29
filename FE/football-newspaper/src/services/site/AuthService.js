@@ -25,7 +25,6 @@ export const login = async (username, password) => {
   }
 };
 
-// Đăng nhập bằng Google
 
 // Đăng ký
 export const register = async (userData) => {
