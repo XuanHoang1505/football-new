@@ -10,11 +10,13 @@ const AppRank = () => {
   const fetchMatches = async () => {
     try {
       const res = await FootballService.getMatches("PL", currentYear);
+      console.log("Kết quả API matches:", res);
       setMatches(res.matches);
     } catch (err) {
       console.error("Lỗi khi fetch trận đấu:", err);
     }
   };
+  
   useEffect(() => {
     fetchMatches();
   }, []);
