@@ -6,7 +6,6 @@ const AppRank = () => {
   const [standings, setStandings] = useState([]);
   const currentYear = new Date().getFullYear();
 
-
   const fetchStandings = async () => {
     try {
       const res = await FootballService.getStandings("PL", currentYear);
