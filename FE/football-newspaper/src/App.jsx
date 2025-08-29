@@ -27,7 +27,7 @@ function App() {
           >
             <Routes>
               <Route path="/" element={<SiteLayout />}>
-                <Route index element={<Home />} />
+                <Route index element={<Account />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="account" element={<Account />}>
                   <Route path="account-info" element={<AccountInfo user={user}/>} />
