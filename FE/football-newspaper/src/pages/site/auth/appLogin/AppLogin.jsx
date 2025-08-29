@@ -91,6 +91,7 @@ const AppLogin = ({ initialTab = "login", handleClose }) => {
           <button className={styles.nut}>ĐĂNG KÝ TÀI KHOẢN</button>
         </div>
       )}
+      
     </div>
   );
 };
