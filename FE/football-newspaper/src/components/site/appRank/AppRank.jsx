@@ -4,23 +4,8 @@ import { FootballService } from "../../../services/site/FootballService";
 
 const AppRank = () => {
   const [standings, setStandings] = useState([]);
-  const [matches, setMatches] = useState([]);
   const currentYear = new Date().getFullYear();
 
-  const fetchMatches = async () => {
-    try {
-      const res = await FootballService.getMatches("PL", currentYear);
-      console.log("Kết quả API matches:", res);
-      setMatches(res.matches);
-    } catch (err) {
-      console.error("Lỗi khi fetch trận đấu:", err);
-    }
-  };
-  
-  useEffect(() => {
-    fetchMatches();
-  }, []);
-  console.log("matches", matches);
   const fetchStandings = async () => {
     try {
       const res = await FootballService.getStandings("PL", currentYear);
@@ -33,8 +18,7 @@ const AppRank = () => {
   useEffect(() => {
     fetchStandings();
   }, []);
-
-  console.log("standings", standings);
+  
 
   return (
     <div className={styles.container}>

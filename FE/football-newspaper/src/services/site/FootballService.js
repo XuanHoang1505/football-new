@@ -8,7 +8,6 @@ const getStandings = async (leagueId, season) => {
     if (season) {
       url += `?season=${season}`;
     }
-    console.log("url", url);
     
     const response = await axiosInstance.get(url);
     return response.data;

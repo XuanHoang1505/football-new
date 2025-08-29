@@ -1,8 +1,9 @@
 import { NavLink } from "react-router-dom";
 import Sidebar from "../../../components/site/appSidebar/Sidebar";
 import styles from "./Home.module.scss";
-import AppRank from "../../../components/site/appRank/AppRank"
+import AppRank from "../../../components/site/appRank/AppRank";
 import AppMatches from "../../../components/site/appMatches/AppMatches";
+
 const Home = () => {
   const listClub = [
     {
@@ -42,7 +43,6 @@ const Home = () => {
     },
   ];
 
-
   return (
     <div className="container px-5">
       <div className={styles.list_item}>
@@ -53,17 +53,18 @@ const Home = () => {
           </NavLink>
         ))}
       </div>
+
       <div className="row">
         <div className="col-2">
-          <Sidebar/>
+          <Sidebar />
         </div>
-        <div className="col-7">
-        </div>
+        <div className="col-7"></div>
         <div className="col-3"></div>
       </div>
-      <div className="row">
+
+      <div className="row mt-3">
         <div className="col-8">
-          <AppMatches/>
+          <AppMatches />
         </div>
         <div className="col-4">
           <AppRank />
@@ -72,4 +73,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;

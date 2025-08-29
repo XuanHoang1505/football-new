@@ -112,6 +112,9 @@ function LoginModal({
     setPassword("");
     setErrors({});
   };
+
+  
+
   return (
     <>
       <Modal show={show} onHide={handleCloseModal} centered size="md">

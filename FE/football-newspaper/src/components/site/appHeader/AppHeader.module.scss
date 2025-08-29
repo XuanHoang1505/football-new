@@ -5,6 +5,7 @@
   font-family: "Roboto", Helvetica, Arial, sans-serif;
   font-size: 14px;
 }
+
 .container {
   padding: 0 90px;
 }
@@ -211,5 +212,56 @@ a {
       border-radius: 4px;
     }
   }
+}
+
+.user_info{
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  gap: 8px;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 6px;
+  background-color: #e4e9f4;
+
+  p {
+    margin: 0;
+    color: #6d6e1a;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  &:hover {
+    background-color: #d0d5e8;
+    border-radius: 4px;
+  }
+}
+
+.dropdown_menu{
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-width: 200px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  .dropdown_item{
+    display: flex;
+    gap: 5px;
+    color: #353232 !important;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 5px;
+
+    &:hover{
+      background-color: transparent !important;
+      color: var(--primary) !important;
+    }
+    &:last-child{
+      border-top: 1px solid #ddd;
+    }
+  }
+
+
 }
 

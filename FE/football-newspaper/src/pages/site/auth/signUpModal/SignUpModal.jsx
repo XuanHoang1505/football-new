@@ -89,6 +89,8 @@ function SignUpModal({
     setConfirmPassword("");
     setErrors({});
   };
+
+
   return (
     <>
       <Modal show={show} onHide={handleCloseModal} centered size="md">
