@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
-import { Dropdown, Nav } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 
 import { useNavigate } from "react-router-dom";
 
@@ -189,16 +189,23 @@ const AppHeader = () => {
   ];
 
   return (
-    <div>
-      <div className={`${styles.container} container`}>
+    <>
+      <div className={`${styles.container}`}>
         <div ref={topHeaderRef} className={styles.top_header}>
-          <img className={styles.logo} src={logo} />
+          <img
+            className={styles.logo}
+            src={logo}
+            onClick={() => {
+              navigate("/");
+            }}
+            style={{cursor:"pointer"}}
+          />
           <div className={styles.right}>
-            <NavLink to={'/ads'} className={styles.item}>
+            <NavLink to={"/ads"} className={styles.item}>
               <img className={styles.iconQc} src={iconQc} />
               Quảng cáo
             </NavLink>
-            <NavLink to={'/submit'} className={styles.item}>
+            <NavLink to={"/submit"} className={styles.item}>
               <img className={styles.iconQc} src={iconButChi} />
               Gửi bài
             </NavLink>
@@ -249,64 +256,89 @@ const AppHeader = () => {
                   <i className="bi bi-chevron-down text-black"></i>
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu className={` ${styles.dropdown_menu} m-0 mt-3`}>
-                  <Dropdown.Item
-                    as={NavLink}
-                    to={"/profile"}
-                    className={styles.dropdown_item}
-                  >
-                    <i className="bi bi-person-circle me-2"></i>
-                    Trang cá nhân
+                <Dropdown.Menu className={`${styles.dropdown_menu} m-0 mt-3`}>
+                  <Dropdown.Item>
+                    <NavLink
+                      to="/profile"
+                      className={({ isActive }) =>
+                        `${styles.dropdown_item} ${
+                          isActive ? styles.active : ""
+                        }`
+                      }
+                    >
+                      <i className="bi bi-person-circle me-2"></i>
+                      Trang cá nhân
+                    </NavLink>
                   </Dropdown.Item>
 
                   {user.role !== "USER" && (
-                    <Dropdown.Item
-                      onClick={() => navigate("/admin")}
-                      className={styles.dropdown_item}
-                    >
-                      <i className="bi bi-speedometer2 me-2"></i>
-                      Chuyển sang quản lý
+                    <Dropdown.Item onClick={() => navigate("/admin")}>
+                      <div className={styles.dropdown_item}>
+                        <i className="bi bi-speedometer2 me-2"></i>
+                        Chuyển sang quản lý
+                      </div>
                     </Dropdown.Item>
                   )}
 
-                  <Dropdown.Item
-                    as={NavLink}
-                    to={"/account/account-info"}
-                    className={styles.dropdown_item}
-                  >
-                    <i className="bi bi-gear me-2"></i>
-                    Cập nhật thông tin
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    as={NavLink}
-                    to="/write-article"
-                    className={styles.dropdown_item}
-                  >
-                    <i className="bi bi-file-post me-2"></i>
-                    Viết bài
+                  <Dropdown.Item>
+                    <NavLink
+                      to="/account/account-info"
+                      className={({ isActive }) =>
+                        `${styles.dropdown_item} ${
+                          isActive ? styles.active : ""
+                        }`
+                      }
+                    >
+                      <i className="bi bi-gear me-2"></i>
+                      Cập nhật thông tin
+                    </NavLink>
                   </Dropdown.Item>
 
-                  <Dropdown.Item
-                    as={NavLink}
-                    to="/account/change-password"
-                    className={styles.dropdown_item}
-                  >
-                    <i className="bi bi-shield-lock me-2"></i>
-                    Đổi mật khẩu
+                  <Dropdown.Item>
+                    <NavLink
+                      to="/write-article"
+                      className={({ isActive }) =>
+                        `${styles.dropdown_item} ${
+                          isActive ? styles.active : ""
+                        }`
+                      }
+                    >
+                      <i className="bi bi-file-post me-2"></i>
+                      Viết bài
+                    </NavLink>
                   </Dropdown.Item>
 
-                  <Dropdown.Item
-                    as={NavLink}
-                    to="/viewed-news"
-                    className={styles.dropdown_item}
-                  >
-                    <i className="bi bi-clock-history me-2"></i>
-                    Tin đã xem
+                  <Dropdown.Item>
+                    <NavLink
+                      to="/account/change-password"
+                      className={({ isActive }) =>
+                        `${styles.dropdown_item} ${
+                          isActive ? styles.active : ""
+                        }`
+                      }
+                    >
+                      <i className="bi bi-shield-lock me-2"></i>
+                      Đổi mật khẩu
+                    </NavLink>
+                  </Dropdown.Item>
+
+                  <Dropdown.Item>
+                    <NavLink
+                      to="/account/watch-history"
+                      className={({ isActive }) =>
+                        `${styles.dropdown_item} ${
+                          isActive ? styles.active : ""
+                        }`
+                      }
+                    >
+                      <i className="bi bi-clock-history me-2"></i>
+                      Tin đã xem
+                    </NavLink>
                   </Dropdown.Item>
 
                   <Dropdown.Item
                     onClick={handleLogout}
-                    className={styles.dropdown_item}
+                    className={`${styles.dropdown_item} ${styles.logout}`}
                   >
                     <i className="bi bi-box-arrow-right me-2"></i>
                     Đăng xuất
@@ -325,6 +357,7 @@ const AppHeader = () => {
           <i
             className={`bi bi-house-door-fill text-light fs-4 ${styles.icon_home}`}
             style={{ cursor: "pointer" }}
+            onClick={() => navigate("/")}
           ></i>
 
           {/* Menu items */}
@@ -533,7 +566,7 @@ const AppHeader = () => {
           dispatch(openModal("showLoginModal"));
         }}
       />
-    </div>
+    </>
   );
 };
 

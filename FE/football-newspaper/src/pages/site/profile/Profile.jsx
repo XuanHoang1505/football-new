@@ -9,6 +9,7 @@ import { UserContext } from "../../../contexts/UserContext";
 
 function Profile() {
   const { user } = useContext(UserContext);
+  console.log(">>> Profile component rendered <<<");
   return (
     <>
       <Helmet>
@@ -47,18 +48,18 @@ function Profile() {
                     <div className="mt-3 text-center text-lg-start">
                       <a
                         href="https://www.facebook.com/xuanhoang1505/"
-                        className="me-3 text-dark"
+                        className="me-3"
                       >
-                        <i className="fa-brands fa-facebook fa-2x"></i>
+                        <i className="fa-brands fa-facebook fa-2x text-primary"></i>
                       </a>
-                      <a href="#" className="me-3 text-dark">
-                        <i className="fa-brands fa-instagram fa-2x"></i>
+                      <a href="#" className="me-3 k">
+                        <i className="fa-brands fa-instagram fa-2x text-danger"></i>
                       </a>
-                      <a href="#" className="me-3 text-dark">
-                        <i className="fa-brands fa-twitter fa-2x"></i>
+                      <a href="#" className="me-3">
+                        <i className="fa-brands fa-twitter fa-2x text-info"></i>
                       </a>
-                      <a href="#" className="me-3 text-dark">
-                        <i className="fa-brands fa-youtube fa-2x"></i>
+                      <a href="#" className="me-3">
+                        <i className="fa-brands fa-youtube fa-2x text-danger"></i>
                       </a>
                     </div>
                   </div>

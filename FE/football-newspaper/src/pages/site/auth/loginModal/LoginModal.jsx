@@ -1,5 +1,4 @@
-import { useState, useContext, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useContext} from "react";
 import { toast } from "react-toastify";
 
 import { Modal } from "react-bootstrap";
@@ -21,30 +20,10 @@ function LoginModal({
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const { user, updateUser } = useContext(UserContext); // Lấy hàm cập nhật user từ context
+  const { updateUser } = useContext(UserContext); // Lấy hàm cập nhật user từ context
   const [isLoading, setIsLoading] = useState(false);
 
-  // useCallback giúp đảm bảo handleNavigate sẽ không thay đổi giữa các lần render trừ khi navigate thay đổi.
-  const handleNavigate = useCallback(
-    (role) => {
-      const rolePaths = {
-        ADMIN: "/admin/home",
-        // EMPLOYEE: "/employee/dashboard",
-        // TRAINER: "/trainer/dashboard",
-        USER: "/",
-      };
-      navigate(rolePaths[role] || "/");
-    },
-    [navigate]
-  );
 
-  useEffect(() => {
-    // Kiểm tra nếu người dùng đã đăng nhập rồi thì điều hướng trở lại trang chủ theo vai trò.
-    if (user) {
-      handleNavigate(user.role);
-    }
-  }, [user, handleNavigate]);
 
   const validate = () => {
     const newErrors = {};
@@ -83,7 +62,6 @@ function LoginModal({
         // lưu nó vào context để context lưu vào localStorage và sử dụng chung cho toàn bộ ứng dụng
         updateUser(userDetail);
 
-        handleNavigate(userDetail.role); // chuyển hướng theo vai trò
         handleCloseModal(); // Đóng modal sau khi đăng nhập thành công
       } catch (error) {
         if (error.response) {
