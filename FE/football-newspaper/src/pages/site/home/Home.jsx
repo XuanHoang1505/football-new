@@ -44,7 +44,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="container px-5">
+    <div className={styles.container}>
       <div className={styles.list_item}>
         {listClub.map((club, index) => (
           <NavLink className={styles.item} to={club.url} key={index}>
