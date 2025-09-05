@@ -3,11 +3,10 @@ import { UserContext } from "../../../contexts/UserContext";
 import { NavLink, Outlet } from "react-router-dom";
 
 import DynamicBreadcrumb from "../../../components/site/breadcrumb/Breadcrumb";
-import AccountInfo from "./accountInfo/AccountInfo";
 
 import styles from "./Account.module.scss";
 import { Alert } from "react-bootstrap";
-import ChangePassword from "./changePassword/ChangePassword";
+
 
 function Account() {
   const { user } = useContext(UserContext);
@@ -15,7 +14,7 @@ function Account() {
     <>
       <div className={styles.mainContainer}>
         <DynamicBreadcrumb />
-        <div className="container p-0 mt-3">
+        <div className="container-fluid p-0 mt-3 mx-0">
           <div className="row">
             <div className="col-12 col-lg-3">
               <div
@@ -23,7 +22,7 @@ function Account() {
                 style={{ boxShadow: "0 0 10px rgba(0,0,0,0.1)" }}
               >
                 <div
-                  className="text-center"
+                  className="text-center pb-3"
                   style={{ borderBottom: "1px solid #ddd" }}
                 >
                   <img
@@ -98,7 +97,7 @@ function Account() {
 
                   <li>
                     <NavLink
-                      to="/account/watched"
+                      to="/account/watch-history"
                       className={({ isActive }) =>
                         `d-block pt-3 text-dark fw-normal ${
                           styles.navbar_item
@@ -129,7 +128,6 @@ function Account() {
               </Alert>
             </div>
             <div className="col-12 col-lg-9">
-              {/* <ChangePassword user={user}/> */}
               <Outlet />
             </div>
           </div>
