@@ -1,29 +1,20 @@
-import React, { useEffect, useState } from "react";
 import styles from "./AppRank.module.scss";
-import { FootballService } from "../../../services/site/FootballService";
+import { useStandings } from "../../../hooks/useFootballData";
 
 const AppRank = () => {
-  const [standings, setStandings] = useState([]);
   const currentYear = new Date().getFullYear();
 
-  const fetchStandings = async () => {
-    try {
-      const res = await FootballService.getStandings("PL", currentYear);
-      const top6 = res.standings[0].table.slice(0, 6);
-      setStandings(top6);
-    } catch (err) {
-      console.error("Lỗi khi fetch BXH:", err);
-    }
-  };
-  useEffect(() => {
-    fetchStandings();
-  }, []);
-  
+  const { data, isLoading, isError } = useStandings("PL", currentYear);
 
+  if (isLoading) return <p>Đang tải BXH...</p>;
+  if (isError) return <p>Lỗi khi tải BXH</p>;
+
+  const top6 = data?.standings?.[0]?.table?.slice(0, 6) || [];
+  
   return (
     <div className={styles.container}>
       <div className={styles.tableWrapper}>
-        <p className={styles.title}>bxh ngoại hạng anh</p>
+        <p className={styles.title}>BXH Ngoại hạng Anh</p>
         <table className={styles.rankTable}>
           <thead>
             <tr>
@@ -37,7 +28,7 @@ const AppRank = () => {
             </tr>
           </thead>
           <tbody>
-            {standings.map((team) => (
+            {top6.map((team) => (
               <tr key={team.team.id}>
                 <td className={styles.th_team}>
                   <span className={styles.rankNumber}>{team.position}</span>

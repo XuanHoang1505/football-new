@@ -1,6 +1,5 @@
 using footballnew.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
 
 namespace footballnew.Controllers.FootballApi
 {
@@ -13,6 +12,13 @@ namespace footballnew.Controllers.FootballApi
         public FootballController(IFootballDataService footballService)
         {
             _footballService = footballService;
+        }
+
+        [HttpGet("competitions/{leagueCode}")]
+        public async Task<IActionResult> GetCompetition(string leagueCode)
+        {
+            var competition = await _footballService.GetCompetitionAsync(leagueCode);
+            return Ok(competition);
         }
 
         [HttpGet("standings/{leagueCode}")]
@@ -35,6 +41,12 @@ namespace footballnew.Controllers.FootballApi
             var scorers = await _footballService.GetTopScorersAsync(leagueCode, season);
             return Ok(scorers);
         }
-    }
 
+        [HttpGet("teams/{leagueCode}")]
+        public async Task<IActionResult> GetTeams(string leagueCode, int season)
+        {
+            var teams = await _footballService.GetTeamsAsync(leagueCode, season);
+            return Ok(teams);
+        }
+    }
 }

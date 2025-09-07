@@ -121,8 +121,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+
+// Đăng kí api footballService
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IFootballDataService, FootballDataService>();
+builder.Services.AddHttpClient<IApiFootballService, ApiFootballService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
@@ -139,6 +142,9 @@ builder.Services.AddTransient<ISendMailService, SendMailService>();
 
 // Đăng ký dịch vụ OTP
 builder.Services.AddTransient<OtpService>();
+
+// Đăng ký MemoryCache
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

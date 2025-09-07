@@ -1,0 +1,96 @@
+.contentWrapper {
+  width: calc(100% - 300px);
+  padding-right: 20px;
+}
+
+@media screen and (max-width: 900px) {
+  .contentWrapper {
+    width: 100%;
+    padding-right: 0;
+  }
+}
+.caption {
+  background: url(https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1)
+    right -372px no-repeat;
+  font-size: 18px;
+  color: #254892;
+  border-bottom: 1px solid #e6e6e6;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: block;
+}
+.boxLeagueInfo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  text-align: left;
+  margin-bottom: 20px;
+
+  .logo {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 5px;
+  }
+  .content {
+    display: flex;
+  }
+}
+
+.boxLeagueInfo .content ul li {
+  color: #254892;
+  line-height: 1.5;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.navItem {
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: #bedfee; // màu hover
+    color: #0d6efd; // xanh đậm
+  }
+}
+
+.navItem.active {
+  background-color: #bedfee;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.tabsWrapper {
+  ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid #e0e0e0;
+  }
+}
+
+.tabItem {
+  flex: 1;
+  text-align: center;
+
+  .tabLink {
+    display: block;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: #1976d2;
+      font-weight: 600;
+      border-bottom: 2px solid #1976d2;
+    }
+  }
+
+  .active {
+    color: #1976d2;
+    font-weight: 600;
+    border-bottom: 2px solid #1976d2;
+  }
+}

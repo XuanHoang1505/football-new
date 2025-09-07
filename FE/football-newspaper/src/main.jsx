@@ -6,17 +6,22 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import store from "./redux/store.js";
 import App from "./App.jsx";
 import { UserProvider } from "./contexts/UserContext.jsx";
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <HelmetProvider>
       <UserProvider>
-        <Provider store={store}>
-          <App />
-        </Provider>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <App />
+          </Provider>
+        </QueryClientProvider>
       </UserProvider>
     </HelmetProvider>
   </StrictMode>

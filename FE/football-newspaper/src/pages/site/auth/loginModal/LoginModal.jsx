@@ -51,7 +51,6 @@ function LoginModal({
       try {
         setIsLoading(true);
         const data = await login(username, password);
-        console.log(data);
         const userDetail = {
           userId: data.userId,
           fullName: data.fullName,
