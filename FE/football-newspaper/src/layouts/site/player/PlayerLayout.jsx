@@ -169,7 +169,7 @@ function PlayerLayout() {
                         {club && (
                           <div className="d-flex flex-column justify-content-center align-items-center ">
                             <div className={styles.clubLogo}>
-                              <Link to={`/club/${club.id}/`}>
+                              <Link to={`/club/${club.code}/`}>
                                 <img
                                   src={playerData?.currentTeam?.crest}
                                   alt={playerData?.currentTeam?.name}

@@ -1,84 +1,72 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ClubService } from "../../../../services/site/ClubService";
-import { clubMenu } from "../../../../data/MenuData";
-import styles from "./Transfers.module.scss";
+import { PlayerService } from "../../../../services/site/PlayerService";
+import styles from "./PlayerTransfers.module.scss";
 import footballLogo from "../../../../assets/site/images/footballLogo.png";
 import { Helmet } from "react-helmet-async";
 
-function Transfers() {
-  const { clubCode } = useParams();
+function PlayerTransfers() {
+  const { playerId } = useParams();
   const [transfers, setTransfers] = useState([]);
+  const [playerInfo, setPlayerInfo] = useState({});
   const [loading, setLoading] = useState(true);
-  const club = clubMenu.find((c) => c.code === clubCode);
 
-  const fetchTransfersByClub = async () => {
+  const fetchTransfersByPlayer = async () => {
     try {
-      const data = await ClubService.getClubTransfers(club.apiId);
+      const data = await PlayerService.getPlayerTransfers(playerId);
+      const transfersData = data.response || [];
 
-      let allTransfers = [];
-      data.forEach((item) => {
-        item.transfers.forEach((t) => {
-          // xác định đội đối tác (không phải đội chính)
-          let otherTeam = null;
-          if (t.teams?.in?.id !== club.apiId) {
-            otherTeam = t.teams?.in;
-          } else if (t.teams?.out?.id !== club.apiId) {
-            otherTeam = t.teams?.out;
-          }
+      // Nếu API có trả player info thì lấy
+      if (data.player) {
+        setPlayerInfo(data.player);
+      }
 
-          allTransfers.push({
-            date: t.date,
-            type: t.type,
-            playerName: item.player.name,
-            otherTeam,
-            direction: t.teams?.in?.id === club.apiId ? "Đến" : "Đi",
-          });
-        });
-      });
-
-      // Sắp xếp theo ngày mới nhất
-      allTransfers.sort((a, b) => new Date(b.date) - new Date(a.date));
+      // Sắp xếp theo ngày giảm dần
+      const sortedTransfers = [...transfersData].sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
 
       // Lấy 30 thương vụ gần nhất
-      setTransfers(allTransfers.slice(0, 30));
+      setTransfers(sortedTransfers.slice(0, 30));
     } catch (error) {
-      console.log("Lỗi khi fetch Transfers", error);
+      console.error("Lỗi khi fetch Transfers", error);
     } finally {
       setLoading(false);
     }
   };
+
   const getTransferTypeVN = (type) => {
     if (!type) return "Không rõ";
-
     const lower = type.toLowerCase();
 
     if (lower.includes("loan")) return "Cho mượn";
-
     if (lower.includes("free")) return "Cầu thủ tự do";
-
     if (lower.includes("transfer")) return "Chuyển nhượng";
-
     if (/^\d/.test(type) || type.startsWith("€") || type.startsWith("$")) {
       return "Chuyển nhượng";
     }
-
     if (lower === "n/a") return "Không rõ";
 
     return type;
   };
+
   useEffect(() => {
-    fetchTransfersByClub();
-  }, [clubCode]);
+    fetchTransfersByPlayer();
+  }, [playerId]);
 
   return (
     <>
       <Helmet>
-        <title>{`Tin tức & danh sách chuyển nhượng của ${club.name} ${new Date().getFullYear()} | Thể Thao 247`}</title>
+        <title>
+          {`Lịch sử chuyển nhượng của ${
+            playerInfo?.name || "Cầu thủ"
+          } | Thể Thao 247`}
+        </title>
       </Helmet>
+
       <div className="mt-3">
         <span className="fs-4 me-2 fw-bold text-uppercase text-danger">
-          CHUYỂN NHƯỢNG {club.name} {new Date().getFullYear()}
+          LỊCH SỬ CHUYỂN NHƯỢNG {playerInfo?.name}
         </span>
         <i className="bi bi-chevron-right fs-4 text-primary fw-bold"></i>
 
@@ -90,17 +78,31 @@ function Transfers() {
               <thead>
                 <tr>
                   <th>Ngày</th>
-                  <th>Cầu thủ</th>
+                  <th>Từ</th>
                   <th>Loại</th>
-                  <th>Chiều</th>
-                  <th>Từ/Đến</th>
+                  <th>Đến</th>
                 </tr>
               </thead>
               <tbody>
                 {transfers.map((t, index) => (
                   <tr key={index}>
                     <td>{new Date(t.date).toLocaleDateString("vi-VN")}</td>
-                    <td className="fw-bold">{t.playerName}</td>
+
+                    {/* Câu lạc bộ cũ */}
+                    <td>
+                      {t.teams?.out && (
+                        <div className="text-start">
+                          <img
+                            className={styles.clubLogo}
+                            src={t.teams.out.logo || footballLogo}
+                            alt=""
+                          />
+                          <span className="fw-bold">{t.teams.out.name}</span>
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Loại chuyển nhượng */}
                     <td>
                       <span
                         className={`${styles.transferType} ${
@@ -116,22 +118,17 @@ function Transfers() {
                         {getTransferTypeVN(t.type)}
                       </span>
                     </td>
-                    <td className="text-start">
-                      {t.direction === "Đến" ? (
-                        <i className="bi bi-arrow-down-circle-fill text-success fs-5"></i>
-                      ) : (
-                        <i className="bi bi-arrow-up-circle-fill text-danger fs-5"></i>
-                      )}
-                    </td>
+
+                    {/* Câu lạc bộ mới */}
                     <td>
-                      {t.otherTeam && (
+                      {t.teams?.in && (
                         <div className="text-start">
                           <img
                             className={styles.clubLogo}
-                            src={t.otherTeam.logo || footballLogo}
-                            alt={""}
+                            src={t.teams.in.logo || footballLogo}
+                            alt=""
                           />
-                          <span className="fw-bold">{t.otherTeam.name}</span>
+                          <span className="fw-bold">{t.teams.in.name}</span>
                         </div>
                       )}
                     </td>
@@ -146,4 +143,4 @@ function Transfers() {
   );
 }
 
-export default Transfers;
+export default PlayerTransfers;

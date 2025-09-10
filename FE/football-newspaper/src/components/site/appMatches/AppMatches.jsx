@@ -3,6 +3,7 @@ import styles from "./AppMatches.module.scss";
 import { FootballService } from "../../../services/site/FootballService";
 
 const AppMatches = () => {
+  const [loading, setLoading] = useState(true);
   const leagues = [
     { code: "PL", name: "Ngoại hạng Anh" },
     { code: "SA", name: "Serie A" },
@@ -14,6 +15,7 @@ const AppMatches = () => {
 
   const fetchAllMatches = async () => {
     try {
+      setLoading(true);
       const now = new Date();
 
       // Tính tuần hiện tại
@@ -40,12 +42,18 @@ const AppMatches = () => {
             matchDate <= endOfWeek
           );
         });
-        return { code: leagues[idx].code, name: leagues[idx].name, matches: filtered };
+        return {
+          code: leagues[idx].code,
+          name: leagues[idx].name,
+          matches: filtered,
+        };
       });
 
       setAllMatches(formatted);
     } catch (err) {
       console.error("Lỗi khi fetch tất cả giải đấu:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,59 +66,63 @@ const AppMatches = () => {
       <p className={styles.title}>Lịch thi đấu bóng đá</p>
 
       <div className={styles.matchesWrapper}>
-      {allMatches.map((league) => (
-        <div key={league.code} className={styles.match}>
-          <p className={styles.matchName}>{league.name}</p>
+        {loading ? (
+          <p>Đang tải trận đấu...</p>
+        ) : (
+          allMatches.map((league) => (
+            <div key={league.code} className={styles.match}>
+              <p className={styles.matchName}>{league.name}</p>
 
-          {league.matches.length === 0 ? (
-            <p>Không có trận nào trong tuần này</p>
-          ) : (
-            league.matches.map((match) => (
-              <div key={match.id} className={styles.matches}>
-                <p className={styles.matchTime}>
-                  {new Date(match.utcDate).toLocaleDateString("vi-VN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                  })}
-                </p>
+              {league.matches.length === 0 ? (
+                <p>Không có trận nào trong tuần này</p>
+              ) : (
+                league.matches.map((match) => (
+                  <div key={match.id} className={styles.matches}>
+                    <p className={styles.matchTime}>
+                      {new Date(match.utcDate).toLocaleDateString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                      })}
+                    </p>
 
-                <div className={styles.matchContent}>
-                  <div className={styles.teamName}>
-                    <p>{match.homeTeam?.shortName}</p>
+                    <div className={styles.matchContent}>
+                      <div className={styles.teamName}>
+                        <p>{match.homeTeam?.shortName}</p>
+                      </div>
+
+                      {match.homeTeam?.crest && (
+                        <img
+                          src={match.homeTeam.crest}
+                          alt={match.homeTeam.name}
+                          className={styles.teamLogo}
+                        />
+                      )}
+
+                      <span className={styles.matchHour}>
+                        {new Date(match.utcDate).toLocaleTimeString("vi-VN", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+
+                      {match.awayTeam?.crest && (
+                        <img
+                          src={match.awayTeam.crest}
+                          alt={match.awayTeam.name}
+                          className={styles.teamLogo}
+                        />
+                      )}
+
+                      <div className={styles.teamName2}>
+                        <p>{match.awayTeam?.shortName}</p>
+                      </div>
+                    </div>
                   </div>
-
-                  {match.homeTeam?.crest && (
-                    <img
-                      src={match.homeTeam.crest}
-                      alt={match.homeTeam.name}
-                      className={styles.teamLogo}
-                    />
-                  )}
-
-                  <span className={styles.matchHour}>
-                    {new Date(match.utcDate).toLocaleTimeString("vi-VN", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-
-                  {match.awayTeam?.crest && (
-                    <img
-                      src={match.awayTeam.crest}
-                      alt={match.awayTeam.name}
-                      className={styles.teamLogo}
-                    />
-                  )}
-
-                  <div className={styles.teamName2}>
-                    <p>{match.awayTeam?.shortName}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      ))}
+                ))
+              )}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

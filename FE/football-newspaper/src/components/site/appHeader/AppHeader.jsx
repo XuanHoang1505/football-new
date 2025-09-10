@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
 import { Dropdown } from "react-bootstrap";
 
 import { useNavigate } from "react-router-dom";
+
+import { FaHome } from 'react-icons/fa';
 
 import { UserContext } from "../../../contexts/UserContext";
 import {
@@ -198,17 +200,17 @@ const AppHeader = () => {
             onClick={() => {
               navigate("/");
             }}
-            style={{cursor:"pointer"}}
+            style={{ cursor: "pointer" }}
           />
           <div className={styles.right}>
-            <NavLink to={"/ads"} className={styles.item}>
+            <Link to={"/ads"} className={styles.item}>
               <img className={styles.iconQc} src={iconQc} />
               Quảng cáo
-            </NavLink>
-            <NavLink to={"/submit"} className={styles.item}>
+            </Link>
+            <Link to={"/submit"} className={styles.item}>
               <img className={styles.iconQc} src={iconButChi} />
               Gửi bài
-            </NavLink>
+            </Link>
 
             {!user ? (
               <>
@@ -353,15 +355,14 @@ const AppHeader = () => {
       {/* Navigation */}
       <nav className={`${styles.navigation} ${isFixed ? styles.fixed : ""}`}>
         <div className={styles.navbar_container}>
-          {/* Icon Home */}
-          <i
-            className={`bi bi-house-door-fill text-light fs-4 ${styles.icon_home}`}
-            style={{ cursor: "pointer" }}
-            onClick={() => navigate("/")}
-          ></i>
-
           {/* Menu items */}
           <div className={styles.nav_content}>
+            <FaHome
+              className={`text-light ${styles.icon_home}`}
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/")}
+            ></FaHome>
+            
             {menuItems.map((item, idx) => {
               if (item.subMenu) {
                 return (
@@ -451,16 +452,16 @@ const AppHeader = () => {
             <h3>{menu.title}</h3>
             {menu.links &&
               menu.links.map((link, i) => (
-                <a key={i} href="#">
+                <Link key={i} to={``}>
                   {link}
-                </a>
+                </Link>
               ))}
 
             {menu.tools &&
               menu.tools.map((tool, i) => (
                 <div key={i} className={`d-flex gap-3 ${styles.toolItem}`}>
                   <i className={tool.icon}></i>
-                  <a href="#">{tool.text}</a>
+                  <Link to={``}>{tool.text}</Link>
                 </div>
               ))}
           </div>

@@ -4,5 +4,6 @@ namespace footballnew.Services.Interfaces
     {
         Task<object> GetTransfersByTeamAsync(int teamId);
         Task<object> GetTransfersByPlayerAsync(int playerId);
+        Task<int?> FindPlayerIdAsync(string name, string? dob, int season = 2024);
     }
 }

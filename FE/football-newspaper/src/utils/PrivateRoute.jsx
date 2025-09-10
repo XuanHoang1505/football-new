@@ -55,7 +55,7 @@ const PrivateRoute = ({ children, roles }) => {
 
   // Chuyển hướng đến trang đăng nhập nếu token không hợp lệ
   if (!isTokenValid) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Nếu token hợp lệ nhưng không có quyền, điều hướng đến trang 403

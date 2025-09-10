@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using footballnew.Services.Interfaces;
-using footballnew.DTOs.footballnew.DTOs;
+using footballnew.DTOs;
 
 namespace footballnew.Services.Implementations
 {
@@ -179,36 +179,113 @@ namespace footballnew.Services.Implementations
         }
         public async Task<IEnumerable<PlayerCareerDto>> GetPlayerCareerAsync(int playerId)
         {
-            var matchesData = await GetPlayerMatchesAsync(playerId);
+            // Lấy thông tin player để biết team hiện tại
+            var playerDetail = await GetPlayerDetailAsync(playerId);
+            var playerJson = JsonSerializer.Serialize(playerDetail);
+            using var playerDoc = JsonDocument.Parse(playerJson);
 
+            int playerTeamId = 0;
+            if (playerDoc.RootElement.TryGetProperty("currentTeam", out var teamElement))
+            {
+                playerTeamId = teamElement.GetProperty("id").GetInt32();
+            }
+            else if (playerDoc.RootElement.TryGetProperty("team", out var teamElement2))
+            {
+                playerTeamId = teamElement2.GetProperty("id").GetInt32();
+            }
+
+            // Giống như code cũ nhưng bỏ tham số playerTeamId ở hàm
+            var allMatches = new List<JsonElement>();
+            int currentYear = DateTime.Now.Year;
+
+            var matchesData = await GetPlayerMatchesAsync(playerId, currentYear);
             var matchesJson = JsonSerializer.Serialize(matchesData);
             using var doc = JsonDocument.Parse(matchesJson);
 
-            var matches = doc.RootElement.GetProperty("matches").EnumerateArray();
+            if (doc.RootElement.TryGetProperty("matches", out var matchesElement))
+            {
+                allMatches.AddRange(matchesElement.EnumerateArray());
+            }
 
-            var careerStats = matches
-                .GroupBy(m => new
-                {
-                    Season = m.GetProperty("season").GetProperty("startDate").GetString()?.Substring(0, 4),
-                    Competition = m.GetProperty("competition").GetProperty("name").GetString(),
-                    Team = m.GetProperty("homeTeam").GetProperty("id").GetInt32() == playerId
-                           ? m.GetProperty("homeTeam").GetProperty("name").GetString()
-                           : m.GetProperty("awayTeam").GetProperty("name").GetString()
-                })
-                .Select(g => new PlayerCareerDto
-                {
-                    Season = g.Key.Season ?? "",
-                    Competition = g.Key.Competition ?? "",
-                    Team = g.Key.Team ?? "",
-                    Matches = g.Count(),
-                    Goals = 0,         // ⚠️ Football-data.org không cung cấp goals cho từng cầu thủ trong match
-                    YellowCards = 0,   // ⚠️ Cũng không có
-                    RedCards = 0       // ⚠️ Cũng không có
-                })
-                .OrderByDescending(x => x.Season)
-                .ToList();
+var careerStats = allMatches
+    .GroupBy(m =>
+    {
+        var season = $"{m.GetProperty("season").GetProperty("startDate").GetString()?.Substring(0, 4)}/" +
+                     $"{m.GetProperty("season").GetProperty("endDate").GetString()?.Substring(0, 4)}";
+
+        var competition = m.GetProperty("competition").GetProperty("name").GetString();
+
+        var homeTeamId = m.GetProperty("homeTeam").GetProperty("id").GetInt32();
+        var awayTeamId = m.GetProperty("awayTeam").GetProperty("id").GetInt32();
+
+        string teamName;
+        string teamCrest;
+
+        if (homeTeamId == playerTeamId)
+        {
+            teamName = m.GetProperty("homeTeam").GetProperty("name").GetString();
+            teamCrest = m.GetProperty("homeTeam").GetProperty("crest").GetString();
+        }
+        else
+        {
+            teamName = m.GetProperty("awayTeam").GetProperty("name").GetString();
+            teamCrest = m.GetProperty("awayTeam").GetProperty("crest").GetString();
+        }
+
+        return new { Season = season, Competition = competition, Team = teamName, Crest = teamCrest };
+    })
+    .Select(g => new PlayerCareerDto
+    {
+        Season = g.Key.Season ?? "",
+        Competition = g.Key.Competition ?? "",
+        Team = g.Key.Team ?? "",
+        Crest = g.Key.Crest ?? "",
+        Matches = g.Count(),
+        Wins = g.Count(m =>
+        {
+            var homeGoals = m.GetProperty("score").GetProperty("fullTime").GetProperty("home").GetInt32();
+            var awayGoals = m.GetProperty("score").GetProperty("fullTime").GetProperty("away").GetInt32();
+
+            var homeTeamId = m.GetProperty("homeTeam").GetProperty("id").GetInt32();
+            var awayTeamId = m.GetProperty("awayTeam").GetProperty("id").GetInt32();
+
+            if (homeTeamId == playerTeamId)
+                return homeGoals > awayGoals;
+            else if (awayTeamId == playerTeamId)
+                return awayGoals > homeGoals;
+
+            return false;
+        }),
+        Draws = g.Count(m =>
+        {
+            var homeGoals = m.GetProperty("score").GetProperty("fullTime").GetProperty("home").GetInt32();
+            var awayGoals = m.GetProperty("score").GetProperty("fullTime").GetProperty("away").GetInt32();
+            return homeGoals == awayGoals;
+        }),
+        Losses = g.Count(m =>
+        {
+            var homeGoals = m.GetProperty("score").GetProperty("fullTime").GetProperty("home").GetInt32();
+            var awayGoals = m.GetProperty("score").GetProperty("fullTime").GetProperty("away").GetInt32();
+
+            var homeTeamId = m.GetProperty("homeTeam").GetProperty("id").GetInt32();
+            var awayTeamId = m.GetProperty("awayTeam").GetProperty("id").GetInt32();
+
+            if (homeTeamId == playerTeamId)
+                return homeGoals < awayGoals;
+            else if (awayTeamId == playerTeamId)
+                return awayGoals < homeGoals;
+
+            return false;
+        })
+    })
+    .OrderByDescending(x => x.Season)
+    .ToList();
+
 
             return careerStats;
         }
+
+
+
     }
 }

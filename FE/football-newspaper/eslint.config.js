@@ -12,6 +12,7 @@ export default defineConfig([
       js.configs.recommended,
       reactHooks.configs["recommended-latest"],
       reactRefresh.configs.vite,
+      "plugin:react/recommended",
     ],
     languageOptions: {
       ecmaVersion: 2020,
@@ -20,6 +21,14 @@ export default defineConfig([
         ecmaVersion: "latest",
         ecmaFeatures: { jsx: true },
         sourceType: "module",
+      },
+    },
+    plugins: {
+      react,
+    },
+    settings: {
+      react: {
+        version: "detect",
       },
     },
     rules: {

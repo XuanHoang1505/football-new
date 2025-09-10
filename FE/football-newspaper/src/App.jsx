@@ -37,7 +37,16 @@ import {
   Transfers,
 } from "./pages/site/club";
 import PlayerLayout from "./layouts/site/player/PlayerLayout";
-import { RecentMatches } from "./pages/site/player";
+import {
+  RecentMatches,
+  PlayerTransfers,
+  PlayerCareer,
+} from "./pages/site/player";
+
+import PrivateRoute from "./utils/PrivateRoute";
+import Page403 from "./pages/site/page403/Page403";
+import Page500 from "./pages/site/page500/Page500";
+import Page404 from "./pages/site/page404/Page404";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -55,8 +64,22 @@ function App() {
           <Routes>
             <Route path="/" element={<SiteLayout />}>
               <Route index element={<Home />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="account" element={<Account />}>
+              <Route
+                path="profile"
+                element={
+                  <PrivateRoute roles={"USER"}>
+                    <Profile />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="account"
+                element={
+                  <PrivateRoute roles={"USER"}>
+                    <Account />
+                  </PrivateRoute>
+                }
+              >
                 <Route
                   path="account-info"
                   element={<AccountInfo user={user} />}
@@ -83,8 +106,13 @@ function App() {
               </Route>
               <Route path="player/:playerId" element={<PlayerLayout />}>
                 <Route index element={<RecentMatches />} />
+                <Route path="transfers" element={<PlayerTransfers />} />
+                <Route path="career" element={<PlayerCareer />} />
               </Route>
             </Route>
+            <Route path="/page403" element={<Page403 />} />
+            <Route path="/page500" element={<Page500 />} />
+            <Route path="*" element={<Page404 />} />
           </Routes>
         </Suspense>
       </Router>

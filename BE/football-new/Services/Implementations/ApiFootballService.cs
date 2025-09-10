@@ -57,5 +57,46 @@ namespace footballnew.Services.Implementations
                 return JsonSerializer.Deserialize<object>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
             });
         }
+        public async Task<int?> FindPlayerIdAsync(string name, string? dob, int season = 2024)
+        {
+            // Tạo cache key để tránh gọi API nhiều lần
+            string cacheKey = $"find_player_{name}_{dob}_{season}";
+
+            return await GetOrSetCacheAsync(cacheKey, async () =>
+            {
+                var url = $"players?search={Uri.EscapeDataString(name)}&season={season}";
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(json);
+
+                foreach (var p in doc.RootElement.GetProperty("response").EnumerateArray())
+                {
+                    var birth = p.GetProperty("player").GetProperty("birth").GetProperty("date").GetString();
+
+                    if (!string.IsNullOrEmpty(dob))
+                    {
+                        if (NormalizeDate(birth) == NormalizeDate(dob))
+                        {
+                            return p.GetProperty("player").GetProperty("id").GetInt32();
+                        }
+                    }
+                    else
+                    {
+                        // Nếu không có dob thì chỉ match theo tên
+                        return p.GetProperty("player").GetProperty("id").GetInt32();
+                    }
+                }
+                return (int?)null;
+            });
+        }
+
+        private static string NormalizeDate(string? date)
+        {
+            if (string.IsNullOrEmpty(date)) return "";
+            return DateTime.TryParse(date, out var d) ? d.ToString("yyyy-MM-dd") : date;
+        }
+
     }
 }
