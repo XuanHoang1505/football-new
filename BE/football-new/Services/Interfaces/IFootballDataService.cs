@@ -1,4 +1,4 @@
-using footballnew.DTOs.footballnew.DTOs;
+using footballnew.DTOs;
 
 namespace footballnew.Services.Interfaces
 {

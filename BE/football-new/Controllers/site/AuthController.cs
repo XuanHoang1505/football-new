@@ -133,15 +133,15 @@ namespace footballnew.Controllers.site
             return Ok("Xác thực OTP thành công.");
         }
 
-        [Authorize]
         [HttpPost("refresh-token")]
+        [AllowAnonymous]
         public async Task<IActionResult> RefreshToken()
         {
-            var refreshToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var newAccessToken = await _jwtTokenProvider.RefreshTokenAsync(refreshToken, _userRepository);
+            var refreshToken = Request.Headers["Authorization"].ToString();
+            var tokenResponse = await _jwtTokenProvider.RefreshTokenAsync(refreshToken, _userRepository);
 
-            if (newAccessToken != null)
-                return Ok(new { AccessToken = newAccessToken });
+            if (tokenResponse != null)
+                return Ok(tokenResponse);
 
             return Unauthorized("Refresh token không hợp lệ hoặc đã hết hạn.");
         }

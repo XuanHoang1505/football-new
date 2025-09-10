@@ -7,6 +7,7 @@ import "dayjs/locale/vi"; // giữ để hiển thị tiếng Việt
 import styles from "./ClubFixtures.module.scss";
 import { ClubService } from "../../../../services/site/ClubService";
 import { clubMenu } from "../../../../data/MenuData";
+import { Helmet } from "react-helmet-async";
 
 function ClubFixtures() {
   const currentYear = new Date().getFullYear();
@@ -14,6 +15,7 @@ function ClubFixtures() {
   dayjs.extend(utc);
   dayjs.extend(timezone);
 
+  const club = clubMenu.find((c) => c.code === clubCode);
   const [groupedMatches, setGroupedMatches] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +23,6 @@ function ClubFixtures() {
     try {
       setLoading(true);
 
-      const club = clubMenu.find((c) => c.code === clubCode);
       if (!club) return;
 
       const data = await ClubService.getClubMatches(club.id, currentYear);
@@ -62,93 +63,100 @@ function ClubFixtures() {
   }, [clubCode]);
 
   console.log(groupedMatches);
-  
 
   return (
-    <div className="mt-3">
-      {loading ? (
-        <p className="mt-3">⏳ Đang tải dữ liệu...</p>
-      ) : (
-        Object.entries(groupedMatches).map(([month, matches]) => (
-          <div key={month} className="mt-3 border rounded">
-            {/* Header tháng */}
-            <div
-              className="border-bottom bg-light"
-              style={{ lineHeight: "35px" }}
-            >
-              <p
-                className="pe-2 ms-auto"
-                style={{
-                  borderBottom: "1px solid red",
-                  width: "fit-content",
-                  color: "#3a4e91",
-                }}
+    <>
+      <Helmet>
+        <title>{`Lịch thi đấu của ${club.name} mới nhất | Thể Thao 247`}</title>
+      </Helmet>
+      <div className="mt-3">
+        {loading ? (
+          <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+        ) : (
+          Object.entries(groupedMatches).map(([month, matches]) => (
+            <div key={month} className="mt-3 border rounded">
+              {/* Header tháng */}
+              <div
+                className="border-bottom bg-light"
+                style={{ lineHeight: "35px" }}
               >
-                Tháng{" "}
-                {dayjs(month + "-01")
-                  .locale("vi")
-                  .format("MM/YYYY")}
-              </p>
-            </div>
-
-            {/* Danh sách trận */}
-            {Array.isArray(matches) &&
-              matches.map((m) => (
-                <div
-                  key={m.id}
-                  className={`${styles.matchRow} d-flex align-items-center border-bottom py-3 px-3`}
+                <p
+                  className="pe-2 ms-auto"
+                  style={{
+                    borderBottom: "1px solid red",
+                    width: "fit-content",
+                    color: "#3a4e91",
+                  }}
                 >
-                  {/* Ngày + giờ */}
-                  <div className="me-3 text-center" style={{ width: "70px" }}>
-                    <div style={{ color: "#254892" }}>
-                      {dayjs(m.utcDate).format("DD-MM")}
-                    </div>
-                  </div>
+                  Tháng{" "}
+                  {dayjs(month + "-01")
+                    .locale("vi")
+                    .format("MM/YYYY")}
+                </p>
+              </div>
 
-                  {/* Đội bóng */}
+              {/* Danh sách trận */}
+              {Array.isArray(matches) &&
+                matches.map((m) => (
                   <div
-                    className={`${styles.teams} d-flex align-items-center flex-grow-1`}
+                    key={m.id}
+                    className={`${styles.matchRow} d-flex align-items-center border-bottom py-3 px-3`}
                   >
-                    <div className={styles.teamHome}>
-                      <span className={styles.teamName}>
-                        {m.homeTeam.shortName}
-                      </span>
-                      <img
-                        src={m.homeTeam.crest}
-                        alt={m.homeTeam.shortName}
-                        width={25}
-                        className="ms-1"
-                      />
+                    {/* Ngày + giờ */}
+                    <div className="me-3 text-center" style={{ width: "70px" }}>
+                      <div style={{ color: "#254892" }}>
+                        {dayjs(m.utcDate).format("DD-MM")}
+                      </div>
                     </div>
 
-                    <div className={styles.score} style={{ color: "#254892" }}>
-                      {" "}
-                      {dayjs(m.utcDate).format("HH:mm")}
+                    {/* Đội bóng */}
+                    <div
+                      className={`${styles.teams} d-flex align-items-center flex-grow-1`}
+                    >
+                      <div className={styles.teamHome}>
+                        <span className={styles.teamName}>
+                          {m.homeTeam.shortName}
+                        </span>
+                        <img
+                          src={m.homeTeam.crest}
+                          alt={m.homeTeam.shortName}
+                          width={25}
+                          className="ms-1"
+                        />
+                      </div>
+
+                      <div
+                        className={styles.score}
+                        style={{ color: "#254892" }}
+                      >
+                        {" "}
+                        {dayjs(m.utcDate).format("HH:mm")}
+                      </div>
+
+                      <div className={styles.teamAway}>
+                        <img
+                          src={m.awayTeam.crest}
+                          alt={m.awayTeam.shortName}
+                          width={20}
+                          className="me-1"
+                        />
+                        <span className={styles.teamName}>
+                          {m.awayTeam.shortName}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className={styles.teamAway}>
-                      <img
-                        src={m.awayTeam.crest}
-                        alt={m.awayTeam.shortName}
-                        width={20}
-                        className="me-1"
-                      />
-                      <span className={styles.teamName}>
-                        {m.awayTeam.shortName}
-                      </span>
+                    {/* Icon mũi tên */}
+                    <div className={styles.matchAction}>
+                      <Link>&nbsp;</Link>
                     </div>
                   </div>
-
-                  {/* Icon mũi tên */}
-                  <div className={styles.matchAction}>
-                    <Link>&nbsp;</Link>
-                  </div>
-                </div>
-              ))}
-          </div>
-        ))
-      )}
-    </div>
+                ))}
+            </div>
+          ))
+        )}
+      </div>
+    </>
   );
 }
 

@@ -5,6 +5,7 @@ import { FootballService } from "../../../../services/site/FootballService";
 import styles from "./Standings.module.scss";
 import { useEffect, useState } from "react";
 import { leagueTranslations } from "../../../../data/VnTransLeague";
+import { Helmet } from "react-helmet-async";
 
 function Standings() {
   const { leagueCode } = useParams();
@@ -39,7 +40,7 @@ function Standings() {
       setLoading(true);
       const data = await FootballService.getStandings(leagueCode, currentYear);
       console.log(data);
-      
+
       setStandingsData(data.standings[0].table);
     } catch (err) {
       console.log("Lỗi khi fetch BXH", err);
@@ -71,6 +72,13 @@ function Standings() {
   ];
   return (
     <>
+      <Helmet>
+        <title>
+          {`Bảng xếp hạng ${
+            leagueTranslations[leagueCode] || leagueCode
+          } ${currentYear}/${currentYear + 1} | Thể Thao 247`}
+        </title>
+      </Helmet>
       <div className="mt-3">
         <span className="fs-4 me-2 fw-bold text-uppercase text-danger">
           Bảng xếp hạng {leagueTranslations[leagueCode] || leagueCode}
