@@ -1,0 +1,88 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.matchRow {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #f8f9fa; // màu nền nhạt khi hover
+  }
+
+  span {
+    font-size: 14px;
+  }
+
+  img {
+    vertical-align: middle;
+  }
+}
+
+.roundTitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #dc3545;
+  margin-bottom: 0.5rem;
+}
+
+.matchDate {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6c757d;
+  text-align: right;
+  margin-bottom: 0.25rem;
+}
+
+.matchTime {
+  color: var(--primary);
+  font-weight: 500;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+.teamName {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.teamHome,
+.teamAway {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.teamHome {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.teamAway {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.score {
+  width: 70px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.matchAction {
+  a {
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: url(https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1)
+      0 -395px no-repeat;
+  }
+}

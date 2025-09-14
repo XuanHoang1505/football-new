@@ -7,11 +7,15 @@
 }
 
 .container {
-  max-width: 1120px; 
-  width: 100%;       
+  position: relative;
+  max-width: 1200px;       
   margin: 0 auto;
 }
-
+@media (max-width: 1200px) {
+  .container {
+    width: 100% !important;
+  }
+}
 .logo {
   width: 282px;
   height: 73px;
@@ -21,6 +25,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 0;
+}
+
+@media (max-width: 900px) {
+  .top_header{
+    display: none;
+  }
 }
 .right {
   display: flex;
@@ -69,7 +79,6 @@ a {
 
 .navigation {
   width: 100%;
-  height: 40px;
   background: #254892
     url(https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1) right -570px
     no-repeat;
@@ -79,26 +88,34 @@ a {
   top: 0;
   left: 0;
   z-index: 1000;
+  width: 100%;
 }
 .navbar_container {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
-  gap: 20px;
 }
 .nav_content {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 20px;
+  overflow-x: auto;   /* 👈 cho cuộn ngang */
+  white-space: nowrap; /* ngăn xuống dòng */
+  scrollbar-width: none;
+}
+
+@media (max-width: 1200px) {
+  .nav_content {
+    gap: 8px;   
+  }
 }
 .nav_item {
   text-transform: uppercase;
   color: #fff;
   font-weight: 500;
   font-size: 12px;
+  white-space: nowrap;
 
   &:hover {
     color: #0093ff;
@@ -106,6 +123,7 @@ a {
 }
 
 .icon_home {
+  font-size: 22px;
   &:hover {
     color: #0093ff !important;
   }
@@ -197,7 +215,7 @@ a {
   top: 100%;
   left: -5px;
   right: 0;
-  width: 100vw;   
+  width: 100%;
   padding-left: 14%;
   display: flex;
   gap: 16px;

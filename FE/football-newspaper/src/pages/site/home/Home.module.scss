@@ -1,41 +1,160 @@
-.container{
-    width: 1120px;
-    margin: 0 auto;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0px 15px 15px 15px;
 }
-.list_item{
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    gap: 20px;
-    overflow: auto;
 
-    .item{
-        display: flex;
-        position: relative;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        color: black;
-    }
-    .logo {
-        width: 25px;
-        height: 25px;
-    }
-    .name{
-        font-size: 14px;
-        font-weight: 500;
-    }
+@media (max-width: 1200px) {
+  .container {
+    width: 100% !important;
+  }
 }
-.item::after{
-    content: "";
-    width: 1px;
-    height: 20px;
-    background: #ddd;
-    position: absolute;
-    top: 3px;
-    right: -10px;
+
+.list_item {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  gap: 20px;
+  flex-wrap: nowrap;
+  overflow: auto;
+  white-space: nowrap;
+
+  .item {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    color: black;
+  }
+  .logo {
+    width: 25px;
+    height: 25px;
+  }
+  .name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+.item::after {
+  content: "";
+  width: 1px;
+  height: 20px;
+  background: #ddd;
+  position: absolute;
+  top: 3px;
+  right: -10px;
 }
 .item:last-child::after {
-    display: none;
+  display: none;
 }
 
+.mainNewsContent {
+  background: #f1f1f1;
+  padding: 15px ;
+
+  .category {
+    background: url(https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1) -50px -864px
+      no-repeat;
+    padding: 5px 4px 4px;
+    font-size: 9px;
+    color: #0d6eb7;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    overflow: hidden;
+    line-height: 1.35rem;
+
+    &:hover {
+      color: rgb(176, 18, 18);
+    }
+  }
+
+  .summary {
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #666;
+    overflow: hidden;
+  }
+}
+.sideNews {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    a {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.44rem;
+      text-decoration: none;
+      display: block;
+      color: black;
+
+      &:hover {
+        color: rgb(176, 18, 18);
+      }
+    }
+  }
+}
+
+.subNewsImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 576px) {
+  .subNewsImage {
+    width: 389px;
+    height: 182px;
+  }
+}
+.subNewsContent {
+  background: #f1f1f1;
+  padding: 5px;
+  min-height: 90px;
+
+  h2 {
+    margin: 0;
+    display: flex;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: normal;
+  }
+
+  .category {
+    background: url(https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1) -50px -864px
+      no-repeat;
+    padding: 5px 4px 4px;
+    font-size: 9px;
+    color: #0d6eb7;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .title {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    &:hover {
+      color: rgb(176, 18, 18);
+    }
+  }
+}

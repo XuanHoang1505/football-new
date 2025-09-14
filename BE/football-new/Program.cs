@@ -121,10 +121,20 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+
+// Đăng kí api footballService
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IFootballDataService, FootballDataService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddHttpClient<IApiFootballService, ApiFootballService>();
 
+// Đăng kí Repository
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+
+// Đăng ký Service (Business Logic Layer)
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 // Đăng ký CloudinaryService
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
@@ -139,6 +149,9 @@ builder.Services.AddTransient<ISendMailService, SendMailService>();
 
 // Đăng ký dịch vụ OTP
 builder.Services.AddTransient<OtpService>();
+
+// Đăng ký MemoryCache
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

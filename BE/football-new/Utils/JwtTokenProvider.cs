@@ -24,7 +24,7 @@ namespace footballnew.Utils
         public JwtTokenProvider(IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
             _jwtSecretKey = configuration["JWT:Secret"] ?? throw new Exception("JWT Secret Key không được tìm thấy.");
-            _jwtExpiration = int.Parse(configuration["JWT:ExpirationInMinutes"] ?? "60"); // 60 phút mặc định
+            _jwtExpiration = int.Parse(configuration["JWT:ExpirationInMinutes"] ?? "15"); // 60 phút mặc định
             _refreshTokenExpiration = int.Parse(configuration["JWT:RefreshExpirationInDays"] ?? "30"); // 30 ngày mặc định
             _userManager = userManager;
         }
@@ -115,19 +115,28 @@ namespace footballnew.Utils
                 RefreshToken = refreshToken
             };
         }
-        public async Task<string?> RefreshTokenAsync(string refreshToken, IUserRepository userRepository)
+        public async Task<TokenResponse?> RefreshTokenAsync(string refreshToken, IUserRepository userRepository)
         {
             var user = await userRepository.GetUserByRefreshTokenAsync(refreshToken);
             if (user == null || user.RefreshTokenExpiryTime < DateTime.UtcNow)
                 return null;
+
             var roles = await _userManager.GetRolesAsync(user);
 
             var newAccessToken = GenerateToken(user.UserName, roles.ToList(), user.Id);
             var newRefreshToken = GenerateRefreshToken();
 
-            await userRepository.UpdateRefreshTokenAsync(user.Id, newRefreshToken, DateTime.UtcNow.AddDays(_refreshTokenExpiration));
+            await userRepository.UpdateRefreshTokenAsync(
+                user.Id,
+                newRefreshToken,
+                DateTime.UtcNow.AddDays(_refreshTokenExpiration)
+            );
 
-            return newAccessToken;
+            return new TokenResponse
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            };
         }
 
     }
