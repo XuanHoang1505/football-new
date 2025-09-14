@@ -18,8 +18,16 @@ function NewsCategory() {
   const [newsData, setNewsData] = useState([]);
   const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(false);
-  const league = leagueMenu.find((league) => league.slug === slug);
-  const leagueCode = league ? league.path.replace("/", "") : null;
+
+  let league = leagueMenu.find((league) => league.slug === slug);
+  let leagueCode = league ? league.path.replace("/", "") : null;
+
+  if (slug === "bong-da-quoc-te") {
+    league = leagueMenu.find((l) => l.path === "PL/"); // lấy object PL trong menu
+    leagueCode = "PL";
+  }
+
+  console.log("League in category page:", league);
 
   const fetchNewsByCategory = async () => {
     try {
@@ -50,8 +58,8 @@ function NewsCategory() {
     fetchCategory();
   }, [slug]);
 
-  console.log(category);
-  
+  console.log(newsData);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -129,11 +137,13 @@ function NewsCategory() {
               {/* Tin mới nhất */}
               <div className="mt-4">
                 <div className={`${styles.caption} mb-3`}>
-                <Link
-                  className="text-light text-uppercase ps-2"
-                  style={{ fontSize: "15px" }}
-                  to={``}
-                >Mới nhất</Link>
+                  <Link
+                    className="text-light text-uppercase ps-2"
+                    style={{ fontSize: "15px" }}
+                    to={``}
+                  >
+                    Mới nhất
+                  </Link>
                 </div>
                 {newsData.slice(4).map((news, index) => (
                   <div className={styles.boxList} key={index}>
@@ -155,7 +165,9 @@ function NewsCategory() {
                     </div>
                   </div>
                 ))}
-                <Button size="lg"  variant="outline-secondary" className="w-100">Xem thêm </Button>
+                <Button size="lg" variant="outline-secondary" className="w-100">
+                  Xem thêm{" "}
+                </Button>
               </div>
             </div>
           </div>

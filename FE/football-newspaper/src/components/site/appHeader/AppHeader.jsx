@@ -120,7 +120,7 @@ const AppHeader = () => {
     },
     {
       label: "bóng đá quốc tế",
-      path: "/bong-da-qt",
+      path: "/category/bong-da-quoc-te",
       subMenu: [
         { label: "Ngoại hạng Anh", path: "/category/ngoai-hang-anh" },
         { label: "La Liga", path: "/category/la-liga" },
