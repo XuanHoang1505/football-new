@@ -1,0 +1,47 @@
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid #cfcfcf;
+  margin-top: 10px;
+}
+
+.careerTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px !important;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #e6e6e6;
+  }
+
+  thead tr {
+    background: #1a4599 url("https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1")
+    right -855px no-repeat;
+  }
+
+  th {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fafafa;
+  }
+
+  tbody tr:hover {
+    background: #f1f5ff;
+  }
+}
+
+.clubLogo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  margin-right: 5px;
+}
+

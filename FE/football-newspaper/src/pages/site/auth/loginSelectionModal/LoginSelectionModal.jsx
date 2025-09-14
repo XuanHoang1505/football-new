@@ -30,7 +30,7 @@ const LoginSelectionModal = ({
               onClick={handleShowLoginModal}
             >
               <FaLock className={styles.icon} /> Đăng nhập bằng Tài khoản
-              footballnew
+              Football-News
             </Button>
 
             <Button variant="light" className={styles.loginButton}>
@@ -61,15 +61,6 @@ const LoginSelectionModal = ({
             >
               Đăng ký
             </span>
-          </p>
-
-          <p className="m-2 text-muted" style={{ fontSize: "0.8rem" }}>
-            Nhấn chọn " Đăng nhập " có nghĩa là bạn đã đọc và đồng ý{" "}
-            <a href="#" className="text-mute">
-              Thỏa thuận quyền riêng tư
-            </a>{" "}
-            & <a href="#">Điều khoản dịch vụ</a>, đồng thời có nghĩa là bạn xác
-            nhận đã tròn 18 tuổi có thể sử dụng dịch vụ của chúng tôi
           </p>
         </Modal.Body>
       </Modal>

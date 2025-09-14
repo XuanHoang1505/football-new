@@ -5,6 +5,7 @@ import React, { createContext, useState, useContext } from 'react';
 const ThemeContext = createContext();
 
 // Custom hook để sử dụng ThemeContext dễ dàng hơn
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
   return useContext(ThemeContext);
 };

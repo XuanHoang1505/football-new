@@ -1,0 +1,46 @@
+.tableWrapper {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #1b1b1b;
+}
+
+.playerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.shirtNumber {
+  font-weight: bold;
+  width: 30px;
+  text-align: center;
+  color: #555;
+}
+
+.playerAvatar {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  background: transparent;
+}
+
+.playerName {
+  flex: 1;
+  font-weight: 600;
+  color: #1b1b1b;
+}
+
+.playerNationality {
+  font-size: 14px;
+  color: #777 ;
+}

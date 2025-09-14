@@ -1,15 +1,15 @@
 .verifyButton{
-    background-color: #00CC36 !important;
+    background-color: var(--primary) !important;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
 
     &:hover{
-        background-color: #40df6a !important;
+        background-color: #1a3c85 !important;
     }
 }
 .loginLink{
-    color: #28a745;
+    color: #254892;
     font-weight: 500 ;
     cursor: pointer;   
 }

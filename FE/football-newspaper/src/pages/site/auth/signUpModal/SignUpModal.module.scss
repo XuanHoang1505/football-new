@@ -1,11 +1,11 @@
 .signUpButton{
-    background-color: #00CC36 !important;
+    background-color:var(--primary) !important;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
 
     &:hover{
-        background-color: #40df6a !important;
+        background-color: #3163c5 !important;
     }
 }
 .eyeButton {
@@ -26,7 +26,7 @@
     }
   }
 .signUpLink{
-    color: #28a745;
+    color: #244892;
     font-weight: 500 ;
     cursor: pointer;   
 }
