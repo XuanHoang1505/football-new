@@ -9,46 +9,35 @@ import SiteLayout from "./layouts/site/SiteLayout";
 
 import { UserContext } from "./contexts/UserContext";
 
-import {
-  Home,
-  Profile,
-  Account,
-  AccountInfo,
-  ChangePassword,
-  WatchHistory,
-} from "./pages";
+
+import { Home, Account, AccountInfo, ChangePassword,Submit } from "./pages";
+import Profile from "./pages/site/profile/Profile";
 
 function App() {
-  const { user } = useContext(UserContext);
-
+    const { user } = useContext(UserContext);
+  
   return (
     <>
       <Router>
-        <Suspense
-          fallback={
-            <div className="pt-3 text-center">
-              <CSpinner color="primary" variant="grow" />
-            </div>
-          }
-        >
-          <Routes>
-            <Route path="/" element={<SiteLayout />}>
-              <Route index element={<Home />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="account" element={<Account />}>
-                <Route
-                  path="account-info"
-                  element={<AccountInfo user={user} />}
-                />
-                <Route
-                  path="change-password"
-                  element={<ChangePassword user={user} />}
-                />
-                <Route path="watch-history" element={<WatchHistory />} />
+          <Suspense
+            fallback={
+              <div className="pt-3 text-center">
+                <CSpinner color="primary" variant="grow" />
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<SiteLayout />}>
+                <Route index element={<Home />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="account" element={<Account />}>
+                  <Route path="account-info" element={<AccountInfo user={user}/>} />
+                  <Route path="change-password" element={<ChangePassword user={user}/>} />
+                </Route>
+                <Route path="submit" element={<Submit/>}/>
               </Route>
-            </Route>
-          </Routes>
-        </Suspense>
+            </Routes>
+          </Suspense>
       </Router>
       <ToastContainer
         position="top-right"

@@ -114,7 +114,6 @@ export const resetPassword = async (email, newPassword) => {
     throw error;
   }
 };
-
 // Đăng xuất
 export const logout = async (userId) => {
   try {

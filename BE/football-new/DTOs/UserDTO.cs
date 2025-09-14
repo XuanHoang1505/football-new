@@ -8,11 +8,12 @@ namespace footballnew.DTOs
     [JsonPropertyName("id")]
     public string? Id { get; set; }
     [JsonPropertyName("fullName")]
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
     [JsonPropertyName("phoneNumber")]
     public string? PhoneNumber { get; set; }
     [JsonPropertyName("avatar")]
     public string? Avatar { get; set; }
+
     [JsonPropertyName("birthDate")]
     public DateTime? BirthDate { get; set; }
     [JsonPropertyName("gender")]
@@ -20,7 +21,7 @@ namespace footballnew.DTOs
     [JsonPropertyName("username")]
     public string? UserName { get; set; }
     [JsonPropertyName("email")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
     [JsonPropertyName("role")]
     public string Role { get; set; }
 
