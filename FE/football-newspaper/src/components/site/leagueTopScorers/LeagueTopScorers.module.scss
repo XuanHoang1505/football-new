@@ -14,9 +14,33 @@
 
   th,
   td {
-    padding: 10px;
     border-bottom: 1px solid #e6e6e6;
     text-align: center;
+  }
+
+    &.fullWidth {
+    th,
+    td {
+      padding: 10px;
+    }
+  }
+
+  &.compact {
+    border-radius: 0;
+    border: 1px solid #efecec;
+    th,
+    td {
+      padding: 2px 4px;
+    }
+    th{
+      font-size: 10px;
+    }
+    .topScorerRow{
+      background: none;
+    }
+    .smallAvatar {
+      margin: 0 4px 0  0;
+    }
   }
 
   thead tr {
@@ -88,6 +112,7 @@
 
 .name {
   font-weight: 500;
+  align-items: flex-start;
 }
 
 .team {

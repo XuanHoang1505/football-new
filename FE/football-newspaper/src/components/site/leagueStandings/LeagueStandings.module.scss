@@ -14,9 +14,24 @@
 
   th,
   td {
-    padding: 10px;
     text-align: center;
     border-bottom: 1px solid #e6e6e6;
+  }
+
+   &.fullWidth {
+    th,
+    td {
+      padding: 10px;
+    }
+  }
+
+  &.compact {
+    border-radius: 0;
+    border: 1px solid #e6e6e6;
+    th,
+    td {
+      padding: 8px 5px;
+    }
   }
 
   thead tr {
