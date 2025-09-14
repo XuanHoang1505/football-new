@@ -10,6 +10,7 @@ import { Alert } from "react-bootstrap";
 
 function Account() {
   const { user } = useContext(UserContext);
+  console.log(user);
   return (
     <>
       <div className={styles.mainContainer}>
@@ -34,8 +35,8 @@ function Account() {
                     className="rounded-circle mb-2"
                     width={100}
                   />
-                  <h6 className="fs-5 fw-bold">Nguyễn Xuân Hoàng</h6>
-                  <p className="text-dark ">email@gmail.com</p>
+                  <h6 className="fs-5 fw-bold">{user?.fullName}</h6>
+                  <p className="text-dark ">{user?.email}</p>
                 </div>
                 <ul className="list-unstyled">
                   <li>
