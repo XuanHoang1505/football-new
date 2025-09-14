@@ -147,7 +147,7 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        hể thao 247 - MXH Thể thao, Bóng đá mới nhất cập nhật 24/7
+        <title>Thể thao 247 - MXH Thể thao, Bóng đá mới nhất cập nhật 24/7</title>
       </Helmet>
       <div className={styles.container}>
         <div className={styles.list_item}>

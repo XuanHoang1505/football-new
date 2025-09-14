@@ -126,8 +126,15 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IFootballDataService, FootballDataService>();
 builder.Services.AddHttpClient<IApiFootballService, ApiFootballService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+// Đăng kí Repository
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+
+// Đăng ký Service (Business Logic Layer)
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 // Đăng ký CloudinaryService
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
