@@ -9,6 +9,7 @@ namespace footballnew.DTOs
         public DateTime DatePublished { get; set; }
         public string AuthorName { get; set; } = null!;
         public string? ImageUrl { get; set; }
-        public DateTime? ViewAt { get; set; } 
+        public DateTime? ViewAt { get; set; }
+        public string? CategoryName { get; set; }
     }
 }

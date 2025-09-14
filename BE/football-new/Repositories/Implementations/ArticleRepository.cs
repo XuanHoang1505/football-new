@@ -43,9 +43,13 @@ namespace footballnew.Repositories.Implementations
         {
             return await _context.Articles
                 .Include(a => a.Author)
+                .Include(a => a.Images) // nạp luôn ảnh
+                .Include(a => a.ArticleCategories)
+                    .ThenInclude(ac => ac.Category) // nạp luôn Category
                 .OrderByDescending(a => a.DatePublished)
                 .ToListAsync();
         }
+
 
         public async Task<Article> AddAsync(Article article)
         {

@@ -20,6 +20,10 @@ namespace footballnew.Mappings
                            opt => opt.MapFrom(src => src.Images
                                .Where(i => i.IsMain)
                                .Select(i => i.Url)
+                               .FirstOrDefault()))
+                .ForMember(dest => dest.CategoryName,
+                           opt => opt.MapFrom(src => src.ArticleCategories
+                               .Select(ac => ac.Category.Name)
                                .FirstOrDefault()));
             CreateMap<Article, ArticleDetailDTO>()
                 .ForMember(dest => dest.AuthorName,

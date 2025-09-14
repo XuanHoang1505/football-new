@@ -47,8 +47,8 @@ import PrivateRoute from "./utils/PrivateRoute";
 import Page403 from "./pages/site/page403/Page403";
 import Page500 from "./pages/site/page500/Page500";
 import Page404 from "./pages/site/page404/Page404";
-import CategoryNews from "./pages/site/categoryPage/NewsCategory";
 import NewsCategory from "./pages/site/categoryPage/NewsCategory";
+import ArticlePage from "./pages/site/articlePage/ArticlePage";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -67,6 +67,7 @@ function App() {
             <Route path="/" element={<SiteLayout />}>
               <Route index element={<Home />} />
               <Route path="category/:slug" element={<NewsCategory/>}/>
+              <Route path="news/:slug" element={<ArticlePage/>}/>
               <Route
                 path="profile"
                 element={
