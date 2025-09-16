@@ -76,6 +76,7 @@ const AppHeader = () => {
   const handleLogout = async () => {
     logout(user.userId);
     updateUser(null);
+    navigate("/");
   };
 
   const topHeaderRef = useRef(null);

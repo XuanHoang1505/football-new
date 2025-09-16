@@ -9,6 +9,7 @@ import SiteLayout from "./layouts/site/SiteLayout";
 
 import { UserContext } from "./contexts/UserContext";
 
+
 import FootballLayout from "./layouts/site/football/FootballLayout";
 import ClubLayout from "./layouts/site/club/ClubLayout";
 
@@ -19,7 +20,9 @@ import {
   AccountInfo,
   ChangePassword,
   WatchHistory,
+  Submit,
 } from "./pages";
+
 
 import {
   TopScores,
@@ -49,10 +52,11 @@ import Page500 from "./pages/site/page500/Page500";
 import Page404 from "./pages/site/page404/Page404";
 import NewsCategory from "./pages/site/categoryPage/NewsCategory";
 import ArticlePage from "./pages/site/articlePage/ArticlePage";
+import LatestPage from "./pages/site/latest/LatestPage";
 
 function App() {
-  const { user } = useContext(UserContext);
-
+    const { user } = useContext(UserContext);
+  
   return (
     <>
       <Router>
@@ -66,6 +70,8 @@ function App() {
           <Routes>
             <Route path="/" element={<SiteLayout />}>
               <Route index element={<Home />} />
+              <Route path="submit" element={<Submit/>}/>
+              <Route path="latest" element={<LatestPage />} />
               <Route path="category/:slug" element={<NewsCategory/>}/>
               <Route path="news/:slug" element={<ArticlePage/>}/>
               <Route
@@ -119,6 +125,7 @@ function App() {
             <Route path="*" element={<Page404 />} />
           </Routes>
         </Suspense>
+
       </Router>
       <ToastContainer
         position="top-right"

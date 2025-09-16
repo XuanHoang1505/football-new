@@ -39,6 +39,9 @@ function DynamicBreadcrumb({ category }) {
           case "profile":
             label = "Trang cá nhân";
             break;
+          case "latest":
+            label = "Tin tức mới nhất";
+            break;  
           default:
             label = name;
         }

@@ -11,6 +11,7 @@ const Sidebar = () => {
           <li key={idx} className={styles.menuItem}>
             <NavLink
               to={item.path}
+              end={item.path === "/football/PL/" ? false : true}
               className={({ isActive }) =>
                 isActive
                   ? `${styles.menuLink} ${styles.active}`

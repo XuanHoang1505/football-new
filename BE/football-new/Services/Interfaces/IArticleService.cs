@@ -25,6 +25,7 @@ namespace footballnew.Services.Interfaces
         Task<IEnumerable<ArticleListDTO>> GetByStatusAsync(string status);
         Task<IEnumerable<ArticleListDTO>> GetByCategoryAsync(int categoryId);
         Task<IEnumerable<ArticleListDTO>> GetByTagAsync(int tagId);
+        Task<IEnumerable<ArticleListDTO>> GetArticlesByDateAsync(DateTime date);
 
         Task<IEnumerable<ArticleHistoryDTO>> GetArticlesViewedByUserAsync(string userId);
 
