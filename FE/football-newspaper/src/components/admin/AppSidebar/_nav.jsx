@@ -1,4 +1,4 @@
-import React from "react";
+
 import CIcon from "@coreui/icons-react";
 import { TfiLayoutSlider } from "react-icons/tfi";
 import { RiMovie2AiLine, RiVipCrown2Line } from "react-icons/ri";
@@ -17,7 +17,7 @@ const _nav = [
   {
     component: CNavItem,
     name: "Bảng điều khiển",
-    to: "dashboard",
+    to: "/admin/",
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
   },
   {

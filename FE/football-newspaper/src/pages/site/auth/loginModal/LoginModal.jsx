@@ -1,4 +1,4 @@
-import { useState, useContext} from "react";
+import { useState, useContext, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 
 import { Modal } from "react-bootstrap";
@@ -7,6 +7,7 @@ import { login } from "../../../../services/site/AuthService";
 import { UserContext } from "../../../../contexts/UserContext";
 import { Spinner } from "react-bootstrap";
 import styles from "./LoginModal.module.scss";
+import { useNavigate } from "react-router-dom";
 
 function LoginModal({
   show,
@@ -22,8 +23,25 @@ function LoginModal({
   const [showPassword, setShowPassword] = useState(false);
   const { updateUser } = useContext(UserContext); // Lấy hàm cập nhật user từ context
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
+  // const handleNavigate = useCallback(
+  //   (role) => {
+  //     const rolePaths = {
+  //       ADMIN: "/admin/",
+  //     };
+  //     navigate(rolePaths[role]);
+  //   },
+  //   [navigate]
+  // );
 
+  // useEffect(() => {
+  //   // Kiểm tra nếu người dùng đã đăng nhập rồi thì điều hướng trở lại trang chủ theo vai trò.
+  //   if (user) {
+  //     handleNavigate(user.role);
+  //   }
+  // }, [user, handleNavigate]);
 
   const validate = () => {
     const newErrors = {};
@@ -61,7 +79,13 @@ function LoginModal({
         // lưu nó vào context để context lưu vào localStorage và sử dụng chung cho toàn bộ ứng dụng
         updateUser(userDetail);
 
-        handleCloseModal(); // Đóng modal sau khi đăng nhập thành công
+        if (data.role === "ADMIN") {
+          navigate("/admin/");
+        } else {
+          // Đóng modal sau khi đăng nhập thành công
+          handleCloseModal();
+        }
+        toast.success("Đăng nhập thành công!");
       } catch (error) {
         if (error.response) {
           const responseData = error.response.data;
@@ -89,8 +113,6 @@ function LoginModal({
     setPassword("");
     setErrors({});
   };
-
-  
 
   return (
     <>

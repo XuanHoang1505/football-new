@@ -10,7 +10,7 @@ import { Alert } from "react-bootstrap";
 
 function Account() {
   const { user } = useContext(UserContext);
-  console.log(user);
+
   return (
     <>
       <div className={styles.mainContainer}>
