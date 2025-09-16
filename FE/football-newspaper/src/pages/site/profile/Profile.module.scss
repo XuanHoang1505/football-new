@@ -1,0 +1,19 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    width: 100% !important;
+  }
+}
+.breadcrumb {
+  border-bottom: 1px dotted #ccc;
+
+}
+.head_author {
+  background-color: #DCE7FF;
+  padding: 20px 15px;
+}

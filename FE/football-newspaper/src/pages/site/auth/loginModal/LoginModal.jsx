@@ -1,5 +1,4 @@
-import { useState, useContext, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useContext, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 
 import { Modal } from "react-bootstrap";
@@ -8,6 +7,7 @@ import { login } from "../../../../services/site/AuthService";
 import { UserContext } from "../../../../contexts/UserContext";
 import { Spinner } from "react-bootstrap";
 import styles from "./LoginModal.module.scss";
+import { useNavigate } from "react-router-dom";
 
 function LoginModal({
   show,
@@ -21,30 +21,27 @@ function LoginModal({
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const { user, updateUser } = useContext(UserContext); // Lấy hàm cập nhật user từ context
+  const { updateUser } = useContext(UserContext); // Lấy hàm cập nhật user từ context
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  // useCallback giúp đảm bảo handleNavigate sẽ không thay đổi giữa các lần render trừ khi navigate thay đổi.
-  const handleNavigate = useCallback(
-    (role) => {
-      const rolePaths = {
-        ADMIN: "/admin/home",
-        // EMPLOYEE: "/employee/dashboard",
-        // TRAINER: "/trainer/dashboard",
-        USER: "/",
-      };
-      navigate(rolePaths[role] || "/");
-    },
-    [navigate]
-  );
+  // const handleNavigate = useCallback(
+  //   (role) => {
+  //     const rolePaths = {
+  //       ADMIN: "/admin/",
+  //     };
+  //     navigate(rolePaths[role]);
+  //   },
+  //   [navigate]
+  // );
 
-  useEffect(() => {
-    // Kiểm tra nếu người dùng đã đăng nhập rồi thì điều hướng trở lại trang chủ theo vai trò.
-    if (user) {
-      handleNavigate(user.role);
-    }
-  }, [user, handleNavigate]);
+  // useEffect(() => {
+  //   // Kiểm tra nếu người dùng đã đăng nhập rồi thì điều hướng trở lại trang chủ theo vai trò.
+  //   if (user) {
+  //     handleNavigate(user.role);
+  //   }
+  // }, [user, handleNavigate]);
 
   const validate = () => {
     const newErrors = {};
@@ -72,7 +69,6 @@ function LoginModal({
       try {
         setIsLoading(true);
         const data = await login(username, password);
-        console.log(data);
         const userDetail = {
           userId: data.userId,
           fullName: data.fullName,
@@ -83,8 +79,13 @@ function LoginModal({
         // lưu nó vào context để context lưu vào localStorage và sử dụng chung cho toàn bộ ứng dụng
         updateUser(userDetail);
 
-        handleNavigate(userDetail.role); // chuyển hướng theo vai trò
-        handleCloseModal(); // Đóng modal sau khi đăng nhập thành công
+        if (data.role === "ADMIN") {
+          navigate("/admin/");
+        } else {
+          // Đóng modal sau khi đăng nhập thành công
+          handleCloseModal();
+        }
+        toast.success("Đăng nhập thành công!");
       } catch (error) {
         if (error.response) {
           const responseData = error.response.data;
@@ -112,6 +113,7 @@ function LoginModal({
     setPassword("");
     setErrors({});
   };
+
   return (
     <>
       <Modal show={show} onHide={handleCloseModal} centered size="md">

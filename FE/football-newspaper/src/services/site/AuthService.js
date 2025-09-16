@@ -1,7 +1,12 @@
+import axios from "axios";
 import axiosInstance from "../../config/axiosInstance"; // Axios config sẵn baseURL và headers
 import handleErrorResponse from "../../utils/errors/ErrorHandler";
 
 const AUTH_URL = "/auth";
+
+const baseAxios = axios.create({
+  baseURL: "http://localhost:5271/api/",
+});
 
 // Đăng nhập
 export const login = async (username, password) => {
@@ -11,9 +16,16 @@ export const login = async (username, password) => {
       password,
     });
 
-    const accessToken =
+    let accessToken =
       response.headers["authorization"] || response.headers["Authorization"];
-    const refreshToken = response.data.refreshToken;
+    let refreshToken = response.data.refreshToken;
+
+    if (accessToken && accessToken.startsWith("Bearer ")) {
+      accessToken = accessToken.replace("Bearer ", "");
+    }
+    if (refreshToken && refreshToken.startsWith("Bearer ")) {
+      refreshToken = refreshToken.replace("Bearer ", "");
+    }
 
     if (accessToken) localStorage.setItem("accessToken", accessToken);
     if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
@@ -24,8 +36,6 @@ export const login = async (username, password) => {
     throw error;
   }
 };
-
-// Đăng nhập bằng Google
 
 // Đăng ký
 export const register = async (userData) => {
@@ -38,29 +48,27 @@ export const register = async (userData) => {
   }
 };
 
-// Làm mới token
 export const refreshToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refreshToken");
     if (!refreshToken) throw new Error("Refresh token not found");
 
-    const response = await axiosInstance.post(
+    const response = await baseAxios.post(
       `${AUTH_URL}/refresh-token`,
       {},
       {
         headers: {
-          Authorization: refreshToken,
+          Authorization: `Bearer ${refreshToken}`,
         },
       }
     );
 
-    return response.data.accessToken;
+    return response.data;
   } catch (error) {
     handleErrorResponse(error);
     throw error;
   }
 };
-
 // Gửi OTP
 export const sendOtp = async (identifier, type) => {
   try {
@@ -115,7 +123,6 @@ export const resetPassword = async (email, newPassword) => {
     throw error;
   }
 };
-
 // Đăng xuất
 export const logout = async (userId) => {
   try {

@@ -1,11 +1,13 @@
-import React from "react";
+import { CContainer, CSpinner } from "@coreui/react";
+import { Outlet } from "react-router-dom";
+
 import {
-  AppContent,
   AppSidebar,
   AppHeader,
   AppFooter,
 } from "../../components/admin";
 import GlobalStyles from "../../assets/admin/scss/GlobalStyles/GlobalStyles";
+import { Suspense } from "react";
 
 const AdminLayout = () => {
   return (
@@ -14,7 +16,11 @@ const AdminLayout = () => {
       <div className=" wrapper d-flex flex-column min-vh-100">
         <AppHeader />
         <div className="body flex-grow-1">
-          <AppContent />
+          <CContainer className="px-4" fluid>
+            <Suspense fallback={<CSpinner color="primary" />}>
+              <Outlet />
+            </Suspense>
+          </CContainer>
         </div>
         <AppFooter />
       </div>
