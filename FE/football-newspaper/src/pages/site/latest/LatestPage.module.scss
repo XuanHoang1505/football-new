@@ -1,0 +1,147 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+}
+@media (max-width: 1200px) {
+  .container {
+    width: 100%;
+  }
+}
+.selectDay {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  background: #f2f2f2;
+  padding: 10px;
+  align-items: center;
+
+  input {
+    border: 1px solid #ccc;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .selectDay {
+    justify-content: space-around;
+    margin-bottom: 15px;
+    flex-direction: column;
+
+    input {
+      margin-bottom: 10px;
+      width: 100%;
+    }
+  }
+}
+.caption {
+  border-bottom: 1px solid #000;
+
+  a {
+    background: #1a4599
+      url("https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1") right -855px
+      no-repeat;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 4px 60px 4px 8px;
+    width: fit-content;
+  }
+}
+.articleList {
+  position: relative;
+  padding-left: 30px;
+  list-style: none;
+  margin-bottom: 15px;
+  margin-top: 15px;
+
+  &::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #ddd;
+    content: "";
+    display: inline-block;
+    left: 0;
+  }
+
+  .articleItem {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #ddd;
+
+    .articleInfo {
+      flex: 1;
+      padding-right: 15px;
+
+      .time {
+        position: relative;
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 10px;
+
+        &::before {
+          width: 9px;
+          height: 9px;
+          background: #c12c2e;
+          display: inline-block;
+          content: "";
+          border-radius: 10px;
+          position: absolute;
+          left: -34px;
+        }
+      }
+
+      .title {
+        font-size: 18px !important;
+        margin-bottom: 10px !important;
+        font-weight: bold;
+        color: #333;
+        text-decoration: none;
+
+        &:hover {
+          color: #007bff;
+        }
+      }
+
+      .sapo {
+        font-size: 14px;
+        color: #666;
+        margin-top: 10px;
+        text-align: justify;
+        line-height: 1.45;
+        overflow: hidden;
+      }
+
+      .date {
+        font-size: 14px;
+        color: #999;
+      }
+    }
+    .thumb {
+      width: 196px;
+      height: auto;
+
+      img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+      }
+
+      &:hover img {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+@media (max-width: 630px) {
+  .articleList .articleItem .articleInfo .sapo {
+    display: none;
+  }
+}

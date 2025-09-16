@@ -28,6 +28,7 @@ namespace footballnew.Repositories.Interfaces
         Task<IEnumerable<Article>> GetByStatusAsync(string status);
         Task<IEnumerable<Article>> GetByCategoryAsync(int categoryId);
         Task<IEnumerable<Article>> GetByTagAsync(int tagId);
+        Task<IEnumerable<Article>> GetArticlesByDateAsync(DateTime date);
 
         Task AddViewHistoryAsync(int articleId, string userId);
         Task<IEnumerable<ArticleViewHistory>> GetArticlesViewedByUserAsync(string userId);

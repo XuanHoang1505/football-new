@@ -172,6 +172,15 @@ namespace footballnew.Repositories.Implementations
                 .ToListAsync();
         }
 
+        // 📌 Lấy bài viết theo ngày
+        public async Task<IEnumerable<Article>> GetArticlesByDateAsync(DateTime date)
+        {
+            return await _context.Articles
+                .Where(a => a.DatePublished.Date == date.Date)
+                .Include(a => a.Images)
+                .ToListAsync();
+        }
+
         // 📌 Lịch sử xem
         public async Task AddViewHistoryAsync(int articleId, string userId)
         {

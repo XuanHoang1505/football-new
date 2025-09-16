@@ -172,6 +172,17 @@ const getArticlesViewedByUser = async (userId) => {
   }
 };
 
+const getArticlesByDate = async (date) => { 
+  try {
+    const response = await axiosInstance.get(`${API_URL}/${date}/date`);
+    return response.data;
+  } catch (error) {
+    handleErrorResponse(error);
+    throw error;
+  }   
+}
+
+
 // Export service
 const ArticleService = {
   getArticles,
@@ -188,6 +199,7 @@ const ArticleService = {
   incrementShareCount,
   incrementCommentCount,
   getArticlesViewedByUser,
+  getArticlesByDate
 };
 
 export default ArticleService;

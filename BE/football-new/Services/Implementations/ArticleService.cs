@@ -109,10 +109,42 @@ namespace footballnew.Services.Implementations
             return _mapper.Map<IEnumerable<ArticleListDTO>>(articles);
         }
 
+        public async Task<IEnumerable<ArticleListDTO>> GetArticlesByDateAsync(DateTime date)
+        {
+            var articles = await _repository.GetArticlesByDateAsync(date);
+
+            var dtoList = new List<ArticleListDTO>();
+
+            foreach (var article in articles)
+            {
+                var dto = _mapper.Map<ArticleListDTO>(article);
+                dto.timeAgo = TimeAgo(article.DatePublished);
+                dtoList.Add(dto);
+            }
+
+            return dtoList;
+        }
+
+
         public async Task<IEnumerable<ArticleHistoryDTO>> GetArticlesViewedByUserAsync(string userId)
         {
             var histories = await _repository.GetArticlesViewedByUserAsync(userId);
             return _mapper.Map<IEnumerable<ArticleHistoryDTO>>(histories);
+        }
+
+        public string TimeAgo(DateTime dateTime)
+        {
+            var timeSpan = DateTime.UtcNow - dateTime;
+
+            if (timeSpan.TotalMinutes < 1)
+                return "Vừa xong";
+            if (timeSpan.TotalMinutes < 60)
+                return $"{(int)timeSpan.TotalMinutes} phút trước";
+            if (timeSpan.TotalHours < 24)
+                return $"{(int)timeSpan.TotalHours} giờ trước";
+            if (timeSpan.TotalDays < 7)
+                return $"{(int)timeSpan.TotalDays} ngày trước";
+            return dateTime.ToString("dd/MM/yyyy HH:mm");
         }
     }
 }

@@ -11,5 +11,6 @@ namespace footballnew.DTOs
         public string? ImageUrl { get; set; }
         public DateTime? ViewAt { get; set; }
         public string? CategoryName { get; set; }
+        public string? timeAgo { get; set; }
     }
 }

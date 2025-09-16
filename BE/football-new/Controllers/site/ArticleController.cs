@@ -118,7 +118,15 @@ namespace footballnew.Controllers.site
             return NoContent();
         }
 
+        [HttpGet("{date:datetime}/date")]
+        public async Task<IActionResult> GetArticlesByDate(DateTime date)
+        {
+            var articles = await _service.GetArticlesByDateAsync(date);
+            return Ok(articles);
+        }
+
         [HttpGet("{id}/histories")]
+
         public async Task<IActionResult> GetViewHistories(string id)
         {
             var histories = await _service.GetArticlesViewedByUserAsync(id);

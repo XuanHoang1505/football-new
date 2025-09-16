@@ -12,9 +12,9 @@ export const mainMenu = [
   { label: "Latest", path: "/latest", icon: <BsLightningFill /> },
   { label: "Video", path: "/video", icon: <BsCameraVideo /> },
   { label: "Livescore", path: "/livescore", icon: <FaFutbol /> },
-  { label: "Lịch thi đấu", path: "/lich-thi-dau", icon: <BsCalendarEvent /> },
-  { label: "Kết quả", path: "/ket-qua", icon: <BsTrophy /> },
-  { label: "BXH", path: "/bxh", icon: <BsTable /> },
+  { label: "Lịch thi đấu", path: "/football/PL/", icon: <BsCalendarEvent /> },
+  { label: "Kết quả", path: "/football/PL/results", icon: <BsTrophy /> },
+  { label: "BXH", path: "/football/PL/standings", icon: <BsTable /> },
   { label: "Trực tiếp", path: "/truc-tiep", icon: <BsBroadcast /> },
 ];
 
