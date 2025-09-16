@@ -1,17 +1,18 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { Bounce, ToastContainer } from "react-toastify";
 import { Suspense } from "react";
-import { CSpinner } from "@coreui/react";
-import SiteLayout from "./layouts/site/SiteLayout";
+import { CSpinner, useColorModes } from "@coreui/react";
 
 import { UserContext } from "./contexts/UserContext";
 
-
+import AdminLayout from "./layouts/admin/AdminLayout";
+import SiteLayout from "./layouts/site/SiteLayout";
 import FootballLayout from "./layouts/site/football/FootballLayout";
 import ClubLayout from "./layouts/site/club/ClubLayout";
+import PlayerLayout from "./layouts/site/player/PlayerLayout";
 
 import {
   Home,
@@ -21,8 +22,7 @@ import {
   ChangePassword,
   WatchHistory,
   Submit,
-} from "./pages";
-
+} from "./pages/site";
 
 import {
   TopScores,
@@ -39,7 +39,7 @@ import {
   ClubResults,
   Transfers,
 } from "./pages/site/club";
-import PlayerLayout from "./layouts/site/player/PlayerLayout";
+
 import {
   RecentMatches,
   PlayerTransfers,
@@ -54,9 +54,33 @@ import NewsCategory from "./pages/site/categoryPage/NewsCategory";
 import ArticlePage from "./pages/site/articlePage/ArticlePage";
 import LatestPage from "./pages/site/latest/LatestPage";
 
+import routes from "./routes/admin/adminRoutes";
+import { useSelector } from "react-redux";
+
 function App() {
-    const { user } = useContext(UserContext);
-  
+  const { isColorModeSet, setColorMode } = useColorModes(
+    "coreui-free-react-admin-template-theme"
+  ); // để quản lý chế độ màu (color mode) của giao diện người dùng
+  const storedTheme = useSelector((state) => state.theme);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.href.split("?")[1]);
+    const theme =
+      urlParams.get("theme") &&
+      urlParams.get("theme").match(/^[A-Za-z0-9\s]+/)[0];
+    if (theme) {
+      setColorMode(theme);
+    }
+
+    if (isColorModeSet()) {
+      return;
+    }
+
+    setColorMode(storedTheme);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const { user } = useContext(UserContext);
+
   return (
     <>
       <Router>
@@ -68,12 +92,34 @@ function App() {
           }
         >
           <Routes>
+            <Route
+              path="/admin/"
+              element={
+                <PrivateRoute roles={"ADMIN"}>
+                  <AdminLayout />
+                </PrivateRoute>
+              }
+            >
+              {routes.map((route, index) => {
+                return (
+                  route.element && (
+                    <Route
+                      key={index}
+                      index={route.path === ""}
+                      path={route.path}
+                      name={route.name}
+                      element={<route.element />}
+                    />
+                  )
+                );
+              })}
+            </Route>
             <Route path="/" element={<SiteLayout />}>
               <Route index element={<Home />} />
-              <Route path="submit" element={<Submit/>}/>
+              <Route path="submit" element={<Submit />} />
               <Route path="latest" element={<LatestPage />} />
-              <Route path="category/:slug" element={<NewsCategory/>}/>
-              <Route path="news/:slug" element={<ArticlePage/>}/>
+              <Route path="category/:slug" element={<NewsCategory />} />
+              <Route path="news/:slug" element={<ArticlePage />} />
               <Route
                 path="profile"
                 element={
@@ -125,7 +171,6 @@ function App() {
             <Route path="*" element={<Page404 />} />
           </Routes>
         </Suspense>
-
       </Router>
       <ToastContainer
         position="top-right"

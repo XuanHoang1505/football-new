@@ -9,7 +9,7 @@ import { UserContext } from "../../../contexts/UserContext";
 
 function Profile() {
   const { user } = useContext(UserContext);
-  console.log(">>> Profile component rendered <<<");
+
   return (
     <>
       <Helmet>

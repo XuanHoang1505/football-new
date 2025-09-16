@@ -89,16 +89,16 @@ builder.Services.AddAuthentication(options =>
 
 
 })
-.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-{
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-})
-.AddFacebook(FacebookDefaults.AuthenticationScheme, options =>
-{
-    options.AppId = builder.Configuration["Authentication:Facebook:AppId"];
-    options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
-});
+// .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+// {
+//     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+//     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+// })
+// .AddFacebook(FacebookDefaults.AuthenticationScheme, options =>
+// {
+//     options.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+//     options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+// });
 ;
 builder.Services.AddAuthorization();
 

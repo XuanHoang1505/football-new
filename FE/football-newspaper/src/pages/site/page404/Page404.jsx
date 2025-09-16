@@ -12,7 +12,7 @@ const Page404 = () => {
           Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.
         </p>
         <NavLink
-          to={userDetail && userDetail.role === "ADMIN" ? "/admin/dashboard" : "/"}
+          to={userDetail && userDetail.role === "ADMIN" ? "/admin/" : "/"}
           className="btn btn-primary btn-lg"
         >
           <i className="bi bi-house-door-fill me-2"></i>
