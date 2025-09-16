@@ -20,6 +20,7 @@ import {
   AccountInfo,
   ChangePassword,
   WatchHistory,
+  Submit,
 } from "./pages";
 
 
@@ -51,6 +52,7 @@ import Page500 from "./pages/site/page500/Page500";
 import Page404 from "./pages/site/page404/Page404";
 import NewsCategory from "./pages/site/categoryPage/NewsCategory";
 import ArticlePage from "./pages/site/articlePage/ArticlePage";
+import LatestPage from "./pages/site/latest/LatestPage";
 
 function App() {
     const { user } = useContext(UserContext);
@@ -69,6 +71,7 @@ function App() {
             <Route path="/" element={<SiteLayout />}>
               <Route index element={<Home />} />
               <Route path="submit" element={<Submit/>}/>
+              <Route path="latest" element={<LatestPage />} />
               <Route path="category/:slug" element={<NewsCategory/>}/>
               <Route path="news/:slug" element={<ArticlePage/>}/>
               <Route

@@ -6,7 +6,7 @@ const AppMatches = () => {
   const [loading, setLoading] = useState(true);
   const leagues = [
     { code: "PL", name: "Ngoại hạng Anh" },
-    { code: "SA", name: "Serie A" },
+    { code: "PD", name: "Laliga" },
     { code: "BL1", name: "Bundesliga" },
   ];
 

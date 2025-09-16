@@ -113,11 +113,11 @@ const Home = () => {
               </div>
 
               {/* Side news */}
-              <div className="col-lg-3 col-md-6 col-12 mt-3 mt-lg-0 ps-sm-4 p-lg-0">
+              <div className="col-lg-3 col-md-6 col-12 mt-3 mt-lg-0 ps-sm-4 p-lg-0" >
                 <h3 className="text-danger text-uppercase border-bottom fw-bold mb-3">
                   Tin hot
                 </h3>
-                <ul className={styles.sideNews}>
+                <ul className={styles.sideNews} style={{maxHeight: "630px", overflowY: "auto"}}>
                   {sideNews.map((news, index) => (
                     <li key={index}>
                       <NavLink to={`/news/${news.slug}`} title={news.title}>
