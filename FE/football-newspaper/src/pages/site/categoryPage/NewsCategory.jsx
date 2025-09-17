@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 
 import CategoryService from "../../../services/admin/CategoryService";
@@ -61,7 +61,9 @@ function NewsCategory() {
   console.log(newsData);
 
   if (loading) {
-    return <div>Loading...</div>;
+    <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+      <Spinner animation="border" className="text-primary" />
+    </div>;
   }
   return (
     <>

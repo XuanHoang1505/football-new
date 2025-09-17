@@ -13,6 +13,7 @@ namespace footballnew.Mappings
             CreateMap<ApplicationUser, UserDTO>()
                 .ForMember(dest => dest.Role, opt => opt.Ignore()); // Lấy Role riêng
             CreateMap<UserDTO, ApplicationUser>();
+            
             CreateMap<Article, ArticleListDTO>()
                 .ForMember(dest => dest.AuthorName,
                            opt => opt.MapFrom(src => src.Author.UserName))

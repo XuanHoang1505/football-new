@@ -5,6 +5,7 @@ import { PlayerService } from "../../../../services/site/PlayerService";
 import footballLogo from "../../../../assets/site/images/footballLogo.jpg";
 
 import styles from "./PlayerCareer.module.scss";
+import { Spinner } from "react-bootstrap";
 
 function PlayerCareer() {
   const { playerId } = useParams();
@@ -24,7 +25,7 @@ function PlayerCareer() {
     }
   };
 
-   const fetchPlayerData = async () => {
+  const fetchPlayerData = async () => {
     try {
       const data = await PlayerService.getPlayerDetail(playerId);
       setPlayerInfo(data);
@@ -38,14 +39,11 @@ function PlayerCareer() {
     fetchPlayerCareer();
   }, [playerId]);
 
-
   return (
     <>
       <Helmet>
         <title>
-          {`Sự nghiệp của ${
-            playerInfo?.name || "Cầu thủ"
-          } | Thể Thao 247`}
+          {`Sự nghiệp của ${playerInfo?.name || "Cầu thủ"} | Thể Thao 247`}
         </title>
       </Helmet>
 
@@ -56,7 +54,9 @@ function PlayerCareer() {
         <i className="bi bi-chevron-right fs-4 text-primary fw-bold"></i>
 
         {loading ? (
-          <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+          <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+            <Spinner animation="border" className="text-primary" />
+          </div>
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.careerTable}>

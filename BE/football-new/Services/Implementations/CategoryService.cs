@@ -3,6 +3,7 @@ using footballnew.DTOs;
 using footballnew.Models;
 using footballnew.Repositories.Interfaces;
 using footballnew.Services.Interfaces;
+using footballnew.Utils.Exceptions;
 
 namespace footballnew.Services.Implementations
 {
@@ -17,16 +18,22 @@ namespace footballnew.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<CategoryDTO?> GetByIdAsync(int id)
+        public async Task<CategoryDTO> GetByIdAsync(int id)
         {
             var category = await _repository.GetByIdAsync(id);
-            return category == null ? null : _mapper.Map<CategoryDTO>(category);
+            if (category == null)
+                throw new AppException(ErrorCode.CategoryNotFound, $"Không tìm thấy danh mục với ID = {id}");
+
+            return _mapper.Map<CategoryDTO>(category);
         }
 
-        public async Task<CategoryDTO?> GetBySlugAsync(string slug)
+        public async Task<CategoryDTO> GetBySlugAsync(string slug)
         {
             var category = await _repository.GetBySlugAsync(slug);
-            return category == null ? null : _mapper.Map<CategoryDTO>(category);
+            if (category == null)
+                throw new AppException(ErrorCode.CategoryNotFound, $"Không tìm thấy danh mục với slug = {slug}");
+
+            return _mapper.Map<CategoryDTO>(category);
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetAllAsync()
@@ -37,9 +44,22 @@ namespace footballnew.Services.Implementations
 
         public async Task<CategoryDTO> CreateAsync(CategoryDTO dto)
         {
-            var entity = _mapper.Map<Category>(dto);
-            var created = await _repository.AddAsync(entity);
+            // Kiểm tra slug đã tồn tại
+            var existing = await _repository.GetBySlugAsync(dto.Slug);
+            if (existing != null)
+                throw new AppException(ErrorCode.CategorySlugAlreadyExists, $"Slug '{dto.Slug}' đã tồn tại.");
 
+            var entity = _mapper.Map<Category>(dto);
+
+            // Nếu có parentId thì kiểm tra parent tồn tại
+            if (entity.ParentId.HasValue)
+            {
+                var parent = await _repository.GetByIdAsync(entity.ParentId.Value);
+                if (parent == null)
+                    throw new AppException(ErrorCode.ParentCategoryNotFound, "Danh mục cha không tồn tại.");
+            }
+
+            var created = await _repository.AddAsync(entity);
             var dtoResult = _mapper.Map<CategoryDTO>(created);
 
             if (created.ParentId.HasValue)
@@ -52,10 +72,27 @@ namespace footballnew.Services.Implementations
             return dtoResult;
         }
 
-        public async Task<CategoryDTO?> UpdateAsync(int id, CategoryDTO dto)
+        public async Task<CategoryDTO> UpdateAsync(int id, CategoryDTO dto)
         {
             var existing = await _repository.GetByIdAsync(id);
-            if (existing == null) return null;
+            if (existing == null)
+                throw new AppException(ErrorCode.CategoryNotFound, $"Không tìm thấy danh mục với ID = {id}");
+
+            // Nếu update slug → check duplicate
+            if (!string.Equals(existing.Slug, dto.Slug, StringComparison.OrdinalIgnoreCase))
+            {
+                var dup = await _repository.GetBySlugAsync(dto.Slug);
+                if (dup != null && dup.Id != id)
+                    throw new AppException(ErrorCode.CategorySlugAlreadyExists, $"Slug '{dto.Slug}' đã tồn tại.");
+            }
+
+            // Nếu có parentId thì kiểm tra parent tồn tại
+            if (dto.ParentId.HasValue)
+            {
+                var parent = await _repository.GetByIdAsync(dto.ParentId.Value);
+                if (parent == null)
+                    throw new AppException(ErrorCode.ParentCategoryNotFound, "Danh mục cha không tồn tại.");
+            }
 
             _mapper.Map(dto, existing);
             await _repository.UpdateAsync(existing);
@@ -72,18 +109,22 @@ namespace footballnew.Services.Implementations
             return dtoResult;
         }
 
-
-
         public async Task<bool> DeleteAsync(int id)
         {
             var existing = await _repository.GetByIdAsync(id);
-            if (existing == null) return false;
+            if (existing == null)
+                throw new AppException(ErrorCode.CategoryNotFound, $"Không tìm thấy danh mục với ID = {id}");
 
             await _repository.DeleteAsync(id);
             return true;
         }
+
         public async Task<IEnumerable<ArticleListDTO>> GetArticlesByCategorySlugAsync(string slug)
         {
+            var category = await _repository.GetBySlugAsync(slug);
+            if (category == null)
+                throw new AppException(ErrorCode.CategoryNotFound, $"Không tìm thấy danh mục với slug = {slug}");
+
             var articles = await _repository.GetArticlesByCategorySlugAsync(slug);
 
             return articles.Select(a => new ArticleListDTO
@@ -95,7 +136,6 @@ namespace footballnew.Services.Implementations
                 DatePublished = a.DatePublished,
                 AuthorName = a.Author?.UserName ?? "Unknown",
                 ImageUrl = a.Images.FirstOrDefault(i => i.IsMain)?.Url
-
             }).ToList();
         }
     }

@@ -8,6 +8,7 @@ import styles from "./ClubFixtures.module.scss";
 import { ClubService } from "../../../../services/site/ClubService";
 import { clubMenu } from "../../../../data/MenuData";
 import { Helmet } from "react-helmet-async";
+import { Spinner } from "react-bootstrap";
 
 function ClubFixtures() {
   const currentYear = new Date().getFullYear();
@@ -71,7 +72,9 @@ function ClubFixtures() {
       </Helmet>
       <div className="mt-3">
         {loading ? (
-          <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+          <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+            <Spinner animation="border" className="text-primary" />
+          </div>
         ) : (
           Object.entries(groupedMatches).map(([month, matches]) => (
             <div key={month} className="mt-3 border rounded">

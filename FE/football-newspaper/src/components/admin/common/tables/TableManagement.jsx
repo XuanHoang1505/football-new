@@ -248,7 +248,7 @@ const TableManagement = ({
       case "gender":
         return (
           <span className={`rounded-3 px-1 py-1 `}>
-            {item.gender === true ? (
+            {item.gender === "1" ? (
               <>
                 <i className="bi bi-gender-male"></i> Nam
               </>

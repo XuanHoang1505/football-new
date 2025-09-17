@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 
@@ -55,7 +55,9 @@ function WatchHistory() {
 
         <div className="d-flex flex-column mt-3">
           {loading ? (
-            <div>Loading...</div>
+            <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+              <Spinner animation="border" className="text-primary" />
+            </div>
           ) : articles.length === 0 ? (
             <p>Hiện chưa xem bài báo nào</p>
           ) : (
@@ -70,8 +72,8 @@ function WatchHistory() {
                   alt={item.title}
                   className="flex-shrink-0"
                   style={{
-                    width: "clamp(125px, 20vw, 196px)", 
-                    height: "clamp(80px, 12vw, 125px)", 
+                    width: "clamp(125px, 20vw, 196px)",
+                    height: "clamp(80px, 12vw, 125px)",
                   }}
                 />
                 <div>

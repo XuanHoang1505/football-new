@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import styles from "./LatestPage.module.scss";
 import DynamicBreadcrumb from "../../../components/site/breadcrumb/Breadcrumb";
 import { formatDateToDMY } from "../../../utils/formatDate";
@@ -43,7 +43,9 @@ function LatestPage() {
       <div className={`${styles.container} container-fluid`}>
         <DynamicBreadcrumb />
         {loading ? (
-          <div>Loading...</div>
+          <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+            <Spinner animation="border" className="text-primary" />
+          </div>
         ) : (
           <div className="row">
             <div className="col-12 col-lg-8">
