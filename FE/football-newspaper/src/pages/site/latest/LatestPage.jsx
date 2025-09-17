@@ -6,7 +6,7 @@ import { Button } from "react-bootstrap";
 import styles from "./LatestPage.module.scss";
 import DynamicBreadcrumb from "../../../components/site/breadcrumb/Breadcrumb";
 import { formatDateToDMY } from "../../../utils/formatDate";
-import ArticleService from "../../../services/site/ArticleService";
+import ArticleService from "../../../services/admin/ArticleService";
 
 function LatestPage() {
   const today = new Date();

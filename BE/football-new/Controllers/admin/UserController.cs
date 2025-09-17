@@ -6,7 +6,7 @@ using footballnew.Services;
 using footballnew.DTOs;
 using footballnew.Utils.Exceptions;
 
-namespace football_new.Controllers
+namespace footballnew.Controllers.admin
 {
     [Route("api/admin/users")]
     [ApiController]

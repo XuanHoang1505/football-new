@@ -2,7 +2,7 @@ import axiosInstance from "../../config/axiosInstance"; // Import axiosInstance
 import handleErrorResponse from "../../utils/errors/ErrorHandler";
 
 // Cấu hình URL API chung
-const API_URL = "/categories";
+const API_URL = "/admin/categories";
 
 // Lấy tất cả category
 const getCategories = async () => {

@@ -487,7 +487,7 @@ const TableManagement = ({
   };
 
   return (
-    <div className="table__management bg-white col-12 p-4 rounded-3">
+    <div className="table__management bg-transparent col-12 p-4 rounded-3">
       <h5 className="mb-4 text-uppercase fw-bold">{title}</h5>
       {/* Table Header */}
       <TableHeader

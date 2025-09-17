@@ -7,7 +7,7 @@ import Sidebar from "../../../components/site/appSidebar/Sidebar";
 import styles from "./Home.module.scss";
 import AppRank from "../../../components/site/appRank/AppRank";
 import AppMatches from "../../../components/site/appMatches/AppMatches";
-import ArticleService from "../../../services/site/ArticleService";
+import ArticleService from "../../../services/admin/ArticleService";
 import { clubMenu } from "../../../data/MenuData";
 
 const Home = () => {

@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 
-import CategoryService from "../../../services/site/CategoryService";
+import CategoryService from "../../../services/admin/CategoryService";
 
 import { leagueMenu } from "../../../data/MenuData";
 

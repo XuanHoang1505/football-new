@@ -4,7 +4,7 @@ import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 
-import ArticleService from "../../../../services/site/ArticleService";
+import ArticleService from "../../../../services/admin/ArticleService";
 import { UserContext } from "../../../../contexts/UserContext";
 import { formatDateTimeToDMY } from "../../../../utils/formatDate";
 function WatchHistory() {
