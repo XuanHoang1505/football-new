@@ -5,6 +5,7 @@ import styles from "./Results.module.scss";
 import { leagueTranslations } from "../../../../data/VnTransLeague";
 import { FootballService } from "../../../../services/site/FootballService";
 import { Helmet } from "react-helmet-async";
+import { Spinner } from "react-bootstrap";
 
 function Results() {
   const currentYear = new Date().getFullYear();
@@ -82,7 +83,9 @@ function Results() {
         <i className="bi bi-chevron-right fs-4 text-primary fw-bold"></i>
 
         {isLoading ? (
-          <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+          <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+            <Spinner animation="border" className="text-primary" />
+          </div>
         ) : roundsToShow.length === 0 ? (
           <p className="mt-3 text-muted fst-italic">
             Hiện chưa có dữ kết quả trận đấu cho mùa giải {currentYear}.

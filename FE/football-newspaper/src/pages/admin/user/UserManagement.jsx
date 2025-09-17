@@ -57,6 +57,7 @@ const UserManagement = () => {
     { key: "email", label: "Email" },
     { key: "role", label: "Vai Trò" },
     { key: "gender", label: "Giới tính" },
+    { key: "birthDate", label: "Ngày sinh" },
     { key: "registeredDate", label: "Ngày đăng ký" },
     { key: "lastLogin", label: "Lần đăng nhập cuối" },
     { key: "status", label: "Trạng thái" },
@@ -71,12 +72,12 @@ const UserManagement = () => {
     setLoadingPage(true);
     try {
       const data = await UserService.getUsers();
-      console.log("data", data);
       const formattedData = data.map((user) => ({
         ...user,
         fullName: user.fullName || "",
         phoneNumber: user.phoneNumber || "",
         avatar: user.avatar || "",
+        gender: user.gender === null ? "" : user.gender ? "1" : "0",
       }));
       setUserData(formattedData);
     } catch (err) {
@@ -232,6 +233,7 @@ const UserManagement = () => {
       registeredDate: formatDateTimeToISO(item.registeredDate),
       lastLogin:
         item.lastLogin === "" ? null : formatDateTimeToISO(item.lastLogin),
+      gender: item.gender ?? "",
     });
     updateStatus({ isEditing: true });
     setErrorFields({});
@@ -596,7 +598,7 @@ const UserManagement = () => {
       )}
     </>
   );
-  console.log("formData", formData);
+
   return (
     <>
       <Helmet>

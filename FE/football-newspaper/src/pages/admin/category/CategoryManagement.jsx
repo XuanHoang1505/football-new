@@ -127,7 +127,7 @@ const CategoryManagement = () => {
           formData
         );
         console.log("updatedCategory", updatedCategory);
-        
+
         const updatedData = categoryData.map((c) =>
           c.id === updatedCategory.id ? updatedCategory : c
         );
@@ -141,7 +141,8 @@ const CategoryManagement = () => {
       handleReset();
       return true;
     } catch (error) {
-      toast.error("Có lỗi xảy ra.");
+      const msg = error?.response?.data?.message || "Đã xảy ra lỗi khi xóa.";
+      toast.error(msg);
       return false;
     } finally {
       setIsLoading(false);
@@ -156,7 +157,8 @@ const CategoryManagement = () => {
       setCategoryData((prev) => prev.filter((c) => c.id !== deleteId));
       toast.success("Xóa thành công!");
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi xóa.");
+      const msg = error?.response?.data?.message || "Đã xảy ra lỗi khi xóa.";
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }

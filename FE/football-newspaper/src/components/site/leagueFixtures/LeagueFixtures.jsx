@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { FootballService } from "../../../services/site/FootballService";
 import { Link } from "react-router-dom";
 import styles from "./LeagueFixtures.module.scss";
+import { Spinner } from "react-bootstrap";
 function LeagueFixtures({ leagueCode, isCategoryPage = false }) {
   const [groupedMatches, setGroupedMatches] = useState({});
   const [loading, setLoading] = useState(true);
@@ -56,7 +57,9 @@ function LeagueFixtures({ leagueCode, isCategoryPage = false }) {
   return (
     <>
       {loading ? (
-        <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+        <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+          <Spinner animation="border" className="text-primary" />
+        </div>
       ) : (
         Object.entries(groupedMatches).map(([round, days]) => (
           <div
@@ -67,7 +70,9 @@ function LeagueFixtures({ leagueCode, isCategoryPage = false }) {
             <div className="fw-bold px-2 py-2 border-bottom bg-light">
               {isCategoryPage ? (
                 <>
-                  <strong className="fs-6" style={{color: "var(--primary)"}}>Chính</strong>
+                  <strong className="fs-6" style={{ color: "var(--primary)" }}>
+                    Chính
+                  </strong>
                   <i className="bi bi-chevron-right fs-6 text-danger fw-bold"></i>
                 </>
               ) : (

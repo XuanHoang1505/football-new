@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FootballService } from "../../../services/site/FootballService";
 
 import styles from "./LeagueTopScorers.module.scss";
+import { Spinner } from "react-bootstrap";
 
 function LeagueTopScorers({ leagueCode, isFullWidth = true }) {
   const [topScorer, setTopScorer] = useState(null);
@@ -33,7 +34,9 @@ function LeagueTopScorers({ leagueCode, isFullWidth = true }) {
   return (
     <>
       {loading ? (
-        <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+        <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+          <Spinner animation="border" className="text-primary" />
+        </div>
       ) : !topScorer && otherScorers.length === 0 ? (
         <p className="mt-3 text-muted fst-italic">
           Hiện chưa có dữ liệu vua phá lưới cho mùa giải {currentYear}.

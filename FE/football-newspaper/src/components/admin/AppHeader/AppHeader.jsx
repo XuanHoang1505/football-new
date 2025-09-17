@@ -59,7 +59,7 @@ const AppHeader = () => {
         </CHeaderToggler>
         <CHeaderNav className="d-none d-md-flex">
           <CNavItem>
-            <CNavLink to="/dashboard" as={NavLink}>
+            <CNavLink to="/admin" as={NavLink}>
               Bảng điều khiển
             </CNavLink>
           </CNavItem>

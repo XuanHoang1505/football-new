@@ -3,6 +3,7 @@ using footballnew.DTOs;
 using footballnew.Models;
 using footballnew.Repositories.Interfaces;
 using footballnew.Services.Interfaces;
+using footballnew.Utils.Exceptions;
 
 namespace footballnew.Services.Implementations
 {
@@ -23,16 +24,22 @@ namespace footballnew.Services.Implementations
             return _mapper.Map<IEnumerable<ArticleListDTO>>(articles);
         }
 
-        public async Task<ArticleDetailDTO?> GetByIdAsync(int id)
+        public async Task<ArticleDetailDTO> GetByIdAsync(int id)
         {
             var article = await _repository.GetByIdAsync(id);
-            return article == null ? null : _mapper.Map<ArticleDetailDTO>(article);
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
+
+            return _mapper.Map<ArticleDetailDTO>(article);
         }
 
-        public async Task<ArticleDetailDTO?> GetBySlugAsync(string slug)
+        public async Task<ArticleDetailDTO> GetBySlugAsync(string slug)
         {
             var article = await _repository.GetBySlugAsync(slug);
-            return article == null ? null : _mapper.Map<ArticleDetailDTO>(article);
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
+
+            return _mapper.Map<ArticleDetailDTO>(article);
         }
 
         public async Task<ArticleDetailDTO> CreateAsync(ArticleDetailDTO dto)
@@ -45,7 +52,8 @@ namespace footballnew.Services.Implementations
         public async Task<bool> UpdateAsync(int id, ArticleDetailDTO dto)
         {
             var article = await _repository.GetByIdAsync(id);
-            if (article == null) return false;
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
 
             _mapper.Map(dto, article);
             await _repository.UpdateAsync(article);
@@ -55,7 +63,8 @@ namespace footballnew.Services.Implementations
         public async Task<bool> DeleteAsync(int id)
         {
             var article = await _repository.GetByIdAsync(id);
-            if (article == null) return false;
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
 
             await _repository.DeleteAsync(id);
             return true;
@@ -74,6 +83,10 @@ namespace footballnew.Services.Implementations
 
         public async Task IncrementViewCountAsync(int id, string? userId = null)
         {
+            var article = await _repository.GetByIdAsync(id);
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
+
             await _repository.IncrementViewCountAsync(id);
             if (!string.IsNullOrEmpty(userId))
             {
@@ -83,11 +96,19 @@ namespace footballnew.Services.Implementations
 
         public async Task IncrementShareCountAsync(int id)
         {
+            var article = await _repository.GetByIdAsync(id);
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
+
             await _repository.IncrementShareCountAsync(id);
         }
 
         public async Task IncrementCommentCountAsync(int id)
         {
+            var article = await _repository.GetByIdAsync(id);
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
+
             await _repository.IncrementCommentCountAsync(id);
         }
 
@@ -124,7 +145,6 @@ namespace footballnew.Services.Implementations
 
             return dtoList;
         }
-
 
         public async Task<IEnumerable<ArticleHistoryDTO>> GetArticlesViewedByUserAsync(string userId)
         {

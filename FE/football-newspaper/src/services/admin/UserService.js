@@ -16,7 +16,7 @@ const getUsers = async () => {
   try {
     const response = await axiosInstance.get(API_URL);
     const users = response.data;
-    return users.map((user) => ({
+    return users.map((user) => ({ 
       ...user,
       birthDate: formatDateTimeToDMY(user.birthDate),
       registeredDate: formatDateTimeToDMY(user.registeredDate),

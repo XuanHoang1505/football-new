@@ -4,6 +4,7 @@ import { PlayerService } from "../../../../services/site/PlayerService";
 import styles from "./PlayerTransfers.module.scss";
 import footballLogo from "../../../../assets/site/images/footballLogo.png";
 import { Helmet } from "react-helmet-async";
+import { Spinner } from "react-bootstrap";
 
 function PlayerTransfers() {
   const { playerId } = useParams();
@@ -71,7 +72,9 @@ function PlayerTransfers() {
         <i className="bi bi-chevron-right fs-4 text-primary fw-bold"></i>
 
         {loading ? (
-          <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+          <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+            <Spinner animation="border" className="text-primary" />
+          </div>
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.transfersTable}>

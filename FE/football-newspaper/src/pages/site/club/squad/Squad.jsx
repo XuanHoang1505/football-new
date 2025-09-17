@@ -5,6 +5,7 @@ import { ClubService } from "../../../../services/site/ClubService";
 
 import styles from "./Squad.module.scss";
 import { Helmet } from "react-helmet-async";
+import { Spinner } from "react-bootstrap";
 
 function Squad() {
   const currentYear = new Date().getFullYear();
@@ -12,7 +13,7 @@ function Squad() {
 
   const [clubData, setClubData] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   const club = clubMenu.find((c) => c.code === clubCode);
   // Rule mapping: gom các vị trí chi tiết -> nhóm chính
   const positionMapping = {
@@ -81,7 +82,11 @@ function Squad() {
   }, [clubCode]);
 
   if (loading) {
-    return <p className="mt-3">⏳ Đang tải dữ liệu...</p>;
+    return (
+      <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+        <Spinner animation="border" className="text-primary" />
+      </div>
+    );
   }
 
   if (!clubData) {
@@ -93,7 +98,9 @@ function Squad() {
   return (
     <>
       <Helmet>
-        <title>{`Đội hình, danh sách cầu thủ của ${club.name} mùa giải  ${currentYear}/${currentYear+1} | Thể Thao 247`}</title>
+        <title>{`Đội hình, danh sách cầu thủ của ${
+          club.name
+        } mùa giải  ${currentYear}/${currentYear + 1} | Thể Thao 247`}</title>
       </Helmet>
       <div className="mt-3">
         {/* Tiêu đề */}

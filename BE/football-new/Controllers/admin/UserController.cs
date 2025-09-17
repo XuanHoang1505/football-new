@@ -96,6 +96,7 @@ namespace footballnew.Controllers.admin
 
                 var updatedUser = await _userRepository.UpdateUserAsync(id, userDto);
 
+
                 return Ok(updatedUser);
             }
             catch (AppException ex)

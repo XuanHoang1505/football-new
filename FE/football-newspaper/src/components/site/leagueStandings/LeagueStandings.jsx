@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./LeagueStandings.module.scss";
 import { FootballService } from "../../../services/site/FootballService";
+import { Spinner } from "react-bootstrap";
 
 function LeagueStandings({ leagueCode, isFullWidth = true }) {
   const [standingsData, setStandingsData] = useState([]);
@@ -67,7 +68,9 @@ function LeagueStandings({ leagueCode, isFullWidth = true }) {
   return (
     <>
       {loading ? (
-        <p className="mt-3">⏳ Đang tải dữ liệu...</p>
+        <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+          <Spinner animation="border" className="text-primary" />
+        </div>
       ) : (
         <>
           <div className={styles.tableWrapper}>

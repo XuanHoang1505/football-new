@@ -16,6 +16,7 @@ using footballnew.Models;
 using footballnew.Configurations;
 using footballnew.Repositories.Interfaces;
 using footballnew.Repositories.Implementations;
+using footballnew.Utils.Exceptions;
 
 
 
@@ -173,13 +174,15 @@ if (app.Environment.IsDevelopment())
 }
 
 
+app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 // Thêm Authentication Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
 app.MapControllers();
 
 

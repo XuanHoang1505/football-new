@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 
 import styles from "./Summary.module.scss";
 import { Helmet } from "react-helmet-async";
+import { Spinner } from "react-bootstrap";
 
 function Summary() {
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,12 @@ function Summary() {
     fetchMatches();
   }, [clubCode]);
 
-  if (loading) return <p>Đang tải...</p>;
+  if (loading)
+    return (
+      <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+        <Spinner animation="border" className="text-primary" />
+      </div>
+    );
 
   return (
     <>

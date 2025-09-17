@@ -5,9 +5,10 @@ using footballnew.Enums;
 using footballnew.Repositories.Interfaces;
 using footballnew.Services.Interfaces;
 using footballnew.Utils;
+using footballnew.Utils.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using System.Net;
 using System.Security.Claims;
 
 namespace footballnew.Repositories.Implementations
@@ -51,7 +52,6 @@ namespace footballnew.Repositories.Implementations
                 userDto.Role = await GetUserRoleAsync(user);
                 userDtos.Add(userDto);
             }
-
             return userDtos;
         }
 
@@ -99,16 +99,20 @@ namespace footballnew.Repositories.Implementations
         public async Task<UserDTO> UpdateUserAsync(string userId, UserDTO userDto)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return null;
+            if (user == null)
+                throw new AppException(ErrorCode.UserNotFound, "Người dùng không tồn tại!");
 
             // Kiểm tra email mới đã tồn tại chưa (trừ user hiện tại)
             if (userDto.Email != user.Email && await IsEmailExistsForUpdateAsync(userDto.Email, userId))
-                return null;
+                throw new AppException(ErrorCode.EmailAlreadyExists, "Email đã tồn tại!");
 
             // Kiểm tra số điện thoại mới đã tồn tại chưa
-            if (userDto.PhoneNumber != user.PhoneNumber && await IsPhoneNumberExistsAsync(userDto.PhoneNumber))
-                return null;
-
+            if (!string.IsNullOrWhiteSpace(userDto.PhoneNumber) &&
+                userDto.PhoneNumber != user.PhoneNumber &&
+                await IsPhoneNumberExistsAsync(userDto.PhoneNumber))
+            {
+                throw new AppException(ErrorCode.PhoneNumberAlreadyExists, "Số điện thoại đã tồn tại!");
+            }
             // Nếu email bị thay đổi thì lưu lại email cũ để gửi thông báo
             bool isEmailChanged = userDto.Email != user.Email;
             string oldEmail = user.Email;
@@ -139,7 +143,6 @@ namespace footballnew.Repositories.Implementations
                 }
             }
 
-            // Trả về DTO đã cập nhật
             var updatedDto = _mapper.Map<UserDTO>(user);
             updatedDto.Role = await GetUserRoleAsync(user);
             return updatedDto;
@@ -213,7 +216,11 @@ namespace footballnew.Repositories.Implementations
         public async Task<LoginResponse> LoginUserAsync(LoginDTO loginDTO)
         {
             var user = await _userManager.FindByNameAsync(loginDTO.UserName);
-            if (user == null) return new LoginResponse { AccessToken = null };
+            if (user == null)
+                return new LoginResponse { AccessToken = null };
+
+            if (user.Status == UserStatus.DISABLED)
+                throw new AppException(ErrorCode.AccountLocked, "Tài khoản này đã bị khóa.");
 
             var result = await _signInManager.PasswordSignInAsync(user, loginDTO.Password, false, false);
             if (result.Succeeded)
