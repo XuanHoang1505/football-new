@@ -47,6 +47,9 @@ namespace footballnew.Mappings
                             opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Name : null))
                 .ForMember(dest => dest.ParentSlug,
                             opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Slug : null));
+
+            CreateMap<CategoryDTO, Category>();
+
             CreateMap<CategoryDTO, Category>()
                 .ForMember(dest => dest.Parent, opt => opt.Ignore());
 

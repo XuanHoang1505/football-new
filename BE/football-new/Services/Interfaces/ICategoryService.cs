@@ -8,7 +8,7 @@ namespace footballnew.Services.Interfaces
         Task<CategoryDTO?> GetBySlugAsync(string slug);
         Task<IEnumerable<CategoryDTO>> GetAllAsync();
         Task<CategoryDTO> CreateAsync(CategoryDTO dto);
-        Task<bool> UpdateAsync(int id, CategoryDTO dto);
+        Task<CategoryDTO> UpdateAsync(int id, CategoryDTO dto);
         Task<bool> DeleteAsync(int id);
 
         Task<IEnumerable<ArticleListDTO>> GetArticlesByCategorySlugAsync(string slug);

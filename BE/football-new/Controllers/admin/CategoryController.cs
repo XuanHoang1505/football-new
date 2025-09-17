@@ -2,10 +2,10 @@ using footballnew.DTOs;
 using footballnew.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace footballnew.Controllers
+namespace footballnew.Controllers.admin
 {
     [ApiController]
-    [Route("api/categories")]
+    [Route("api/admin/categories")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _service;
@@ -47,7 +47,9 @@ namespace footballnew.Controllers
         public async Task<IActionResult> Update(int id, CategoryDTO dto)
         {
             var updated = await _service.UpdateAsync(id, dto);
-            return updated ? NoContent() : NotFound();
+            if (updated == null) return NotFound();
+
+            return Ok(updated);
         }
 
         [HttpDelete("{id}")]

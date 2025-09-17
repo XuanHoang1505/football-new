@@ -1,2 +1,3 @@
 import Dashboard from "./dashboard/Dashboard";
-export { Dashboard };
+import CategoryManagement from "./category/CategoryManagement";
+export { Dashboard, CategoryManagement };

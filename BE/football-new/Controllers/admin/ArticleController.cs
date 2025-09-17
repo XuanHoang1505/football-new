@@ -2,10 +2,10 @@ using footballnew.DTOs;
 using footballnew.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace footballnew.Controllers.site
+namespace footballnew.Controllers.admin
 {
     [ApiController]
-    [Route("api/articles")]
+    [Route("api/admin/articles")]
     public class ArticleController : ControllerBase
     {
         private readonly IArticleService _service;

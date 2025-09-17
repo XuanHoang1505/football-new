@@ -1,7 +1,7 @@
 import axiosInstance from "../../config/axiosInstance";
 import handleErrorResponse from "../../utils/errors/ErrorHandler";
 
-const API_URL = "/articles";
+const API_URL = "/admin/articles";
 
 // Lấy tất cả articles
 const getArticles = async () => {

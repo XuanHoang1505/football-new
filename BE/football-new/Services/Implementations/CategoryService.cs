@@ -39,18 +39,40 @@ namespace footballnew.Services.Implementations
         {
             var entity = _mapper.Map<Category>(dto);
             var created = await _repository.AddAsync(entity);
-            return _mapper.Map<CategoryDTO>(created);
+
+            var dtoResult = _mapper.Map<CategoryDTO>(created);
+
+            if (created.ParentId.HasValue)
+            {
+                var parent = await _repository.GetByIdAsync(created.ParentId.Value);
+                dtoResult.ParentName = parent?.Name;
+                dtoResult.ParentSlug = parent?.Slug;
+            }
+
+            return dtoResult;
         }
 
-        public async Task<bool> UpdateAsync(int id, CategoryDTO dto)
+        public async Task<CategoryDTO?> UpdateAsync(int id, CategoryDTO dto)
         {
             var existing = await _repository.GetByIdAsync(id);
-            if (existing == null) return false;
+            if (existing == null) return null;
 
             _mapper.Map(dto, existing);
             await _repository.UpdateAsync(existing);
-            return true;
+
+            var dtoResult = _mapper.Map<CategoryDTO>(existing);
+
+            if (existing.ParentId.HasValue)
+            {
+                var parent = await _repository.GetByIdAsync(existing.ParentId.Value);
+                dtoResult.ParentName = parent?.Name;
+                dtoResult.ParentSlug = parent?.Slug;
+            }
+
+            return dtoResult;
         }
+
+
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -73,7 +95,7 @@ namespace footballnew.Services.Implementations
                 DatePublished = a.DatePublished,
                 AuthorName = a.Author?.UserName ?? "Unknown",
                 ImageUrl = a.Images.FirstOrDefault(i => i.IsMain)?.Url
-                
+
             }).ToList();
         }
     }
