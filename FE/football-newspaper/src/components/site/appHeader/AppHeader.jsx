@@ -8,7 +8,9 @@ import { Dropdown } from "react-bootstrap";
 
 import { useNavigate } from "react-router-dom";
 
-import { FaHome } from 'react-icons/fa';
+import { FaHome } from "react-icons/fa";
+
+import { UserSwitchOutlined } from "@ant-design/icons"
 
 import { UserContext } from "../../../contexts/UserContext";
 import {
@@ -277,7 +279,7 @@ const AppHeader = () => {
                   {user.role !== "USER" && (
                     <Dropdown.Item onClick={() => navigate("/admin")}>
                       <div className={styles.dropdown_item}>
-                        <i className="bi bi-speedometer2 me-2"></i>
+                        <UserSwitchOutlined className="me-2"/>
                         Chuyển sang quản lý
                       </div>
                     </Dropdown.Item>
@@ -363,7 +365,7 @@ const AppHeader = () => {
               style={{ cursor: "pointer" }}
               onClick={() => navigate("/")}
             ></FaHome>
-            
+
             {menuItems.map((item, idx) => {
               if (item.subMenu) {
                 return (

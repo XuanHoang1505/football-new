@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { toast } from "react-toastify";
+import { UserSwitchOutlined } from "@ant-design/icons"
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   CBadge,
@@ -48,26 +49,30 @@ const AppHeaderDropdown = () => {
         />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">
+        <CDropdownHeader className="bg-body-secondary fw-semibold mb-2" style={{ minWidth: "200px", fontSize: "15px" }}>
           Account
         </CDropdownHeader>
 
-        <CDropdownItem as={NavLink} to="/admin/myProfile">
+        <CDropdownItem as={NavLink} to="/admin/myProfile" className="py-2" style={{fontSize: "15px"}}>
           <CIcon icon={cilUser} className="me-2" />
           Profile
         </CDropdownItem>
-        <CDropdownItem href="#">
+        <CDropdownItem as={NavLink} to="/" className="py-2" style={{fontSize: "15px"}}>
+          <UserSwitchOutlined className="me-2"/>
+          Cilent
+        </CDropdownItem>
+        <CDropdownItem href="#" className="py-2" style={{fontSize: "15px"}}>
           <CIcon icon={cilSettings} className="me-2" />
           Settings
         </CDropdownItem>
-        <CDropdownItem href="#">
+        <CDropdownItem href="#" className="py-2" style={{fontSize: "15px"}}>
           <CIcon icon={cilCreditCard} className="me-2" />
           Payments
           <CBadge color="secondary" className="ms-2">
             42
           </CBadge>
         </CDropdownItem>
-        <CDropdownItem href="#">
+        <CDropdownItem href="#" className="py-2" style={{fontSize: "15px"}}>
           <CIcon icon={cilFile} className="me-2" />
           Projects
           <CBadge color="primary" className="ms-2">
@@ -75,7 +80,7 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem onClick={handleLogout} style={{ cursor: "pointer" }}>
+        <CDropdownItem onClick={handleLogout} className="py-2" style={{ cursor: "pointer", fontSize:"15px" }}>
           <CIcon icon={cilAccountLogout} className="me-2" />
           Log out
         </CDropdownItem>

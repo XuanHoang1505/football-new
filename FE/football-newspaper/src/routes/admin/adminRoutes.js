@@ -11,7 +11,7 @@ import {
   // MovieSlideManagement,
   // VipTypeManagement,
   // VipManagement,
-  // MyProfile,
+  MyProfile,
 } from "../../pages/admin";
 
 const routes = [
@@ -27,12 +27,12 @@ const routes = [
   // { path: "movieSlides", name: "Slide", element: MovieSlideManagement },
   // { path: "reviews", name: "Đánh giá", element: ReviewManagement },
   // { path: "genres", name: "Thể loại", element: GenreManagement },
-  { path: "/admin/category", name: "Danh mục", element: CategoryManagement },
+  { path: "category", name: "Danh mục", element: CategoryManagement },
   { path: "user", name: "Người dùng", element: UserManagement },
   // { path: "actors", name: "Diễn viên", element: ActorManagement },
   // { path: "vips/vipTypes", name: "Loại VIP", element: VipTypeManagement },
   // { path: "vips/vipMembers", name: "Thành viên VIP", element: VipManagement },
-  // { path: "myProfile", name: "Hồ sơ của tôi", element: MyProfile },
+  { path: "myProfile", name: "Hồ sơ của tôi", element: MyProfile },
 ];
 
 export default routes;
