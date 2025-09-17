@@ -1,5 +1,6 @@
 using footballnew.DTOs;
 using footballnew.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace footballnew.Controllers.admin
@@ -37,6 +38,7 @@ namespace footballnew.Controllers.admin
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Create(CategoryDTO dto)
         {
             var created = await _service.CreateAsync(dto);
@@ -44,6 +46,7 @@ namespace footballnew.Controllers.admin
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Update(int id, CategoryDTO dto)
         {
             var updated = await _service.UpdateAsync(id, dto);
@@ -53,6 +56,7 @@ namespace footballnew.Controllers.admin
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _service.DeleteAsync(id);
