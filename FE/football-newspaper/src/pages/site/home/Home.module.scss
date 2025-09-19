@@ -51,7 +51,7 @@
 
 .mainNewsContent {
   background: #f1f1f1;
-  padding: 15px ;
+  padding: 15px;
 
   .category {
     background: url(https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1) -50px -864px
@@ -155,6 +155,173 @@
     font-weight: 600;
     &:hover {
       color: rgb(176, 18, 18);
+    }
+  }
+}
+
+.caption {
+  border-bottom: 1px solid #000;
+
+  a {
+    background: #1a4599
+      url("https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1") right -855px
+      no-repeat;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 4px 8px;
+    width: fit-content;
+  }
+}
+
+.boxList {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  gap: 10px; /* khoảng cách giữa ảnh và chữ */
+}
+
+.thumb {
+  flex-shrink: 0; /* giữ cố định kích thước */
+  width: 125px;
+  transition: all 0.3s ease;
+}
+
+.thumb img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.content {
+  flex: 1; /* chiếm toàn bộ phần còn lại */
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  color: #000;
+}
+
+.title:hover {
+  color: #b22222;
+}
+// .viewAll {
+//   font-size: 10px;
+//   margin-right: 10px;
+//   margin-top: 4px;
+//   text-transform: uppercase;
+
+//   &:hover {
+//     text-decoration: underline;
+//   }
+// }
+
+.box_trending {
+  margin-bottom: 15px;
+
+  .caption_2 {
+    position: relative;
+    margin-bottom: 15px;
+    display: block;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 120px;
+      right: 0;
+      border-bottom: 2px solid #f40000;
+      bottom: 13px;
+    }
+
+    .trending_title {
+      font-weight: 700;
+      font-size: 20px;
+      color: #f40000;
+      position: relative;
+      text-transform: uppercase;
+      display: inline-block;
+      padding-right: 5px;
+    }
+  }
+  .content {
+    padding: 20px 0;
+    text-align: center;
+    background: #f7f7f7;
+  }
+
+  .trending_tag_7 {
+    margin: 0 10px 10px 0;
+    color: #0f408b;
+    font-weight: normal;
+    font-size: 30px;
+  }
+  .trending_tag_6 {
+    margin: 0 10px 10px 0;
+    font-weight: normal;
+    color: #0070bb;
+    font-size: 24px;
+  }
+  .trending_tag_4 {
+    margin: 0 10px 10px 0;
+    font-weight: normal;
+    color: #ea7a7c;
+    font-size: 29px;
+  }
+  .trending_tag_3 {
+    color: #0769b4;
+  }
+}
+.boxListLatest {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+
+  .thumb {
+    flex: 0 0 196px;
+    transition: all 0.3s ease;
+
+    img {
+      object-fit: cover;
+    }
+
+    @media (max-width: 900px) {
+      flex: 0 0 125px;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: #000;
+
+    &:hover {
+      color: #b22222; // màu đỏ đậm khi hover title
+    }
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+    @media (max-width: 680px) {
+      font-size: 15px;
+    }
+  }
+
+  .summary {
+    font-size: 14px;
+    color: #666;
+    margin-top: 6px;
+
+    @media (max-width: 680px) {
+      display: none;
     }
   }
 }
