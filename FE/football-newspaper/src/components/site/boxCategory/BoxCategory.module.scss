@@ -1,0 +1,37 @@
+
+.caption {
+  border-bottom: 1px solid #000;
+
+  a {
+    background: #1a4599
+      url("https://cdn-img.thethao247.vn/frontend/images/bg-min.svg?v=1") right -855px
+      no-repeat;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 4px 8px;
+    width: fit-content;
+  }
+}
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  color: #000;
+}
+
+.title:hover {
+  color: #b22222;
+}
+.viewAll {
+  font-size: 10px;
+  margin-right: 10px;
+  margin-top: 4px;
+  text-transform: uppercase;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -185,3 +185,71 @@ export const playerTabs = [
   { key: "career", path: "career", label: "SỰ NGHIỆP" },
   { key: "transfers", path: "transfers", label: "CHUYỂN NHƯỢNG" },
 ];
+
+export const footerData = [
+  {
+    title: "Tiện ích bóng đá",
+    links: [
+      { name: "Lịch thi đấu bóng đá", url: "/football/PL/" },
+      { name: "Kết quả bóng đá", url: "football/PL/results" },
+      { name: "Nhận định bóng đá", url: "/" },
+      { name: "Tỷ số bóng đá", url: "/" },
+      { name: "Trực tiếp bóng đá", url: "/" },
+      { name: "Chuyển nhượng bóng đá", url: "/category/chuyen-nhuong" },
+      { name: "Video thể thao", url: "/" },
+    ],
+  },
+  {
+    title: "Giải đấu nổi bật",
+    links: [
+      { name: "Ngoại hạng Anh", url: "/football/PL/" },
+      { name: "Cúp C1", url: "/football/CL" },
+      { name: "La Liga", url: "/football/PD" },
+      { name: "Serie A", url: "/football/SA" },
+      { name: "Bundesliga", url: "/football/BL" },
+      { name: "V League", url: "/" },
+      { name: "World Cup", url: "/" },
+      { name: "Euro", url: "/" },
+      { name: "Asian Cup", url: "/" },
+      { name: "Cúp C2", url: "/" },
+      { name: "SEA Games", url: "/" },
+      { name: "AFF Cup", url: "/" },
+      { name: "Bóng đá Việt Nam", url: "/" },
+    ],
+  },
+  {
+    title: "Bảng xếp hạng bóng đá",
+    links: [
+      { name: "BXH Ngoại hạng Anh", url: "/" },
+      { name: "BXH La Liga", url: "/" },
+      { name: "BXH Ý", url: "/" },
+      { name: "BXH Cúp C1", url: "/" },
+      { name: "BXH Cúp C2", url: "/" },
+      { name: "BXH Đức", url: "/" },
+      { name: "BXH Pháp", url: "/" },
+      { name: "BXH V League", url: "/" },
+    ],
+  },
+  {
+    title: "Kết quả bóng đá",
+    links: [
+      { name: "Kết quả Cúp C1", url: "/" },
+      { name: "Kết quả Ngoại hạng Anh", url: "/" },
+      { name: "Kết quả bóng đá Ý", url: "/" },
+      { name: "Kết quả bóng đá Tây Ban Nha", url: "/" },
+      { name: "Kết quả bóng đá Đức", url: "/" },
+      { name: "Kết quả bóng đá Pháp", url: "/" },
+      { name: "Kết quả Cúp C2", url: "/" },
+    ],
+    extra: {
+      title: "Thể thao tổng hợp",
+      links: [
+        { name: "Bóng chuyền", url: "/" },
+        { name: "Quần vợt", url: "/" },
+        { name: "Esports", url: "/" },
+        { name: "Xe cộ", url: "/" },
+        { name: "Võ", url: "/" },
+      ],
+    },
+  },
+];

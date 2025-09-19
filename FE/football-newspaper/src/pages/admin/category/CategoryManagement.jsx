@@ -253,7 +253,7 @@ const CategoryManagement = () => {
   return (
     <>
       <Helmet>
-        <title>Quản lý danh mục - Star Movie</title>
+        <title>Quản lý danh mục - Thể Thao 247</title>
       </Helmet>
       {loadingPage ? (
         <div className="w-100 h-100 d-flex justify-content-center align-items-center">

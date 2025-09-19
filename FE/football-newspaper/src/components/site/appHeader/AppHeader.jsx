@@ -110,10 +110,10 @@ const AppHeader = () => {
     },
     {
       label: "bóng đá việt nam",
-      path: "/bong-da-vn",
+      path: "/category/bong-da-viet-nam",
       subMenu: [
-        { label: "Đội tuyển Quốc gia", path: "/bong-da-vn/dtqg" },
-        { label: "V-League", path: "/bong-da-vn/vleague" },
+        { label: "Đội tuyển Quốc gia", path: "category/doi-tuyen-quoc-gia" },
+        { label: "V-League", path: "/" },
         { label: "Bóng đá nữ", path: "/bong-da-vn/bdn" },
         { label: "U17 châu Á", path: "/bong-da-vn/bdn" },
         { label: "Bóng đá trẻ", path: "/bong-da-vn/bdn" },
@@ -134,7 +134,7 @@ const AppHeader = () => {
       background: "#9F234E",
     },
     { label: "nhận định", path: "/nhan-dinh" },
-    { label: "chuyển nhượng", path: "/chuyen-nhuong" },
+    { label: "chuyển nhượng", path: "/category/chuyen-nhuong" },
     { label: "thể thao", path: "/the-thao" },
     { label: "bóng chuyền", path: "/bong-chuyen" },
     { label: "pickleball", path: "/pickleball" },

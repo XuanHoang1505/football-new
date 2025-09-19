@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import { Figure, Spinner } from "react-bootstrap";
+import { Button, Figure, Spinner } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
 
@@ -9,10 +9,15 @@ import AppRank from "../../../components/site/appRank/AppRank";
 import AppMatches from "../../../components/site/appMatches/AppMatches";
 import ArticleService from "../../../services/admin/ArticleService";
 import { clubMenu } from "../../../data/MenuData";
+import BoxCategory from "../../../components/site/boxCategory/BoxCategory";
 
 const Home = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [vietnamArticles, setVietnamArticles] = useState([]);
+  const [nationalArticles, setNationalArticles] = useState([]);
+  const [transferArticles, setTransferArticles] = useState([]);
+  const [internationalArticles, setInternationalArticles] = useState([]);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -22,6 +27,19 @@ const Home = () => {
           (a, b) => new Date(b.datePublished) - new Date(a.datePublished)
         );
         setArticles(sorted);
+
+        setVietnamArticles(
+          sorted.filter((a) => a.categoryName === "Bóng đá Việt Nam")
+        );
+        setNationalArticles(
+          sorted.filter((a) => a.categoryName === "Đội tuyển quốc gia")
+        );
+        setTransferArticles(
+          sorted.filter((a) => a.categoryName === "Chuyển nhượng")
+        );
+        setInternationalArticles(
+          sorted.filter((a) => a.categoryName === "Bóng đá quốc tế")
+        );
       } catch (error) {
         console.error("Lỗi khi fetch articles", error);
       } finally {
@@ -40,13 +58,10 @@ const Home = () => {
     );
   }
 
-  if (articles.length === 0) {
-    return <div className="text-center p-5">Không có bài viết nào</div>;
-  }
-
   const mainNews = articles[0];
   const subNews = articles.slice(1, 4);
   const sideNews = articles.slice(4, 14);
+  const latestNews = articles.slice(11, 30);
 
   return (
     <>
@@ -113,11 +128,14 @@ const Home = () => {
               </div>
 
               {/* Side news */}
-              <div className="col-lg-3 col-md-6 col-12 mt-3 mt-lg-0 ps-sm-4 p-lg-0" >
+              <div className="col-lg-3 col-md-6 col-12 mt-3 mt-lg-0 ps-sm-4 p-lg-0">
                 <h3 className="text-danger text-uppercase border-bottom fw-bold mb-3">
                   Tin hot
                 </h3>
-                <ul className={styles.sideNews} style={{maxHeight: "630px", overflowY: "auto"}}>
+                <ul
+                  className={styles.sideNews}
+                  style={{ maxHeight: "630px", overflowY: "auto" }}
+                >
                   {sideNews.map((news, index) => (
                     <li key={index}>
                       <NavLink to={`/news/${news.slug}`} title={news.title}>
@@ -171,10 +189,183 @@ const Home = () => {
         <div className="row">
           <div className="col-lg-8 col-12 mb-3 mb-lg-0 ps-0">
             <AppMatches />
+            <div className="row mt-3">
+              <div className="col-12 col-lg-6">
+                <div className={styles.caption}>
+                  <Link
+                    className="text-light text-uppercase ps-2"
+                    style={{ fontSize: "15px" }}
+                    to={`/latest`}
+                  >
+                    Latest
+                  </Link>
+                </div>
+                {latestNews.map((news, index) => (
+                  <div className={styles.boxList} key={index}>
+                    <Link
+                      to={`/news/${news.slug}`}
+                      className={`${styles.thumb} me-3`}
+                    >
+                      <img
+                        src={news.imageUrl}
+                        alt={news.title}
+                        className="w-100 h-auto"
+                      />
+                    </Link>
+
+                    <div className={styles.content}>
+                      <Link to={`/news/${news.slug}`} className={styles.title}>
+                        {news.title.length > 90
+                          ? `${news.title.slice(0, 90)}...`
+                          : news.title}
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="col-12 col-lg-6">
+                {/* Bóng đá Việt Nam */}
+                <BoxCategory
+                  articles={vietnamArticles}
+                  name={"Bóng đá Việt Nam"}
+                  path={`/category/bong-da-viet-nam`}
+                />
+                <div className={styles.box_trending}>
+                  <div className={styles.caption_2}>
+                    <h2>
+                      <Link className={styles.trending_title} to={""}>
+                        # Trending
+                      </Link>
+                    </h2>
+                  </div>
+                  <div className={styles.content}>
+                    <p className="d-flex flex-column">
+                      <Link
+                        className={styles.trending_tag_6}
+                        title="Bóng đá Việt Nam"
+                        to={"/category/bong-da-viet-nam"}
+                      >
+                        Bóng đá Việt Nam
+                      </Link>
+                      <Link
+                        className={styles.trending_tag_4}
+                        title="V-League"
+                        to={""}
+                      >
+                        V-League
+                      </Link>
+                      <Link
+                        className={styles.trending_tag_6}
+                        title="Đội tuyển quốc gia"
+                        to={"/category/doi-tuyen-quoc-gia"}
+                      >
+                        Đội tuyển quốc gia
+                      </Link>
+                    </p>
+                  </div>
+                </div>
+                <BoxCategory
+                  articles={transferArticles}
+                  name={"Chuyển nhượng"}
+                  path={`/category/chuyen-nhuong`}
+                />
+                <div className={styles.box_trending}>
+                  <div className={styles.caption_2}>
+                    <h2>
+                      <Link className={styles.trending_title} to={""}>
+                        # Trending
+                      </Link>
+                    </h2>
+                  </div>
+                  <div className={styles.content}>
+                    <p className="d-flex flex-column">
+                      <Link
+                        className={styles.trending_tag_7}
+                        title="Tin chuyển nhượng"
+                        to={"/category/chuyen-nhuong"}
+                      >
+                        Tin chuyển nhượng
+                      </Link>
+                      <Link
+                        className={styles.trending_tag_4}
+                        title="category/ngoai-hang-anh"
+                        to={""}
+                      >
+                        Bóng đá anh
+                      </Link>
+                      <Link
+                        className={styles.trending_tag_7}
+                        title="Đội tuyển quốc gia"
+                        to={"/category/bong-da-quoc-te"}
+                      >
+                        Cúp C1
+                      </Link>
+                      <Link
+                        className={styles.trending_tag_3}
+                        title="Europa league"
+                        to={""}
+                      >
+                        Europa league
+                      </Link>
+                    </p>
+                  </div>
+                </div>
+                <BoxCategory
+                  articles={nationalArticles}
+                  name={"Đội tuyển quốc gia"}
+                  path={`/category/doi-tuyen-quoc-gia`}
+                />
+                <BoxCategory
+                  articles={internationalArticles}
+                  name={"Bóng đá quốc tế"}
+                  path={`/category/bong-da-quoc-te`}
+                />
+              </div>
+            </div>
           </div>
           <div className="col-lg-4 col-12 p-0">
             <AppRank />
           </div>
+        </div>
+        <div className="row">
+          {/* Mới nhất */}
+          <div className="col-md-8 p-0">
+            <div className="mt-4">
+              <div className={`${styles.caption} mb-3`}>
+                <Link
+                  className="text-light text-uppercase ps-2"
+                  style={{ fontSize: "15px" }}
+                  to={``}
+                >
+                  Latest
+                </Link>
+              </div>
+              {articles.slice(4).map((news, index) => (
+                <div className={styles.boxListLatest} key={index}>
+                  <Link
+                    to={`/news/${news.slug}`}
+                    className={`${styles.thumb} me-3`}
+                  >
+                    <img
+                      src={news.imageUrl}
+                      alt={news.title}
+                      className="w-100 h-auto"
+                    />
+                  </Link>
+                  <div style={{ flex: "1" }}>
+                    <Link to={`/news/${news.slug}`} className={styles.title}>
+                      {news.title}
+                    </Link>
+                    <p className={styles.summary}>{news.summary}</p>
+                  </div>
+                </div>
+              ))}
+              <Button size="lg" variant="outline-secondary" className="w-100">
+                Xem thêm{" "}
+              </Button>
+            </div>
+          </div>
+          <div className="col-4"></div>
         </div>
       </div>
     </>
