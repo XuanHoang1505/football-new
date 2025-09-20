@@ -113,6 +113,7 @@ export const clubMenu = [
     logo: "https://mediares.thethao247.vn/res/image/data/nwSRlyWg-h2pPXz3k.png",
     url: "manchester-united/",
     code: "manchester-united",
+    leagueCode: "PL", // Premier League
   },
   {
     id: 64,
@@ -121,6 +122,7 @@ export const clubMenu = [
     logo: "https://mediares.thethao247.vn/res/image/data/Gr0cGteM-KCp4zq5F.png",
     url: "liverpool/",
     code: "liverpool",
+    leagueCode: "PL",
   },
   {
     id: 57,
@@ -129,6 +131,7 @@ export const clubMenu = [
     logo: "https://mediares.thethao247.vn/res/image/data/pfchdCg5-vcNAdtF9.png",
     url: "arsenal/",
     code: "arsenal",
+    leagueCode: "PL",
   },
   {
     id: 65,
@@ -137,6 +140,7 @@ export const clubMenu = [
     logo: "https://mediares.thethao247.vn/res/image/data/UXcqj7HG-lQuhqN8N.png",
     url: "manchester-city/",
     code: "manchester-city",
+    leagueCode: "PL",
   },
   {
     id: 61,
@@ -145,6 +149,7 @@ export const clubMenu = [
     logo: "https://mediares.thethao247.vn/res/image/data/GMmvDEdM-IROrZEJb.png",
     url: "chelsea/",
     code: "chelsea",
+    leagueCode: "PL",
   },
   {
     id: 81,
@@ -153,6 +158,7 @@ export const clubMenu = [
     logo: "https://mediares.thethao247.vn/res/image/data/8dhw5vxS-fcDVLdrL.png",
     url: "barcelona/",
     code: "barcelona",
+    leagueCode: "PD", // La Liga (Primera División)
   },
   {
     id: 86,
@@ -161,8 +167,10 @@ export const clubMenu = [
     logo: "https://mediares.thethao247.vn/res/image/data/A7kHoxZA-fcDVLdrL.png",
     url: "real-madrid/",
     code: "real-madrid",
+    leagueCode: "PD",
   },
 ];
+
 
 
 export const leagueTabs = [
