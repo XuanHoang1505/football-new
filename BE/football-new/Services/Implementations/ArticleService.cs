@@ -1,5 +1,6 @@
 using AutoMapper;
 using footballnew.DTOs;
+using footballnew.Enums;
 using footballnew.Models;
 using footballnew.Repositories.Interfaces;
 using footballnew.Services.Interfaces;
@@ -73,7 +74,7 @@ namespace footballnew.Services.Implementations
         public async Task<(IEnumerable<ArticleListDTO> Articles, int TotalCount)> GetPagedAsync(
             int pageIndex, int pageSize,
             string? search = null,
-            string? status = null,
+            ArticleStatus? status = null,
             string? category = null,
             string? tag = null)
         {
@@ -112,7 +113,7 @@ namespace footballnew.Services.Implementations
             await _repository.IncrementCommentCountAsync(id);
         }
 
-        public async Task<IEnumerable<ArticleListDTO>> GetByStatusAsync(string status)
+        public async Task<IEnumerable<ArticleListDTO>> GetByStatusAsync(ArticleStatus status)
         {
             var articles = await _repository.GetByStatusAsync(status);
             return _mapper.Map<IEnumerable<ArticleListDTO>>(articles);
@@ -139,7 +140,7 @@ namespace footballnew.Services.Implementations
             foreach (var article in articles)
             {
                 var dto = _mapper.Map<ArticleListDTO>(article);
-                dto.timeAgo = TimeAgo(article.DatePublished);
+                dto.timeAgo = TimeAgo(article.DatePublished.Value);
                 dtoList.Add(dto);
             }
 
@@ -152,6 +153,11 @@ namespace footballnew.Services.Implementations
             return _mapper.Map<IEnumerable<ArticleHistoryDTO>>(histories);
         }
 
+        public async Task<IEnumerable<ArticlePendingDTO>> GetPendingAsync()
+        {
+            var articles = await _repository.GetPendingAsync();
+            return _mapper.Map<IEnumerable<ArticlePendingDTO>>(articles);
+        }
         public string TimeAgo(DateTime dateTime)
         {
             var timeSpan = DateTime.UtcNow - dateTime;

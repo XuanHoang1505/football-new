@@ -139,7 +139,7 @@ function Squad() {
                     : "# Khác"}
                 </p>
                 {players.map((player, index) => (
-                  <Link to={`/player/${player.id}/`}>
+                  <Link to={`/player/${player.id}/`} key={index}>
                     <div key={player.id} className={styles.playerRow}>
                       <span className={styles.shirtNumber}>{index + 1}</span>
                       <img

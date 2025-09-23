@@ -5,7 +5,9 @@ namespace footballnew.Models
     public class Image
     {
         public int Id { get; set; }
-        public int ArticleId { get; set; }
+        public int? ArticleId { get; set; }
+
+        public int? ContentId { set; get; }
         public string Url { get; set; } = null!;
         public string? AltText { get; set; }
         public string? Caption { get; set; }
@@ -14,6 +16,7 @@ namespace footballnew.Models
         public string? Credits { get; set; }
 
         // Navigation
-        public Article Article { get; set; } = null!;
+        public Article? Article { get; set; } = null!;
+        public Content? Content { get; set; } = null!;
     }
 }

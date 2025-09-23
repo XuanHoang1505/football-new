@@ -34,6 +34,7 @@ function Account() {
                     alt="avatar"
                     className="rounded-circle mb-2"
                     width={100}
+                    height={100}
                   />
                   <h6 className="fs-5 fw-bold">{user?.fullName}</h6>
                   <p className="text-dark ">{user?.email}</p>

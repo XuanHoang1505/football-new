@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using footballnew.Data;
 
@@ -11,9 +12,11 @@ using footballnew.Data;
 namespace football_new.Migrations
 {
     [DbContext(typeof(FootballContext))]
-    partial class FootballContextModelSnapshot : ModelSnapshot
+    [Migration("20250923083902_FixArticleStatus")]
+    partial class FixArticleStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,9 +259,6 @@ namespace football_new.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ApprovedDate")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("AuthorId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -269,7 +269,7 @@ namespace football_new.Migrations
                     b.Property<int>("CommentCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DatePublished")
+                    b.Property<DateTime>("DatePublished")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("MetaDescription")
@@ -287,9 +287,6 @@ namespace football_new.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Summary")
                         .IsRequired()

@@ -68,10 +68,8 @@ namespace footballnew.Controllers.admin
         {
             var articles = await _service.GetArticlesByCategorySlugAsync(slug);
 
-            if (!articles.Any())
-                return NotFound(new { Message = "Không tìm thấy bài báo cho category này" });
-
             return Ok(articles);
         }
+
     }
 }

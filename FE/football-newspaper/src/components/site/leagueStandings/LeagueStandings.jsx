@@ -3,7 +3,7 @@ import styles from "./LeagueStandings.module.scss";
 import { FootballService } from "../../../services/site/FootballService";
 import { Spinner } from "react-bootstrap";
 
-function LeagueStandings({ leagueCode, isFullWidth = true }) {
+function LeagueStandings({ leagueCode, isFullWidth = true, clubId = null }) {
   const [standingsData, setStandingsData] = useState([]);
   const currentYear = new Date().getFullYear();
 
@@ -25,6 +25,8 @@ function LeagueStandings({ leagueCode, isFullWidth = true }) {
   useEffect(() => {
     fetchMatches();
   }, [leagueCode]);
+  console.log(clubId);
+  
 
   const leagueRules = {
     PL: { c1: [1, 4], c2: [5, 5], conference: [6, 6], relegation: [18, 20] },
@@ -98,7 +100,7 @@ function LeagueStandings({ leagueCode, isFullWidth = true }) {
               </thead>
               <tbody>
                 {standingsData.map((team) => (
-                  <tr key={team.team.id}>
+                  <tr key={team.team.id}  className={`${clubId === team.team.id ? styles.active : ""}`}>
                     <td className={styles.th_team}>
                       <span
                         className={`${styles.rankNumber} ${getTeamClass(

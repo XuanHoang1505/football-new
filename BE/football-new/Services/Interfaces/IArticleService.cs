@@ -1,4 +1,5 @@
 using footballnew.DTOs;
+using footballnew.Enums;
 
 namespace footballnew.Services.Interfaces
 {
@@ -14,7 +15,7 @@ namespace footballnew.Services.Interfaces
         Task<(IEnumerable<ArticleListDTO> Articles, int TotalCount)> GetPagedAsync(
             int pageIndex, int pageSize,
             string? search = null,
-            string? status = null,
+            ArticleStatus? status = null,
             string? category = null,
             string? tag = null);
 
@@ -22,12 +23,14 @@ namespace footballnew.Services.Interfaces
         Task IncrementShareCountAsync(int id);
         Task IncrementCommentCountAsync(int id);
 
-        Task<IEnumerable<ArticleListDTO>> GetByStatusAsync(string status);
+        Task<IEnumerable<ArticleListDTO>> GetByStatusAsync(ArticleStatus status);
         Task<IEnumerable<ArticleListDTO>> GetByCategoryAsync(int categoryId);
         Task<IEnumerable<ArticleListDTO>> GetByTagAsync(int tagId);
         Task<IEnumerable<ArticleListDTO>> GetArticlesByDateAsync(DateTime date);
 
         Task<IEnumerable<ArticleHistoryDTO>> GetArticlesViewedByUserAsync(string userId);
+
+        Task<IEnumerable<ArticlePendingDTO>> GetPendingAsync();
 
     }
 }

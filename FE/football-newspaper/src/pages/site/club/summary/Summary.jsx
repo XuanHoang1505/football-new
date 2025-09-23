@@ -20,38 +20,40 @@ function Summary() {
   const { clubCode } = useParams();
   const club = clubMenu.find((c) => c.code === clubCode);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+useEffect(() => {
+  if (!club) return;
 
-        const [matchesData, articlesData] = await Promise.all([
-          ClubService.getClubMatches(club.id, currentYear),
-          CategoryService.getArticlesByCategorySlug(club.code),
-        ]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
 
-        // trận đã kết thúc (mới nhất)
-        const finished = matchesData.matches
-          .filter((m) => m.status === "FINISHED")
-          .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
-        setLastMatch(finished[0] || null);
+      const [matchesData, articlesData] = await Promise.all([
+        ClubService.getClubMatches(club.id, currentYear),
+        CategoryService.getArticlesByCategorySlug(club.code),
+      ]);
 
-        // trận sắp tới (gần nhất)
-        const upcoming = matchesData.matches
-          .filter((m) => ["SCHEDULED", "TIMED", "LIVE"].includes(m.status))
-          .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
-        setNextMatch(upcoming[0] || null);
+      // trận đã kết thúc (mới nhất)
+      const finished = matchesData.matches
+        .filter((m) => m.status === "FINISHED")
+        .sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
+      setLastMatch(finished[0] || null);
 
-        setArticles(articlesData);
-      } catch (err) {
-        console.error("Lỗi khi fetch dữ liệu", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      // trận sắp tới
+      const upcoming = matchesData.matches
+        .filter((m) => ["SCHEDULED", "TIMED", "LIVE"].includes(m.status))
+        .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+      setNextMatch(upcoming[0] || null);
 
-    fetchData();
-  }, [clubCode]);
+      setArticles(articlesData);
+    } catch (err) {
+      console.error("Lỗi khi fetch dữ liệu", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [clubCode]);
 
   const highlightArticle = articles[0];
   const sideArticles = articles.slice(1, 5);
@@ -256,7 +258,7 @@ function Summary() {
             }`}{" "}
           </p>
           <div className="" style={{ maxHeight: "400px", overflow: "auto" }}>
-            <LeagueStandings leagueCode={club.leagueCode} />
+            <LeagueStandings leagueCode={club.leagueCode} clubId={club.id}/>
           </div>
         </div>
         {/* End bảng xếp hạng  */}

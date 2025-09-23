@@ -13,7 +13,7 @@ namespace footballnew.Mappings
             CreateMap<ApplicationUser, UserDTO>()
                 .ForMember(dest => dest.Role, opt => opt.Ignore()); // Lấy Role riêng
             CreateMap<UserDTO, ApplicationUser>();
-            
+
             CreateMap<Article, ArticleListDTO>()
                 .ForMember(dest => dest.AuthorName,
                            opt => opt.MapFrom(src => src.Author.UserName))
@@ -74,6 +74,20 @@ namespace footballnew.Mappings
                             .FirstOrDefault()))
                 .ForMember(dest => dest.ViewAt,
                         opt => opt.MapFrom(src => src.ViewAt));
+            CreateMap<Article, ArticlePendingDTO>()
+                .ForMember(dest => dest.AuthorName,
+                        opt => opt.MapFrom(src => src.Author.UserName))
+                .ForMember(dest => dest.ThumbnailUrl,
+                        opt => opt.MapFrom(src => src.Images
+                            .Where(i => i.IsMain)
+                            .Select(i => i.Url)
+                            .FirstOrDefault()))
+                .ForMember(dest => dest.CategoryName,
+                        opt => opt.MapFrom(src => src.ArticleCategories
+                            .Select(ac => ac.Category.Name)
+                            .FirstOrDefault()))
+                .ForMember(dest => dest.SubmittedDate,
+                        opt => opt.MapFrom(src => src.SubmitDate));
 
         }
     }
