@@ -1,11 +1,14 @@
 import Alert from "react-bootstrap/Alert";
 import { Helmet } from "react-helmet-async";
 
-import { Form, Row, Col, Button, Container,Spinner } from "react-bootstrap";
+import { Form, Row, Col, Button, Container, Spinner } from "react-bootstrap";
 import styles from "./AccountInfo.module.scss";
 import { useEffect, useRef, useState, useContext } from "react";
 import UserService from "../../../../services/admin/userService";
-import { formatDateTimeToDMY, formatDateTimeToISO } from "../../../../utils/formatDate";
+import {
+  formatDateTimeToDMY,
+  formatDateTimeToISO,
+} from "../../../../utils/formatDate";
 
 import { UserContext } from "../../../../contexts/UserContext";
 import { toast } from "react-toastify";
@@ -19,7 +22,7 @@ function AccountInfo() {
   const [errors, setErrors] = useState({});
   const [selectedAvatar, setSelectedAvatar] = useState(null);
 
-    // Ref for hidden file input
+  // Ref for hidden file input
   const fileInputRef = useRef(null);
   const handleAvatarClick = () => {
     if (fileInputRef.current) {
@@ -27,7 +30,7 @@ function AccountInfo() {
     }
   };
 
-    const handleAvatarChange = (e) => {
+  const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       // Kiểm tra loại tệp ảnh
@@ -57,14 +60,14 @@ function AccountInfo() {
       reader.readAsDataURL(file);
     }
   };
-  
+
   useEffect(() => {
     if (user?.userId) {
       fetchUserProfile(user.userId);
     }
-  }, [user?.userId]); 
+  }, [user?.userId]);
 
-   const fetchUserProfile = async (userId) => {
+  const fetchUserProfile = async (userId) => {
     try {
       setLoading(true);
       const data = await UserService.getUserById(userId);
@@ -75,7 +78,7 @@ function AccountInfo() {
         phoneNumber: data.phoneNumber || "",
         email: data.email || "",
         birthDate: data.birthDate || "",
-        gender: data.gender === null ? "" : data.gender,
+        gender: data.gender === null ? "" : data.gender ? "Nam" : "Nữ",
         avatar: data.avatar || "",
       });
     } catch (error) {
@@ -85,8 +88,7 @@ function AccountInfo() {
     }
   };
 
-
-   // Handle input changes in the form
+  // Handle input changes in the form
   const handleInputChange = (field, value) => {
     setEditProfile((prev) => ({
       ...prev,
@@ -99,7 +101,6 @@ function AccountInfo() {
       [field]: "",
     }));
   };
-
 
   // Validation function
   const validateProfile = () => {
@@ -120,11 +121,10 @@ function AccountInfo() {
       }
     }
 
-
-      const phoneRegex = /^[0-9]{10,15}$/;
-      if (!phoneRegex.test(editProfile.phoneNumber)) {
-        newErrors.phoneNumber = "Số điện thoại không hợp lệ.";
-      }
+    const phoneRegex = /^[0-9]{10,15}$/;
+    if (!phoneRegex.test(editProfile.phoneNumber)) {
+      newErrors.phoneNumber = "Số điện thoại không hợp lệ.";
+    }
 
     if (editProfile.birthDate) {
       const dob = new Date(editProfile.birthDate);
@@ -141,7 +141,6 @@ function AccountInfo() {
     // Return true if no errors
     return Object.keys(newErrors).length === 0;
   };
-
 
   // Handle form submission for Profile and Contact Info
   const handleFormSubmit = async (e) => {
@@ -160,10 +159,10 @@ function AccountInfo() {
         fullName: editProfile.fullName,
         phoneNumber: editProfile.phoneNumber,
         email: editProfile.email,
-        birthDate: editProfile.birthDate|| null,
+        birthDate: editProfile.birthDate || null,
         lastLogin: formatDateTimeToISO(profile.lastLogin),
         registeredDate: formatDateTimeToISO(profile.registeredDate),
-        gender: editProfile.gender,
+        gender: editProfile.gende === "Nam" ? true : false,
         // Không cần set avatar ở đây nếu đã xử lý trong handleAvatarChange
       };
 
@@ -171,13 +170,14 @@ function AccountInfo() {
       const updatedProfile = await UserService.updateUser(
         profile.id,
         updatedData,
-        selectedAvatar,
+        selectedAvatar
       );
 
       // Update state với dữ liệu mới
       setProfile({
         ...updatedProfile,
         updatedAt: formatDateTimeToDMY(updatedProfile.updatedAt),
+        gender: updatedProfile.gender ? "Nam" : "Nữ",
       });
       setEditProfile({
         ...editProfile,
@@ -208,7 +208,7 @@ function AccountInfo() {
   };
 
   const handleVerified = () => {
-    setIsVerified(true); 
+    setIsVerified(true);
   };
 
   if (loading)
@@ -218,8 +218,9 @@ function AccountInfo() {
           <span className="visually-hidden">Loading...</span>
         </Spinner>
       </div>
-  );
+    );
 
+    
   return (
     <>
       <Helmet>
@@ -234,49 +235,44 @@ function AccountInfo() {
           <Alert.Link href="#">vào đây</Alert.Link> để xác thực ngay!
         </Alert>
 
-        <Form 
-          onSubmit={handleFormSubmit}
-
-        >
+        <Form onSubmit={handleFormSubmit}>
           <Row className="mb-4">
             <Col xs={12} lg={4}>
               <Form.Group controlId="formFullName">
                 <Form.Label className="fw-bold">Họ tên</Form.Label>
-                <Form.Control 
-                  type="text" 
-                  placeholder="Họ tên" 
-                  name="fullName" 
-                  value={editProfile.fullName|| ""}
+                <Form.Control
+                  type="text"
+                  placeholder="Họ tên"
+                  name="fullName"
+                  value={editProfile.fullName || ""}
                   isInvalid={!!errors.fullName}
                   onChange={(e) =>
                     handleInputChange("fullName", e.target.value)
                   }
                 />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.fullName}
-                  </Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">
+                  {errors.fullName}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
-  
+
             <Col xs={12} lg={4}>
               <Form.Group controlId="formEmail">
                 <Form.Label className="fw-bold">Email</Form.Label>
-                <Form.Control 
-                  type="email" 
-                  placeholder="Email" 
-                  name="email" 
-                  value={editProfile.email|| ""}
+                <Form.Control
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  value={editProfile.email || ""}
                   isInvalid={!!errors.email}
-                  onChange={(e) =>
-                    handleInputChange("email", e.target.value)
-                  }
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                 />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email}
-                  </Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">
+                  {errors.email}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
-  
+
             <Col xs={12} lg={4}>
               <Form.Group controlId="formAvatar" className="d-flex flex-column">
                 <Form.Label className="fw-bold">Ảnh đại diện</Form.Label>
@@ -290,7 +286,7 @@ function AccountInfo() {
               </Form.Group>
             </Col>
           </Row>
-  
+
           <Row className="mb-4">
             <Col xs={12} lg={4}>
               <Form.Group controlId="formPhone">
@@ -300,38 +296,36 @@ function AccountInfo() {
                   placeholder="Điện thoại"
                   name="phoneNumber"
                   isInvalid={!!errors.phoneNumber}
-                  value={editProfile.phoneNumber|| ""}
+                  value={editProfile.phoneNumber || ""}
                   onChange={(e) =>
                     handleInputChange("phoneNumber", e.target.value)
                   }
                 />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.phoneNumber}
-                  </Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">
+                  {errors.phoneNumber}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
-  
+
             <Col xs={12} lg={4}>
               <Form.Group controlId="formBirthday">
                 <Form.Label className="fw-bold">Ngày sinh</Form.Label>
-                <Form.Control 
-                  type="date" 
-                  name="birthDate" 
+                <Form.Control
+                  type="date"
+                  name="birthDate"
                   isInvalid={!!errors.birthDate}
-                  value={editProfile.birthDate||""}
+                  value={editProfile.birthDate || ""}
                   onChange={(e) =>
                     handleInputChange("birthDate", e.target.value)
                   }
-                  
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.birthDate}
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-  
+
             <Col xs={12} lg={4}>
-              
               <Form.Group controlId="formGender">
                 <Form.Label className="fw-bold">Giới tính</Form.Label>
                 <div>
@@ -342,7 +336,9 @@ function AccountInfo() {
                     name="gender"
                     value="Nam"
                     checked={editProfile.gender === "Nam"}
-                    onChange={(e) => handleInputChange("gender", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("gender", e.target.value)
+                    }
                   />
                   <Form.Check
                     inline
@@ -351,7 +347,9 @@ function AccountInfo() {
                     name="gender"
                     value="Nữ"
                     checked={editProfile.gender === "Nữ"}
-                    onChange={(e) => handleInputChange("gender", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("gender", e.target.value)
+                    }
                   />
                   <Form.Check
                     inline
@@ -360,13 +358,15 @@ function AccountInfo() {
                     name="gender"
                     value="Khác"
                     checked={editProfile.gender === "Khác"}
-                    onChange={(e) => handleInputChange("gender", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("gender", e.target.value)
+                    }
                   />
                 </div>
               </Form.Group>
             </Col>
           </Row>
-  
+
           <Row className="mb-4">
             <Col xs={12}>
               <Form.Group controlId="formInfo">
@@ -380,37 +380,35 @@ function AccountInfo() {
             </Col>
           </Row>
           <Alert variant="warning" className="mt-3">
-            Theo nghị định 147 về quản lý, cung cấp, sử dụng Internet và thông tin
-            trên mạng do Chính phủ ban hành và bắt đầu có hiệu lực từ ngày 25-12,
-            tài khoản mạng xã hội (MXH) phải xác thực bằng số điện thoại di động
-            mới được phép hoạt động, đăng bài (viết bài, bình luận, livestream,
-            chia sẻ thông tin)
+            Theo nghị định 147 về quản lý, cung cấp, sử dụng Internet và thông
+            tin trên mạng do Chính phủ ban hành và bắt đầu có hiệu lực từ ngày
+            25-12, tài khoản mạng xã hội (MXH) phải xác thực bằng số điện thoại
+            di động mới được phép hoạt động, đăng bài (viết bài, bình luận,
+            livestream, chia sẻ thông tin)
           </Alert>
           <div className="text-center">
-  
-              <Button
-                variant="primary"
-                type="submit"
-                disabled={updating}
-                className="mt-3 mb-5"
-                size="lg"
-              >
-                {updating ? (
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={updating}
+              className="mt-3 mb-5"
+              size="lg"
+            >
+              {updating ? (
                 <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />{" "}
-                Đang cập nhật...
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />{" "}
+                  Đang cập nhật...
                 </>
-                ) : (
+              ) : (
                 "Lưu thay đổi"
-                )}
-              </Button>
-  
+              )}
+            </Button>
           </div>
         </Form>
       </Container>

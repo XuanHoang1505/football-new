@@ -91,5 +91,10 @@
   color: #fff;
   background: #bd0000 !important;
 }
-
+.active{
+  background: rgb(113, 141, 218) !important;
+  &:hover{
+     background: rgb(133, 156, 221) !important;
+  }
+}
 

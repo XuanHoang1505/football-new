@@ -27,7 +27,6 @@ function NewsCategory() {
     leagueCode = "PL";
   }
 
-  console.log("League in category page:", league);
 
   const fetchNewsByCategory = async () => {
     try {
@@ -58,7 +57,6 @@ function NewsCategory() {
     fetchCategory();
   }, [slug]);
 
-  console.log(newsData);
 
   if (loading) {
     return (

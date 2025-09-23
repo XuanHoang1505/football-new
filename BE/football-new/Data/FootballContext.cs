@@ -13,6 +13,7 @@ namespace footballnew.Data
         // DbSet cho các entity
         public DbSet<Article> Articles { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<Content> Contents { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ArticleCategory> ArticleCategories { get; set; }
         public DbSet<Tag> Tags { get; set; }
@@ -124,6 +125,20 @@ namespace footballnew.Data
             modelBuilder.Entity<Tag>()
                 .HasIndex(t => t.Slug)
                 .IsUnique();
+
+            // Article - Content (1-nhiều)
+            modelBuilder.Entity<Content>()
+                .HasOne(c => c.Article)
+                .WithMany(a => a.Contents)
+                .HasForeignKey(c => c.ArticleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Content - Image (1-1)
+            modelBuilder.Entity<Content>()
+                .HasOne(c => c.Image)
+                .WithOne(i => i.Content)
+                .HasForeignKey<Image>(i => i.ContentId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

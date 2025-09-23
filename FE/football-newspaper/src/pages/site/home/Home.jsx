@@ -128,8 +128,8 @@ const Home = () => {
               </div>
 
               {/* Side news */}
-              <div className="col-lg-3 col-md-6 col-12 mt-3 mt-lg-0 ps-sm-4 p-lg-0">
-                <h3 className="text-danger text-uppercase border-bottom fw-bold mb-3">
+              <div className="col-lg-3 col-12 mt-3 mt-lg-0 ps-sm-4 p-lg-0">
+                <h3 className={`${styles.sideTitle} text-danger text-uppercase border-bottom fw-bold mb-3`} style={{maxWidth: "245px"}}>
                   Tin hot
                 </h3>
                 <ul

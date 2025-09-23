@@ -123,7 +123,11 @@ namespace footballnew.Services.Implementations
         {
             var category = await _repository.GetBySlugAsync(slug);
             if (category == null)
-                throw new AppException(ErrorCode.CategoryNotFound, $"Không tìm thấy danh mục với slug = {slug}");
+                if (category == null)
+                {
+                    // Trả về danh sách rỗng thay vì throw exception
+                    return Enumerable.Empty<ArticleListDTO>();
+                }
 
             var articles = await _repository.GetArticlesByCategorySlugAsync(slug);
 
@@ -133,7 +137,7 @@ namespace footballnew.Services.Implementations
                 Title = a.Title,
                 Summary = a.Summary,
                 Slug = a.Slug,
-                DatePublished = a.DatePublished,
+                DatePublished = a.DatePublished.Value,
                 AuthorName = a.Author?.UserName ?? "Unknown",
                 ImageUrl = a.Images.FirstOrDefault(i => i.IsMain)?.Url
             }).ToList();

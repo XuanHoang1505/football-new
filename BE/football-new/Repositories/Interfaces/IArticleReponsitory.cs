@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using footballnew.DTOs;
+using footballnew.Enums;
 using footballnew.Models;
 
 namespace footballnew.Repositories.Interfaces
@@ -15,22 +16,23 @@ namespace footballnew.Repositories.Interfaces
         Task DeleteAsync(int id);
 
         Task<(IEnumerable<Article> Articles, int TotalCount)> GetPagedAsync(
-            int pageIndex, int pageSize, 
-            string? search = null, 
-            string? status = null, 
-            string? category = null, 
+            int pageIndex, int pageSize,
+            string? search = null,
+            ArticleStatus? status = null,
+            string? category = null,
             string? tag = null);
 
         Task IncrementViewCountAsync(int id);
         Task IncrementShareCountAsync(int id);
         Task IncrementCommentCountAsync(int id);
 
-        Task<IEnumerable<Article>> GetByStatusAsync(string status);
+        Task<IEnumerable<Article>> GetByStatusAsync(ArticleStatus status);
         Task<IEnumerable<Article>> GetByCategoryAsync(int categoryId);
         Task<IEnumerable<Article>> GetByTagAsync(int tagId);
         Task<IEnumerable<Article>> GetArticlesByDateAsync(DateTime date);
 
         Task AddViewHistoryAsync(int articleId, string userId);
         Task<IEnumerable<ArticleViewHistory>> GetArticlesViewedByUserAsync(string userId);
+        Task<IEnumerable<Article>> GetPendingAsync();
     }
 }

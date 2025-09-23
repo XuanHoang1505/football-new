@@ -1,4 +1,5 @@
 using footballnew.DTOs;
+using footballnew.Enums;
 using footballnew.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +44,7 @@ namespace footballnew.Controllers.admin
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string? search = null,
-            [FromQuery] string? status = null,
+            [FromQuery] ArticleStatus? status = null,
             [FromQuery] string? category = null,
             [FromQuery] string? tag = null)
         {
@@ -77,7 +78,7 @@ namespace footballnew.Controllers.admin
         }
 
         [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetByStatus(string status)
+        public async Task<IActionResult> GetByStatus(ArticleStatus status)
         {
             var articles = await _service.GetByStatusAsync(status);
             return Ok(articles);

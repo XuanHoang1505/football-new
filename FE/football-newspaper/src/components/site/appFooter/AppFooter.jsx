@@ -100,7 +100,7 @@ const AppFooter = () => {
                 </li>
               </ul>
             </div>
-            <div classNme={styles.col_info_com}>
+            <div className={styles.col_info_com}>
               <p className="mb-2">
                 <a href="#" className="fw-normal">
                   Thỏa thuận chia sẻ nội dung

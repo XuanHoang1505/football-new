@@ -7,6 +7,7 @@ using footballnew.Data;
 using footballnew.Models;
 using footballnew.Repositories.Interfaces;
 using footballnew.DTOs;
+using footballnew.Enums;
 
 namespace footballnew.Repositories.Implementations
 {
@@ -79,7 +80,7 @@ namespace footballnew.Repositories.Implementations
         public async Task<(IEnumerable<Article> Articles, int TotalCount)> GetPagedAsync(
             int pageIndex, int pageSize,
             string? search = null,
-            string? status = null,
+            ArticleStatus? status = null,
             string? category = null,
             string? tag = null)
         {
@@ -94,9 +95,9 @@ namespace footballnew.Repositories.Implementations
                 query = query.Where(a => a.Title.Contains(search) || a.Summary.Contains(search));
             }
 
-            if (!string.IsNullOrEmpty(status))
+            if (status.HasValue)
             {
-                query = query.Where(a => a.Status == status);
+                query = query.Where(a => a.Status == status.Value);
             }
 
             if (!string.IsNullOrEmpty(category))
@@ -151,7 +152,7 @@ namespace footballnew.Repositories.Implementations
         }
 
         // 📌 Quản lý trạng thái
-        public async Task<IEnumerable<Article>> GetByStatusAsync(string status)
+        public async Task<IEnumerable<Article>> GetByStatusAsync(ArticleStatus status)
         {
             return await _context.Articles
                 .Where(a => a.Status == status)
@@ -176,10 +177,13 @@ namespace footballnew.Repositories.Implementations
         public async Task<IEnumerable<Article>> GetArticlesByDateAsync(DateTime date)
         {
             return await _context.Articles
-                .Where(a => a.DatePublished.Date == date.Date)
+                .Where(a => a.DatePublished.HasValue
+                         && a.Status == ArticleStatus.Published
+                         && a.DatePublished.Value.Date == date.Date)
                 .Include(a => a.Images)
                 .ToListAsync();
         }
+
 
         // 📌 Lịch sử xem
         public async Task AddViewHistoryAsync(int articleId, string userId)
@@ -202,6 +206,18 @@ namespace footballnew.Repositories.Implementations
                 .Include(v => v.Article).ThenInclude(a => a.Author)
                 .Include(v => v.Article).ThenInclude(a => a.Images)
                 .OrderByDescending(v => v.ViewAt)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Article>> GetPendingAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.Status == ArticleStatus.PendingReview)
+                .Include(a => a.Author)
+                .Include(a => a.Images)
+                .Include(a => a.ArticleCategories)
+                    .ThenInclude(ac => ac.Category)
+                .OrderByDescending(a => a.DatePublished)
                 .ToListAsync();
         }
     }
