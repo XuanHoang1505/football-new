@@ -172,5 +172,66 @@ namespace footballnew.Services.Implementations
                 return $"{(int)timeSpan.TotalDays} ngày trước";
             return dateTime.ToString("dd/MM/yyyy HH:mm");
         }
+
+        public async Task<bool> ApproveAsync(int id, string approvedBy, bool publishNow, DateTime? publishDate)
+        {
+            var article = await _repository.GetByIdAsync(id);
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, $"Không tìm thấy bài viết với Id = {id}");
+
+            article.ApprovedBy = approvedBy;
+            article.ApprovedDate = DateTime.UtcNow;
+
+            if (publishNow)
+            {
+                // Publish ngay
+                article.DatePublished = DateTime.UtcNow;
+                article.Status = ArticleStatus.Published;
+            }
+            else
+            {
+                if (publishDate == null)
+                    throw new AppException(ErrorCode.InvalidInput, "Phải có thời gian xuất bản");
+
+                // Nếu publishDate <= now → publish luôn
+                if (publishDate <= DateTime.UtcNow)
+                {
+                    article.DatePublished = DateTime.UtcNow;
+                    article.Status = ArticleStatus.Published;
+                }
+                else
+                {
+                    article.DatePublished = publishDate;
+                    article.Status = ArticleStatus.Approved;
+                }
+            }
+
+            article.RejectedBy = null;
+            article.RejectedDate = null;
+            article.RejectionReason = null;
+
+            await _repository.UpdateAsync(article);
+            return true;
+        }
+
+
+
+        public async Task<bool> RejectAsync(int id, string rejectedBy, string reason)
+        {
+            if (string.IsNullOrWhiteSpace(reason))
+                throw new AppException(ErrorCode.InvalidInput, "Lý do từ chối không được để trống.");
+
+            var article = await _repository.GetByIdAsync(id);
+            if (article == null)
+                throw new AppException(ErrorCode.ArticleNotFound, $"Không tìm thấy bài viết với Id = {id}");
+
+            article.Status = ArticleStatus.Rejected;
+            article.RejectedBy = rejectedBy;
+            article.RejectedDate = DateTime.UtcNow;
+            article.RejectionReason = reason;
+
+            await _repository.UpdateAsync(article);
+            return true;
+        }
     }
 }

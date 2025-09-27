@@ -34,5 +34,7 @@ namespace footballnew.Repositories.Interfaces
         Task AddViewHistoryAsync(int articleId, string userId);
         Task<IEnumerable<ArticleViewHistory>> GetArticlesViewedByUserAsync(string userId);
         Task<IEnumerable<Article>> GetPendingAsync();
+
+        Task<List<Article>> GetArticlesToPublishAsync();
     }
 }

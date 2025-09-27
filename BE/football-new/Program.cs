@@ -20,6 +20,7 @@ using footballnew.Utils.Exceptions;
 
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -132,6 +133,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+//Đăng kí BackgroundService
+builder.Services.AddHostedService<ArticlePublisherService>();
 
 // Đăng kí api footballService
 builder.Services.AddHttpClient();

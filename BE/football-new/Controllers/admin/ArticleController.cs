@@ -1,6 +1,7 @@
 using footballnew.DTOs;
 using footballnew.Enums;
 using footballnew.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace footballnew.Controllers.admin
@@ -126,12 +127,46 @@ namespace footballnew.Controllers.admin
             return Ok(articles);
         }
 
-        [HttpGet("{id}/histories")]
+        [HttpGet("{userId}/histories")]
 
-        public async Task<IActionResult> GetViewHistories(string id)
+        public async Task<IActionResult> GetViewHistories(string userId)
         {
-            var histories = await _service.GetArticlesViewedByUserAsync(id);
+            var histories = await _service.GetArticlesViewedByUserAsync(userId);
             return Ok(histories);
         }
+
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetPendingArticles()
+        {
+            var articles = await _service.GetPendingAsync();
+            return Ok(articles);
+        }
+
+        [Authorize]
+        [HttpPost("approve/{id}")]
+        public async Task<IActionResult> Approve(int id, [FromBody] ApproveArticleDTO approve)
+        {
+            var userId = User.FindFirst("userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Token không có userId");
+
+            var result = await _service.ApproveAsync(id, userId, approve.PublishNow, approve.PublishDate);
+            return result ? Ok("Bài viết đã được chấp thuận") : BadRequest("Lỗi duyệt bài");
+        }
+        
+        [Authorize]
+        [HttpPost("reject/{id}")]
+        public async Task<IActionResult> Reject(int id, [FromBody] RejectArticleDTO rejectArticle)
+        {
+            var userId = User.FindFirst("userId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Token không có userId");
+
+            var result = await _service.RejectAsync(id, userId, rejectArticle.Reason);
+            return result ? Ok("Bài viết đã bị từ chối") : BadRequest("Lỗi từ chối bài viết");
+        }
+
     }
 }

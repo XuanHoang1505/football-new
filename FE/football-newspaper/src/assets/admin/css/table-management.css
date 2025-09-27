@@ -51,6 +51,27 @@
   color: rgb(25, 97, 25);
 }
 
+.table__management table .btn__approve {
+  color: rgb(0, 128, 0); /* xanh lá */
+  transition: 0.3s;
+  border: none;
+}
+
+.table__management table .btn__approve:hover {
+  color: rgb(50, 205, 50); /* xanh sáng hơn */
+}
+
+.table__management table .btn__reject {
+  color: rgb(178, 34, 34); /* đỏ đậm */
+  transition: 0.3s;
+  border: none;
+}
+
+.table__management table .btn__reject:hover {
+  color: rgb(255, 69, 58); /* đỏ cam khi hover */
+}
+
+
 .table__management .pagination .page-item .page-link {
   padding: 4px 10px;
 }

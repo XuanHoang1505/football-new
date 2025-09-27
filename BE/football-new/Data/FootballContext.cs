@@ -57,6 +57,19 @@ namespace footballnew.Data
                 .HasForeignKey(a => a.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Article>()
+                .HasOne(a => a.ApprovedByUser)
+                .WithMany(u => u.ArticlesApproved)   
+                .HasForeignKey(a => a.ApprovedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Article - RejectedByUser (1 User -> nhiều Articles Rejected)
+            modelBuilder.Entity<Article>()
+                .HasOne(a => a.RejectedByUser)
+                .WithMany(u => u.ArticlesRejected)   
+                .HasForeignKey(a => a.RejectedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // ArticleViewHistory - User (1 User -> nhiều ViewHistories)
             modelBuilder.Entity<ArticleViewHistory>()
                 .HasOne(vh => vh.User)

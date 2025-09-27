@@ -20,7 +20,7 @@ const CustomModal = ({
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
-      {!statusFunction.isViewDetail && (
+      {!statusFunction?.isViewDetail && (
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Đóng

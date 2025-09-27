@@ -33,6 +33,10 @@ namespace footballnew.Data
         public ICollection<Article> ArticlesAuthored { get; set; } = new List<Article>();
 
         public ICollection<Article> ArticlesUpdated { get; set; } = new List<Article>();
+        public ICollection<Article> ArticlesApproved { get; set; } = new List<Article>();
+
+        // RejectedBy
+        public ICollection<Article> ArticlesRejected { get; set; } = new List<Article>();
 
         public ICollection<ArticleViewHistory> ArticleViewHistories { get; set; } = new List<ArticleViewHistory>();
     }

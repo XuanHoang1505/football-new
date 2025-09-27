@@ -26,15 +26,6 @@ namespace footballnew.Mappings
                            opt => opt.MapFrom(src => src.ArticleCategories
                                .Select(ac => ac.Category.Name)
                                .FirstOrDefault()));
-            CreateMap<Article, ArticleDetailDTO>()
-                .ForMember(dest => dest.AuthorName,
-                           opt => opt.MapFrom(src => src.Author.UserName))
-                .ForMember(dest => dest.Tags,
-                           opt => opt.MapFrom(src => src.ArticleTags.Select(at => at.Tag.Name)))
-                .ForMember(dest => dest.Categories,
-                           opt => opt.MapFrom(src => src.ArticleCategories.Select(ac => ac.Category.Name)))
-                .ForMember(dest => dest.Images,
-                           opt => opt.MapFrom(src => src.Images.Select(i => i.Url)));
 
             CreateMap<ArticleDetailDTO, Article>()
                 .ForMember(dest => dest.ArticleTags, opt => opt.Ignore())
@@ -77,7 +68,7 @@ namespace footballnew.Mappings
             CreateMap<Article, ArticlePendingDTO>()
                 .ForMember(dest => dest.AuthorName,
                         opt => opt.MapFrom(src => src.Author.UserName))
-                .ForMember(dest => dest.ThumbnailUrl,
+                .ForMember(dest => dest.Thumbnail,
                         opt => opt.MapFrom(src => src.Images
                             .Where(i => i.IsMain)
                             .Select(i => i.Url)
@@ -88,6 +79,30 @@ namespace footballnew.Mappings
                             .FirstOrDefault()))
                 .ForMember(dest => dest.SubmittedDate,
                         opt => opt.MapFrom(src => src.SubmitDate));
+
+            CreateMap<Image, ImageDTO>();
+
+            // 🔹 Mapping Content
+            CreateMap<Content, ContentDTO>()
+                .ForMember(dest => dest.Image,
+                        opt => opt.MapFrom(src => src.Image));
+
+            // 🔹 Mapping Article -> Detail
+            CreateMap<Article, ArticleDetailDTO>()
+                .ForMember(dest => dest.AuthorName,
+                           opt => opt.MapFrom(src => src.Author.FullName))
+                .ForMember(des => des.AuthorAvatar,
+                        opt => opt.MapFrom(src => src.Author.Avatar))
+                .ForMember(dest => dest.Status,
+                        opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Tags,
+                        opt => opt.MapFrom(src => src.ArticleTags.Select(at => at.Tag.Name)))
+                .ForMember(dest => dest.Categories,
+                        opt => opt.MapFrom(src => src.ArticleCategories.Select(ac => ac.Category)))
+                .ForMember(dest => dest.Images,
+                        opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Contents,
+                        opt => opt.MapFrom(src => src.Contents.OrderBy(c => c.OrderIndex)));
 
         }
     }

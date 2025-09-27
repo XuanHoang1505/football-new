@@ -127,11 +127,9 @@ const getArticlesByTag = async (tagId) => {
 // Tăng view count (có thể có userId query)
 const incrementViewCount = async (id, userId) => {
   try {
-    const response = await axiosInstance.post(
-      `${API_URL}/${id}/view`,
-      null,
-      { params: { userId } }
-    );
+    const response = await axiosInstance.post(`${API_URL}/${id}/view`, null, {
+      params: { userId },
+    });
     return response.data;
   } catch (error) {
     handleErrorResponse(error);
@@ -172,16 +170,52 @@ const getArticlesViewedByUser = async (userId) => {
   }
 };
 
-const getArticlesByDate = async (date) => { 
+const getArticlesByDate = async (date) => {
   try {
     const response = await axiosInstance.get(`${API_URL}/${date}/date`);
     return response.data;
   } catch (error) {
     handleErrorResponse(error);
     throw error;
-  }   
-}
+  }
+};
 
+const getPendingArticles = async () => {
+  try {
+    const response = await axiosInstance.get(`${API_URL}/pending`);
+    return response.data;
+  } catch (error) {
+    handleErrorResponse(error);
+    throw error;
+  }
+};
+
+// ✅ Duyệt article
+const approveArticle = async (id, options) => {
+  try {
+    const response = await axiosInstance.post(`${API_URL}/approve/${id}`, {
+      publishNow: options.publishNow,
+      publishDate: options.publishNow ? null : options.publishDate,
+    });
+    return response.data;
+  } catch (error) {
+    handleErrorResponse(error);
+    throw error;
+  }
+};
+
+// ✅ Từ chối article (có thể kèm lý do)
+const rejectArticle = async (id, reason = null) => {
+  try {
+    const response = await axiosInstance.post(`${API_URL}/reject/${id}`, {
+      reason,
+    });
+    return response.data;
+  } catch (error) {
+    handleErrorResponse(error);
+    throw error;
+  }
+};
 
 // Export service
 const ArticleService = {
@@ -199,7 +233,10 @@ const ArticleService = {
   incrementShareCount,
   incrementCommentCount,
   getArticlesViewedByUser,
-  getArticlesByDate
+  getArticlesByDate,
+  getPendingArticles,
+  approveArticle,
+  rejectArticle,
 };
 
 export default ArticleService;

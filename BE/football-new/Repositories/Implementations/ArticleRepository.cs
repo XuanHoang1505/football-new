@@ -8,6 +8,7 @@ using footballnew.Models;
 using footballnew.Repositories.Interfaces;
 using footballnew.DTOs;
 using footballnew.Enums;
+using footballnew.Utils.Exceptions;
 
 namespace footballnew.Repositories.Implementations
 {
@@ -25,6 +26,7 @@ namespace footballnew.Repositories.Implementations
             return await _context.Articles
                 .Include(a => a.Author)
                 .Include(a => a.Images)
+                .Include(a => a.Contents).ThenInclude(c => c.Image)
                 .Include(a => a.ArticleCategories).ThenInclude(ac => ac.Category)
                 .Include(a => a.ArticleTags).ThenInclude(at => at.Tag)
                 .FirstOrDefaultAsync(a => a.Id == id);
@@ -35,6 +37,7 @@ namespace footballnew.Repositories.Implementations
             return await _context.Articles
                 .Include(a => a.Author)
                 .Include(a => a.Images)
+                .Include(a => a.Contents).ThenInclude(c => c.Image)
                 .Include(a => a.ArticleCategories).ThenInclude(ac => ac.Category)
                 .Include(a => a.ArticleTags).ThenInclude(at => at.Tag)
                 .FirstOrDefaultAsync(a => a.Slug == slug);
@@ -217,7 +220,15 @@ namespace footballnew.Repositories.Implementations
                 .Include(a => a.Images)
                 .Include(a => a.ArticleCategories)
                     .ThenInclude(ac => ac.Category)
-                .OrderByDescending(a => a.DatePublished)
+                .OrderByDescending(a => a.SubmitDate)
+                .ToListAsync();
+        }
+
+        public async Task<List<Article>> GetArticlesToPublishAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.Status == ArticleStatus.Approved
+                            )
                 .ToListAsync();
         }
     }
