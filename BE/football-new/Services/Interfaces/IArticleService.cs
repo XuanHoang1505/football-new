@@ -32,5 +32,8 @@ namespace footballnew.Services.Interfaces
 
         Task<IEnumerable<ArticlePendingDTO>> GetPendingAsync();
 
+        Task<bool> ApproveAsync(int id, string approvedBy, bool publishNow, DateTime? publishDate = null);
+        Task<bool> RejectAsync(int id, string rejectedBy, string reason);
+
     }
 }

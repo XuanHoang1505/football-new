@@ -9,6 +9,7 @@ import {
   cilCommentBubble,
   cilPeople,
   cilUser,
+  cilTask
 } from "@coreui/icons";
 
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
@@ -35,6 +36,12 @@ const _nav = [
     name: "Người dùng",
     to: "user",
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: "Duyệt bài viết",
+    to: "article",
+    icon: <CIcon icon={cilTask} customClassName="nav-icon" />,
   },
   // {
   //   component: CNavGroup,

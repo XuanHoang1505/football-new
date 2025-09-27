@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using footballnew.Data;
 
@@ -11,9 +12,11 @@ using footballnew.Data;
 namespace football_new.Migrations
 {
     [DbContext(typeof(FootballContext))]
-    partial class FootballContextModelSnapshot : ModelSnapshot
+    [Migration("20250925160939_UpdateRowVersionToBinary")]
+    partial class UpdateRowVersionToBinary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,9 +352,6 @@ namespace football_new.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("tinyint(1)");
-
                     b.HasKey("ArticleId", "CategoryId");
 
                     b.HasIndex("CategoryId");
@@ -444,7 +444,7 @@ namespace football_new.Migrations
                     b.Property<int>("ArticleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderIndex")
+                    b.Property<int>("Order")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")

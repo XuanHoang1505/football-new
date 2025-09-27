@@ -13,6 +13,8 @@ const TableBody = ({
   onEdit,
   handleShowModal,
   handleShowConfirmModal,
+  handleShowApproveModal,
+  handleShowRejectModal,
   onViewDetail,
 }) => {
   return (
@@ -140,6 +142,29 @@ const TableBody = ({
                                 }}
                               >
                                 <i className="bi bi-card-list"></i> Xem chi tiết
+                              </button>
+                            )}
+                            {handleRenderBtn().btnReject && (
+                              <button
+                                className="btn btn__reject p-1 me-3"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleShowRejectModal(item.id);
+                                }}
+                              >
+                                <i className="bi bi-x-circle-fill"></i> Từ chối
+                              </button>
+                            )}
+                            {handleRenderBtn().btnApprove && (
+                              <button
+                                className="btn btn__approve p-1 me-3"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleShowApproveModal(item.id);
+                                }}
+                              >
+                                <i className="bi bi-check2-circle"></i> Duyệt
+                                bài
                               </button>
                             )}
                           </li>

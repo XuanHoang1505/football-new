@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using footballnew.Data;
 
@@ -11,9 +12,11 @@ using footballnew.Data;
 namespace football_new.Migrations
 {
     [DbContext(typeof(FootballContext))]
-    partial class FootballContextModelSnapshot : ModelSnapshot
+    [Migration("20250925154834_AddRowVersion")]
+    partial class AddRowVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,10 +293,10 @@ namespace football_new.Migrations
                     b.Property<string>("RejectionReason")
                         .HasColumnType("longtext");
 
-                    b.Property<byte[]>("RowVersion")
+                    b.Property<DateTime>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasColumnType("BINARY(8)");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
 
                     b.Property<int>("ShareCount")
                         .HasColumnType("int");
@@ -348,9 +351,6 @@ namespace football_new.Migrations
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("ArticleId", "CategoryId");
 
@@ -444,7 +444,7 @@ namespace football_new.Migrations
                     b.Property<int>("ArticleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderIndex")
+                    b.Property<int>("Order")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")

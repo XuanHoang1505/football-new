@@ -10,6 +10,8 @@ import TableBody from "./TableBody";
 import TableFooter from "./TableFooter";
 import { Badge } from "react-bootstrap";
 import VideoModal from "../VideoModal";
+import ApproveModal from "../ApproveModal";
+import RejectModal from "../RejectModal";
 
 const TableManagement = ({
   data,
@@ -27,6 +29,8 @@ const TableManagement = ({
   isLoading,
   buttonCustom,
   onResetStatus,
+  onReject,
+  onApprove,
 }) => {
   // State management
   const [visibleColumns, setVisibleColumns] = useState(
@@ -37,13 +41,16 @@ const TableManagement = ({
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" });
   const [showModal, setShowModal] = useState(false); // Hiển thị modal thêm/sửa
-  const [deleteId, setDeleteId] = useState(null); // ID của item cần xóa
+  const [deleteId, setDeleteId] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false); // Hiển thị modal xác nhận xóa
   const [expandedRows, setExpandedRows] = useState([]); // Theo dõi các hàng đang được mở
   const [showModalImage, setShowModalImage] = useState(false); // Hiển thị modal hình ảnh lớn
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModalVideo, setShowModalVideo] = useState(false); // Hiển thị modal hình ảnh lớn
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [articleId, setArticleId] = useState(null);
 
   const handleRenderBtn = () => {
     // Danh sách button mặc định nếu button không được định nghĩa
@@ -80,7 +87,7 @@ const TableManagement = ({
             break;
           case "PENDING":
             statusClass = "text-bg-warning";
-            statusText = "Đang chờ xử lý";
+            statusText = "Đang chờ duyệt";
             break;
           case "COMPLETED":
             statusClass = "text-bg-success";
@@ -98,6 +105,9 @@ const TableManagement = ({
             statusClass = "text-bg-secondary";
             statusText = "Đã xem";
             break;
+          case 1:
+            statusClass = "text-bg-warning";
+            statusText = "Đang chờ duyệt";
           default:
             statusClass = "text-bg-muted"; // Trường hợp mặc định
             statusText = "Không xác định";
@@ -118,6 +128,19 @@ const TableManagement = ({
             src={item[column.key] || defaultImage} // Nếu item[column.key] không có, hiển thị ảnh mặc định
             alt={item.name || "Ảnh mặc định"} // Đổi alt thành "Default Image" nếu item.name không tồn tại
             className="object-fit-cover rounded-circle"
+            style={{ width: "45px", height: "45px", cursor: "pointer" }}
+            onClick={(e) => {
+              e.stopPropagation(); // ngăn chặn sự kiện lan truyền sang cha.
+              handleImageClick(item[column.key] || defaultImage);
+            }}
+          />
+        );
+      case "thumbnail":
+        return (
+          <img
+            src={item[column.key] || defaultImage} // Nếu item[column.key] không có, hiển thị ảnh mặc định
+            alt={item.title || "Ảnh mặc định"} // Đổi alt thành "Default Image" nếu item.title không tồn tại
+            className="object-fit-cover"
             style={{ width: "45px", height: "45px", cursor: "pointer" }}
             onClick={(e) => {
               e.stopPropagation(); // ngăn chặn sự kiện lan truyền sang cha.
@@ -478,12 +501,42 @@ const TableManagement = ({
     setDeleteId(null);
   };
 
+  const handleShowApproveModal = (id) => {
+    setArticleId(id);
+    setShowApproveModal(true);
+  };
+
+  const handleCloseApproveModal = () => {
+    setShowApproveModal(false);
+    setArticleId(null);
+  };
+
+  const handleShowRejectModal = (id) => {
+    setArticleId(id);
+    setShowRejectModal(true);
+  };
+
+  const handleCloseRejectModal = () => {
+    setShowRejectModal(false);
+    setArticleId(null);
+  };
+
   // Xác nhận xóa
   const handleConfirm = () => {
     if (deleteId) {
       onDelete(deleteId);
       handleCloseConfirmModal();
     }
+  };
+
+  const handleApprove = (options) => {
+    onApprove(articleId, options);
+    handleCloseApproveModal();
+  };
+
+  const handleReject = (reason) => {
+    onReject(articleId, reason);
+    handleCloseRejectModal();
   };
 
   return (
@@ -515,6 +568,8 @@ const TableManagement = ({
         onEdit={onEdit}
         handleShowModal={handleShowModal}
         handleShowConfirmModal={handleShowConfirmModal}
+        handleShowApproveModal={handleShowApproveModal}
+        handleShowRejectModal={handleShowRejectModal}
         onViewDetail={onViewDetail}
       />
       {/* Table Footer */}
@@ -530,12 +585,12 @@ const TableManagement = ({
         show={showModal}
         handleClose={handleCloseModal}
         title={
-          statusFunction.isEditing ? (
+          statusFunction?.isEditing ? (
             <>
               CẬP NHẬT BẢN GHI{" "}
               <i className="bi bi-arrow-repeat text-success fs-4"></i>
             </>
-          ) : statusFunction.isAdd ? (
+          ) : statusFunction?.isAdd ? (
             <>
               THÊM MỚI BẢN GHI{" "}
               <i className="bi bi-plus-circle-dotted text-success ms-1 fs-4"></i>
@@ -570,6 +625,18 @@ const TableManagement = ({
         show={showModalVideo}
         videoSrc={selectedVideo}
         onClose={handleCloseVideo}
+      />
+      <ApproveModal
+        show={showApproveModal}
+        onClose={handleCloseApproveModal}
+        onConfirm={handleApprove}
+        isLoading={isLoading}
+      />
+      <RejectModal
+        show={showRejectModal}
+        onClose={handleCloseRejectModal}
+        onConfirm={handleReject}
+        isLoading={isLoading}
       />
     </div>
   );
