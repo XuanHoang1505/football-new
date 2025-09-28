@@ -43,12 +43,96 @@ namespace footballnew.Services.Implementations
             return _mapper.Map<ArticleDetailDTO>(article);
         }
 
-        public async Task<ArticleDetailDTO> CreateAsync(ArticleDetailDTO dto)
+       public async Task<ArticleDetailDTO> CreateAsync(ArticleDetailDTO dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            // 1️⃣ Map DTO -> Entity
             var article = _mapper.Map<Article>(dto);
-            var created = await _repository.AddAsync(article);
-            return _mapper.Map<ArticleDetailDTO>(created);
+
+            // Trạng thái & thời gian
+            article.Status = ArticleStatus.PendingReview;
+            article.SubmitDate = DateTime.UtcNow;
+            article.DatePublished = null; // ✅ luôn null khi tạo mới
+
+            // Khởi tạo collections
+            article.Images ??= new List<Image>();
+            article.Contents ??= new List<Content>();
+            article.ArticleCategories ??= new List<ArticleCategory>();
+
+            // 2️⃣ Gán Content + Image
+            if (dto.Contents != null && dto.Contents.Any())
+            {
+                for (int i = 0; i < dto.Contents.Count; i++)
+                {
+                    var contentDto = dto.Contents[i];
+                    var content = _mapper.Map<Content>(contentDto);
+                    content.OrderIndex = i;
+
+                    if (contentDto.Image != null && !string.IsNullOrWhiteSpace(contentDto.Image.Url))
+                    {
+                        content.Image = _mapper.Map<Image>(contentDto.Image);
+                        content.Image.Content = content;
+                        content.Image.IsMain = false;
+                        content.Image.UploadDate = contentDto.Image.UploadDate != default
+                            ? contentDto.Image.UploadDate
+                            : DateTime.UtcNow;
+                    }
+
+                    article.Contents.Add(content);
+                }
+            }
+
+            // 3️⃣ Gán ảnh chính
+            if (dto.Images != null && dto.Images.Any())
+            {
+                foreach (var imgDto in dto.Images.Where(x => x.IsMain))
+                {
+                    var img = _mapper.Map<Image>(imgDto);
+                    img.Article = article;
+                    img.UploadDate = imgDto.UploadDate != default ? imgDto.UploadDate : DateTime.UtcNow;
+                    article.Images.Add(img);
+                }
+            }
+
+            // 4️⃣ Gán Categories từ mainCategoryId + subCategoryIds
+            if (!string.IsNullOrEmpty(dto.MainCategoryId))
+            {
+                article.ArticleCategories.Add(new ArticleCategory
+                {
+                    Article = article,
+                    CategoryId = int.Parse(dto.MainCategoryId),
+                    IsPrimary = true
+                });
+            }
+
+            if (dto.SubCategoryIds != null && dto.SubCategoryIds.Any())
+            {
+                foreach (var subCatId in dto.SubCategoryIds)
+                {
+                    article.ArticleCategories.Add(new ArticleCategory
+                    {
+                        Article = article,
+                        CategoryId = int.Parse(subCatId),
+                        IsPrimary = false
+                    });
+                }
+            }
+
+            // 5️⃣ Lưu Article + liên quan
+            var createdArticle = await _repository.AddAsync(article);
+
+            // 6️⃣ Map entity -> DTO để trả về
+            var resultDto = _mapper.Map<ArticleDetailDTO>(createdArticle);
+
+            return resultDto;
         }
+
+
+
+
+
 
         public async Task<bool> UpdateAsync(int id, ArticleDetailDTO dto)
         {

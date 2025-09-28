@@ -1,70 +1,96 @@
 .container {
-  width: 75%;
-  margin: 0 auto;
-  padding: 10px;
+  width: 70%;
+  margin: 20px auto;
+  padding: 15px;
 
   form {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
     .form-label {
       font-weight: 600;
-      color: #333;
+      color: #222;
+      margin-bottom: 6px;
+      display: block;
     }
 
     input[type="text"],
     textarea,
     input[type="file"],
     select {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      width: 100%;
+      border: 1px solid #d0d7e2;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      background-color: #fdfdfd;
+      transition: all 0.25s ease-in-out;
 
       &:focus {
         border-color: #0d6efd;
-        box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
+        box-shadow: 0 0 6px rgba(13, 110, 253, 0.35);
+        background-color: #fff;
         outline: none;
       }
     }
 
     textarea {
       resize: vertical;
+      min-height: 100px;
     }
 
+    /* 🔹 Nút chung */
     .btn {
-      border-radius: 8px;
-      padding: 8px 20px;
-      font-weight: 500;
+      border-radius: 10px;
+      padding: 10px 22px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      transition: all 0.25s ease-in-out;
     }
 
+    /* ✅ Nút thành công (Submit, Save) */
     .btn-success {
-      background-color: #198754;
+      background: linear-gradient(135deg, #34d399, #059669) !important;
       border: none;
+      color: #fff;
 
       &:hover {
-        background-color: #157347;
+        background: linear-gradient(135deg, #10b981, #047857) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
       }
     }
 
+    /* ✅ Nút phụ (Cancel, Back, …) */
     .btn-outline-primary {
-      border-radius: 8px;
-      font-size: 0.9rem;
+      border: 1px solid #0d6efd;
+      color: #0d6efd;
+      background-color: #fff;
+
+      &:hover {
+        background: linear-gradient(135deg, #4e9af1, #2979ff);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(41, 121, 255, 0.25);
+      }
     }
   }
 
   .border {
-    border: 1px solid #d9e2f3 !important;
+    border: 1px solid #e1e8f5 !important;
   }
 
   .bg-light {
-    background-color: #f8f9fa !important;
+    background-color: #f9fafb !important;
   }
 
   img {
-    border-radius: 10px;
+    border-radius: 12px;
     object-fit: cover;
+    max-width: 100%;
+    height: auto;
   }
 }
