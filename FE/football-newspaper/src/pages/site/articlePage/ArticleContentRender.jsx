@@ -1,6 +1,4 @@
-import React from "react";
 import { Image } from 'antd';
-
 
 function ArticleContentRenderer({ contents }) {
   if (!contents || contents.length === 0) return null;
@@ -13,40 +11,28 @@ function ArticleContentRenderer({ contents }) {
       {sortedContents.map((block) => {
         switch (block.type) {
           case "Paragraph":
-            return <p key={block.id} className="my-3">{block.text}</p>;
-
-          case "Heading1":
-            return <h2 key={block.id} className="my-3">{block.text}</h2>;
-
-          case "Heading2":
-            return <h3 key={block.id} className="my-3">{block.text}</h3>;
+            return (
+              <div
+                key={block.id}
+                className="my-4"
+                dangerouslySetInnerHTML={{ __html: block.text }}
+              />
+            );
 
           case "Image":
             return (
-              <div key={block.id} className="my-3 text-center ">
+              <div key={block.id} className="my-4 text-center">
                 <Image
                   src={block.image.url}
                   alt={block.image.altText}
-                  className="img-fluid"
+                  style={{ width: "100%", height: "auto" }}
                 />
                 {block.image.caption && (
-                  <p className="text-muted fst-italic">{block.image.caption}</p>
+                  <p className="text-muted fst-italic bg-light p-2 text-center mx-3">
+                    {block.image.caption} {' '} {`(Ảnh: ${block.image.credits})`}
+                  </p>
                 )}
               </div>
-            );
-
-          case "Quote":
-            return (
-              <blockquote key={block.id} className="blockquote ">
-                {block.text}
-              </blockquote>
-            );
-
-          case "Code ":
-            return (
-              <pre key={block.id}>
-                <code>{block.text}</code>
-              </pre>
             );
 
           default:

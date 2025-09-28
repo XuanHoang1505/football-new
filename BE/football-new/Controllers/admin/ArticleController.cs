@@ -141,6 +141,7 @@ namespace footballnew.Controllers.admin
             var articles = await _service.GetPendingAsync();
             return Ok(articles);
         }
+        
 
         [Authorize]
         [HttpPost("approve/{id}")]
