@@ -13,13 +13,7 @@ function ArticleContentRenderer({ contents }) {
       {sortedContents.map((block) => {
         switch (block.type) {
           case "Paragraph":
-            return <p key={block.id} className="my-3">{block.text}</p>;
-
-          case "Heading1":
-            return <h2 key={block.id} className="my-3">{block.text}</h2>;
-
-          case "Heading2":
-            return <h3 key={block.id} className="my-3">{block.text}</h3>;
+            return <div key={block.id}>{block.text}</div>;
 
           case "Image":
             return (
@@ -33,20 +27,6 @@ function ArticleContentRenderer({ contents }) {
                   <p className="text-muted fst-italic">{block.image.caption}</p>
                 )}
               </div>
-            );
-
-          case "Quote":
-            return (
-              <blockquote key={block.id} className="blockquote ">
-                {block.text}
-              </blockquote>
-            );
-
-          case "Code ":
-            return (
-              <pre key={block.id}>
-                <code>{block.text}</code>
-              </pre>
             );
 
           default:

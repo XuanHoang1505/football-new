@@ -17,6 +17,7 @@ using footballnew.Configurations;
 using footballnew.Repositories.Interfaces;
 using footballnew.Repositories.Implementations;
 using footballnew.Utils.Exceptions;
+using footballnew.Mappings;
 
 
 
@@ -131,7 +132,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(ApplicationMapper));
 
 //Đăng kí BackgroundService
 builder.Services.AddHostedService<ArticlePublisherService>();

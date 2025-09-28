@@ -1,5 +1,8 @@
+using System.Text.Json;
 using footballnew.DTOs;
 using footballnew.Enums;
+using footballnew.Services;
+using footballnew.Services.Implementations;
 using footballnew.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +14,12 @@ namespace footballnew.Controllers.admin
     public class ArticleController : ControllerBase
     {
         private readonly IArticleService _service;
+        private readonly CloudinaryService _cloudinaryService;
 
-        public ArticleController(IArticleService service)
+        public ArticleController(IArticleService service, CloudinaryService cloudinaryService)
         {
             _service = service;
+            _cloudinaryService = cloudinaryService;
         }
 
         [HttpGet]
@@ -53,14 +58,92 @@ namespace footballnew.Controllers.admin
             return Ok(new { totalCount, articles });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ArticleDetailDTO dto)
+    [HttpPost("create")]
+    public async Task<IActionResult> Create(
+        [FromForm] string article,
+        [FromForm] IFormFile? mainImage,
+        [FromForm] List<IFormFile>? contentImages)
+    {
+        try
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (string.IsNullOrWhiteSpace(article))
+                return BadRequest("Dữ liệu bài viết không hợp lệ!");
 
+            // Deserialize JSON
+            var dto = JsonSerializer.Deserialize<ArticleDetailDTO>(article, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (dto == null)
+                return BadRequest("Không thể đọc dữ liệu bài viết.");
+
+            if (string.IsNullOrWhiteSpace(dto.AuthorId))
+                return BadRequest("AuthorId không được để trống!");
+
+            // Khởi tạo danh sách nếu null để tránh lỗi mapping
+            dto.Images ??= new List<ImageDTO>();
+            dto.Contents ??= new List<ContentDTO>();
+
+            // Khởi tạo Image cho từng Content nếu null
+            foreach (var c in dto.Contents)
+            {
+                c.Image ??= new ImageDTO();
+            }
+
+            // 1️⃣ Upload main image
+            if (mainImage != null)
+            {
+                var mainUrl = await _cloudinaryService.UploadImageAsync(mainImage, "articles");
+                dto.Images.Add(new ImageDTO
+                {
+                    Url = mainUrl,
+                    IsMain = true,
+                    UploadDate = DateTime.UtcNow
+                });
+            }
+
+            // 2️⃣ Upload content images
+            if (contentImages != null && contentImages.Count > 0)
+            {
+                for (int i = 0; i < contentImages.Count; i++)
+                {
+                    if (i >= dto.Contents.Count) break;
+
+                    var url = await _cloudinaryService.UploadImageAsync(contentImages[i], "articles/contents");
+                    dto.Contents[i].Image = new ImageDTO
+                    {
+                        Url = url,
+                        IsMain = false,
+                        UploadDate = DateTime.UtcNow,
+                        Caption = dto.Contents[i].Caption
+                    };
+                }
+            }
+
+            // 3️⃣ Gọi service để tạo article
             var created = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+
+            return Ok(created);
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "Server error: " + ex.Message,
+                inner = ex.InnerException?.Message,
+                stack = ex.StackTrace
+            });
+        }
+    }
+
+
+
+
+
+
+
+
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] ArticleDetailDTO dto)

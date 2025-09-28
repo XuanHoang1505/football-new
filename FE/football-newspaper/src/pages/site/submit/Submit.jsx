@@ -1,9 +1,15 @@
 import { Helmet } from "react-helmet-async";
 import styles from "./Submit.module.scss";
 import DynamicBreadcrumb from "../../../components/site/breadcrumb/Breadcrumb";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
+import { Button } from "antd";
+import CategoryService from "../../../services/admin/CategoryService";
+import ArticleService from "../../../services/admin/ArticleService";
+import { toast } from "react-toastify";
 import "react-quill/dist/quill.snow.css";
+import Select from "react-select";
+
 
 // --- Toolbar mặc định với font + size ---
 const modules = {
@@ -30,8 +36,12 @@ const Submit = () => {
   const [mainImage, setMainImage] = useState(null);
   const [summary, setSummary] = useState("");
   const [blocks, setBlocks] = useState([{ text: "", image: null, caption: "", source: "" }]);
-
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [updating, setUpdating] = useState(false);
   const handleMainImageChange = (e) => setMainImage(e.target.files[0]);
+  const [mainCategory, setMainCategory] = useState("");   // danh mục chính
+  const [subCategories, setSubCategories] = useState([]); // danh mục phụ
 
   const handleTextChange = (index, value) => {
     const newBlocks = [...blocks];
@@ -64,13 +74,102 @@ const Submit = () => {
     setBlocks(newBlocks);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Title:", title);
-    console.log("Main Image:", mainImage);
-    console.log("Blocks:", blocks);
-    alert("Bài viết đã được gửi!");
+  // Giả sử bạn có thông tin user hiện tại
+  const user = JSON.parse(localStorage.getItem("userDetail")); // Lấy user từ localStorage
+  
+ const handleFormSubmit = async (e) => {
+  e.preventDefault();
+
+  // Kiểm tra dữ liệu bắt buộc
+  if (!title.trim()) {
+    toast.error("Tiêu đề không được để trống!");
+    return;
+  }
+  if (!summary.trim()) {
+    toast.error("Tóm tắt không được để trống!");
+    return;
+  }
+  if (!user?.userId) {
+    toast.error("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!");
+    return;
+  }
+
+  try {
+    setUpdating(true);
+
+     // Tạo slug từ title
+    const generateSlug = (str) => {
+      return str
+        .toLowerCase()
+        .trim()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, ""); // loại bỏ ký tự đặc biệt
+    };
+
+    // Chuẩn bị articleData
+    const articleData = {
+    title: title.trim(),
+    summary: summary.trim(),
+    slug: generateSlug(title),
+    authorId: user.userId,
+    mainCategoryId: mainCategory,
+    subCategoryIds: subCategories,
+    contents: blocks.map(b => ({
+      text: b.text,
+      image: null,   // sẽ gán URL back-end
+      caption: b.caption,
+      source: b.source
+    })),
   };
+
+    // Lấy tất cả ảnh block (File) để gửi riêng
+    const contentImages = blocks
+      .map(b => b.image)
+      .filter(Boolean);
+
+    // Gọi API
+    await ArticleService.createArticle(articleData, mainImage, contentImages);
+
+    console.log("Submitted articleData:", articleData);
+    
+    toast.success("Bài báo đã được gửi tới Admin, hãy chờ phê duyệt!");
+
+    // Reset form
+    setTitle("");
+    setSummary("");
+    setMainCategory("");
+    setSubCategories([]);
+    setMainImage(null);
+    setBlocks([{ text: "", image: null, caption: "", source: "" }]);
+  } catch (error) {
+    toast.error("Có lỗi xảy ra khi gửi bài!");
+    console.error("Submit error:", error);
+  } finally {
+    setUpdating(false);
+  }
+};
+
+
+
+
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const data = await CategoryService.getCategories();
+      setCategories(data);
+
+    } catch (error) {
+      console.log("Lỗi khi fetch categories", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
 
   return (
     <>
@@ -87,7 +186,7 @@ const Submit = () => {
                 <small className="text-muted">Chia sẻ tin tức và bài viết bóng đá của bạn</small>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-3 border rounded shadow-sm bg-white">
+              <form onSubmit={handleFormSubmit} className="p-3 border rounded shadow-sm bg-white">
                 {/* Tiêu đề */}
                 <div className="mb-3">
                   <label className="form-label fw-bold">Tiêu đề bài viết</label>
@@ -99,6 +198,40 @@ const Submit = () => {
                     required
                   />
                 </div>
+
+                {/* Danh mục */}
+                <div className="mb-3">
+                  <label className="form-label fw-bold">Danh mục chính</label>
+                  <Select
+                    options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
+                    value={
+                      categories
+                        .filter((c) => mainCategory === String(c.id))
+                        .map((c) => ({ value: String(c.id), label: c.name }))[0] || null
+                    }
+                    onChange={(selected) => setMainCategory(selected ? String(selected.value) : "")}
+                    placeholder="-- Chọn danh mục chính --"
+                    isClearable
+                    noOptionsMessage={() => "Không có danh mục nào"}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-bold">Danh mục phụ</label>
+                  <Select
+                    isMulti
+                    options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
+                    value={categories
+                      .filter((c) => subCategories.includes(String(c.id)))
+                      .map((c) => ({ value: String(c.id), label: c.name }))}
+                    onChange={(selected) =>
+                      setSubCategories(selected.map((s) => String(s.value)))
+                    }
+                    placeholder="-- Chọn danh mục phụ --"
+                    noOptionsMessage={() => "Không có danh mục nào"}
+                  />
+                </div>
+
 
                 {/* Ảnh chính */}
                 <div className="mb-3">
@@ -189,29 +322,35 @@ const Submit = () => {
                       </div>
 
                       <div className="text-end mt-3">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger px-4 py-1.5"
+                        <Button
+                          type="primary"
+                          danger
+                          size="middle"
                           onClick={() => handleRemoveBlock(index)}
                         >
                           Xóa
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ))}
 
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary"
-                    onClick={handleAddBlock}
-                  >
+
+                  <Button type="dashed" onClick={handleAddBlock}>
                     + Thêm đoạn mới
-                  </button>
+                  </Button>
                 </div>
 
-                <button type="submit" className="btn btn-success px-4">
-                  Gửi bài
-                </button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={updating} // khi updating=true thì hiển thị spinner
+                  className="mt-3 mb-5"
+                  size="large"
+                >
+                  {updating ? "Đang xử lý..." : "Gửi bài"}
+                </Button>
+
+
               </form>
             </div>
           </div>
