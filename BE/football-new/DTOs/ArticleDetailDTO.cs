@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace footballnew.DTOs
 {
     public class ArticleDetailDTO
@@ -5,6 +7,7 @@ namespace footballnew.DTOs
         public int Id { get; set; }
 
         // Author
+        [JsonPropertyName("authorId")]
         public string AuthorId { get; set; } = null!;
         public string AuthorName { get; set; } = null!;
         public string? AuthorAvatar { get; set; }
@@ -32,6 +35,11 @@ namespace footballnew.DTOs
         public int CommentCount { get; set; }
 
         // Danh mục, tags
+          [JsonPropertyName("mainCategoryId")]
+        public string? MainCategoryId { get; set; }
+
+        [JsonPropertyName("subCategoryIds")]
+        public List<string>? SubCategoryIds { get; set; }
         public List<CategoryDTO> Categories { get; set; } = new();
         public List<string> Tags { get; set; } = new();
 

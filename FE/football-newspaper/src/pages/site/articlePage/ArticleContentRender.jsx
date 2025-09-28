@@ -4,7 +4,9 @@ function ArticleContentRenderer({ contents }) {
   if (!contents || contents.length === 0) return null;
 
   // Sắp xếp theo orderIndex trước khi render
-  const sortedContents = [...contents].sort((a, b) => a.orderIndex - b.orderIndex);
+  const sortedContents = [...contents].sort(
+    (a, b) => a.orderIndex - b.orderIndex
+  );
 
   return (
     <div>

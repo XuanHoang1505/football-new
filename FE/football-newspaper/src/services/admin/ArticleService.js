@@ -56,16 +56,53 @@ const getPagedArticles = async (
   }
 };
 
-// Tạo article
-const createArticle = async (articleData) => {
+
+// Tạo article (có upload ảnh chính + ảnh nội dung)
+const createArticle = async (articleData, mainImage, contentImages) => {
+  // Debug trước khi gửi
+  console.log("Sending articleData:", articleData);
+
+  // Kiểm tra authorId
+  if (!articleData.authorId) {
+    throw new Error("authorId đang bị rỗng! Kiểm tra user.userId trước khi gửi.");
+  }
+
+  const formData = new FormData();
+
+  // Bài viết gửi dạng JSON string
+  formData.append("article", JSON.stringify(articleData));
+
+  // Ảnh chính
+  if (mainImage) {
+    formData.append("mainImage", mainImage);
+  }
+
+  // Ảnh block (nếu có nhiều)
+  if (contentImages && contentImages.length > 0) {
+    contentImages.forEach((file, index) => {
+      formData.append("contentImages", file);
+    });
+  }
+
   try {
-    const response = await axiosInstance.post(API_URL, articleData);
-    return response.data;
+    const response = await axiosInstance.post(`${API_URL}/create`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Server response:", response.data);
+    return response.data; // ✅ trả về article vừa tạo
   } catch (error) {
+    console.error("Error uploading article:", error.response?.data || error.message);
     handleErrorResponse(error);
     throw error;
   }
 };
+
+
+
+
 
 // Cập nhật article
 const updateArticle = async (id, articleData) => {
