@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AutoMapper;
 using footballnew.DTOs;
 using footballnew.Enums;
@@ -24,6 +25,11 @@ namespace footballnew.Services.Implementations
             var articles = await _repository.GetAllAsync();
             return _mapper.Map<IEnumerable<ArticleListDTO>>(articles);
         }
+        public async Task<IEnumerable<ArticleListDTO>> GetPublishArticleAsync()
+        {
+            var articles = await _repository.GetPublishArticle();
+            return _mapper.Map<IEnumerable<ArticleListDTO>>(articles);
+        }
 
         public async Task<ArticleDetailDTO> GetByIdAsync(int id)
         {
@@ -43,7 +49,7 @@ namespace footballnew.Services.Implementations
             return _mapper.Map<ArticleDetailDTO>(article);
         }
 
-       public async Task<ArticleDetailDTO> CreateAsync(ArticleDetailDTO dto)
+        public async Task<ArticleDetailDTO> CreateAsync(ArticleDetailDTO dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -54,7 +60,7 @@ namespace footballnew.Services.Implementations
             // Trạng thái & thời gian
             article.Status = ArticleStatus.PendingReview;
             article.SubmitDate = DateTime.UtcNow;
-            article.DatePublished = null; // ✅ luôn null khi tạo mới
+            article.DatePublished = null;
 
             // Khởi tạo collections
             article.Images ??= new List<Image>();
@@ -67,8 +73,9 @@ namespace footballnew.Services.Implementations
                 for (int i = 0; i < dto.Contents.Count; i++)
                 {
                     var contentDto = dto.Contents[i];
+
                     var content = _mapper.Map<Content>(contentDto);
-                    content.OrderIndex = i;
+                    content.OrderIndex = contentDto.OrderIndex;
 
                     if (contentDto.Image != null && !string.IsNullOrWhiteSpace(contentDto.Image.Url))
                     {
@@ -79,6 +86,10 @@ namespace footballnew.Services.Implementations
                             ? contentDto.Image.UploadDate
                             : DateTime.UtcNow;
                     }
+                    else
+                    {
+                        content.Image = null; // ❌ Fix: bỏ ảnh rỗng
+                    }
 
                     article.Contents.Add(content);
                 }
@@ -87,7 +98,7 @@ namespace footballnew.Services.Implementations
             // 3️⃣ Gán ảnh chính
             if (dto.Images != null && dto.Images.Any())
             {
-                foreach (var imgDto in dto.Images.Where(x => x.IsMain))
+                foreach (var imgDto in dto.Images.Where(x => x.IsMain && !string.IsNullOrWhiteSpace(x.Url)))
                 {
                     var img = _mapper.Map<Image>(imgDto);
                     img.Article = article;
@@ -96,7 +107,6 @@ namespace footballnew.Services.Implementations
                 }
             }
 
-            // 4️⃣ Gán Categories từ mainCategoryId + subCategoryIds
             if (!string.IsNullOrEmpty(dto.MainCategoryId))
             {
                 article.ArticleCategories.Add(new ArticleCategory
@@ -120,17 +130,39 @@ namespace footballnew.Services.Implementations
                 }
             }
 
-            // 5️⃣ Lưu Article + liên quan
+            // 5️⃣ Lọc bỏ mọi Image null Url trước khi lưu
+            foreach (var c in article.Contents)
+            {
+                if (c.Image != null && string.IsNullOrWhiteSpace(c.Image.Url))
+                {
+                    c.Image = null;
+                }
+            }
+            article.Images = article.Images.Where(img => !string.IsNullOrWhiteSpace(img.Url)).ToList();
+
+            // 6️⃣ Lưu Article
             var createdArticle = await _repository.AddAsync(article);
 
-            // 6️⃣ Map entity -> DTO để trả về
+            Console.WriteLine("=== [DEBUG] Sau khi AddAsync ===");
+            foreach (var c in createdArticle.Contents)
+            {
+                Console.WriteLine($"Created Content: Type={c.Type}, ImageUrl={c.Image?.Url}");
+            }
+            foreach (var img in createdArticle.Images)
+            {
+                Console.WriteLine($"Created Article Image: Url={img.Url}, IsMain={img.IsMain}");
+            }
+
+            // 7️⃣ Map entity -> DTO
             var resultDto = _mapper.Map<ArticleDetailDTO>(createdArticle);
+
+            Console.WriteLine("=== [DEBUG] Result DTO ===");
+            Console.WriteLine(JsonSerializer.Serialize(resultDto, new JsonSerializerOptions { WriteIndented = true }));
+
+            Console.WriteLine("=== [DEBUG] KẾT THÚC CreateAsync ===");
 
             return resultDto;
         }
-
-
-
 
 
 

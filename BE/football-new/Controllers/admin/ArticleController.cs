@@ -29,6 +29,13 @@ namespace footballnew.Controllers.admin
             return Ok(articles);
         }
 
+
+        [HttpGet("publish")]
+        public async Task<IActionResult> GetPublishArticle()
+        {
+            var articles = await _service.GetPublishArticleAsync();
+            return Ok(articles);
+        }
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -58,91 +65,89 @@ namespace footballnew.Controllers.admin
             return Ok(new { totalCount, articles });
         }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> Create(
-        [FromForm] string article,
-        [FromForm] IFormFile? mainImage,
-        [FromForm] List<IFormFile>? contentImages)
-    {
-        try
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(
+            [FromForm] string article,
+            [FromForm] IFormFile? mainImage,
+            [FromForm] List<IFormFile>? contentImages,
+            [FromForm] List<int>? contentImageIndexes)
         {
-            if (string.IsNullOrWhiteSpace(article))
-                return BadRequest("Dữ liệu bài viết không hợp lệ!");
-
-            // Deserialize JSON
-            var dto = JsonSerializer.Deserialize<ArticleDetailDTO>(article, new JsonSerializerOptions
+            try
             {
-                PropertyNameCaseInsensitive = true
-            });
+                if (string.IsNullOrWhiteSpace(article))
+                    return BadRequest("Dữ liệu bài viết không hợp lệ!");
 
-            if (dto == null)
-                return BadRequest("Không thể đọc dữ liệu bài viết.");
-
-            if (string.IsNullOrWhiteSpace(dto.AuthorId))
-                return BadRequest("AuthorId không được để trống!");
-
-            // Khởi tạo danh sách nếu null để tránh lỗi mapping
-            dto.Images ??= new List<ImageDTO>();
-            dto.Contents ??= new List<ContentDTO>();
-
-            // Khởi tạo Image cho từng Content nếu null
-            foreach (var c in dto.Contents)
-            {
-                c.Image ??= new ImageDTO();
-            }
-
-            // 1️⃣ Upload main image
-            if (mainImage != null)
-            {
-                var mainUrl = await _cloudinaryService.UploadImageAsync(mainImage, "articles");
-                dto.Images.Add(new ImageDTO
+                // Deserialize JSON
+                var dto = JsonSerializer.Deserialize<ArticleDetailDTO>(article, new JsonSerializerOptions
                 {
-                    Url = mainUrl,
-                    IsMain = true,
-                    UploadDate = DateTime.UtcNow
+                    PropertyNameCaseInsensitive = true
+                });
+
+
+                if (dto == null)
+                    return BadRequest("Không thể đọc dữ liệu bài viết.");
+
+                if (string.IsNullOrWhiteSpace(dto.AuthorId))
+                    return BadRequest("AuthorId không được để trống!");
+
+                // Khởi tạo danh sách nếu null để tránh lỗi mapping
+                dto.Images ??= new List<ImageDTO>();
+                dto.Contents ??= new List<ContentDTO>();
+
+                // Khởi tạo Image cho từng Content nếu null
+                foreach (var c in dto.Contents)
+                {
+                    c.Image ??= new ImageDTO();
+                }
+
+                // 1️⃣ Upload main image
+                if (mainImage != null)
+                {
+                    var mainUrl = await _cloudinaryService.UploadImageAsync(mainImage, "articles");
+                    dto.Images.Add(new ImageDTO
+                    {
+                        Url = mainUrl,
+                        IsMain = true,
+                        UploadDate = DateTime.UtcNow
+                    });
+                }
+
+                // 2️⃣ Upload content images
+                if (contentImages != null && contentImageIndexes != null)
+                {
+                    for (int i = 0; i < contentImages.Count; i++)
+                    {
+                        var idx = contentImageIndexes[i];
+                        if (idx >= dto.Contents.Count) continue;
+
+                        var url = await _cloudinaryService.UploadImageAsync(contentImages[i], "articles/contents");
+                        Console.WriteLine($"[DEBUG] Uploaded image {i} => {url}");
+                        dto.Contents[idx].Image = new ImageDTO
+                        {
+                            Url = url,
+                            IsMain = false,
+                            UploadDate = DateTime.UtcNow,
+                            Caption = dto.Contents[idx].Caption
+                        };
+                    }
+                }
+
+
+                // 3️⃣ Gọi service để tạo article
+                var created = await _service.CreateAsync(dto);
+
+                return Ok(created);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Server error: " + ex.Message,
+                    inner = ex.InnerException?.Message,
+                    stack = ex.StackTrace
                 });
             }
-
-            // 2️⃣ Upload content images
-            if (contentImages != null && contentImages.Count > 0)
-            {
-                for (int i = 0; i < contentImages.Count; i++)
-                {
-                    if (i >= dto.Contents.Count) break;
-
-                    var url = await _cloudinaryService.UploadImageAsync(contentImages[i], "articles/contents");
-                    dto.Contents[i].Image = new ImageDTO
-                    {
-                        Url = url,
-                        IsMain = false,
-                        UploadDate = DateTime.UtcNow,
-                        Caption = dto.Contents[i].Caption
-                    };
-                }
-            }
-
-            // 3️⃣ Gọi service để tạo article
-            var created = await _service.CreateAsync(dto);
-
-            return Ok(created);
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new
-            {
-                message = "Server error: " + ex.Message,
-                inner = ex.InnerException?.Message,
-                stack = ex.StackTrace
-            });
-        }
-    }
-
-
-
-
-
-
-
 
 
         [HttpPut("{id:int}")]
@@ -224,7 +229,7 @@ namespace footballnew.Controllers.admin
             var articles = await _service.GetPendingAsync();
             return Ok(articles);
         }
-        
+
 
         [Authorize]
         [HttpPost("approve/{id}")]
@@ -238,7 +243,7 @@ namespace footballnew.Controllers.admin
             var result = await _service.ApproveAsync(id, userId, approve.PublishNow, approve.PublishDate);
             return result ? Ok("Bài viết đã được chấp thuận") : BadRequest("Lỗi duyệt bài");
         }
-        
+
         [Authorize]
         [HttpPost("reject/{id}")]
         public async Task<IActionResult> Reject(int id, [FromBody] RejectArticleDTO rejectArticle)

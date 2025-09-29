@@ -31,7 +31,8 @@ namespace footballnew.Mappings
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));
 
             CreateMap<ContentDTO, Content>()
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image ?? new ImageDTO()));
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));
+
 
             // ============================
             // 🔹 Category Mapping
@@ -84,8 +85,8 @@ namespace footballnew.Mappings
                 .ForMember(dest => dest.ArticleCategories, opt => opt.Ignore())
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.Author, opt => opt.Ignore())
-                .ForMember(dest => dest.Contents,
-                           opt => opt.MapFrom(src => src.Contents ?? new List<ContentDTO>()));
+                .ForMember(dest => dest.Contents, opt => opt.Ignore()); // 🚀 Ignore luôn
+
 
             CreateMap<Article, ArticleDetailDTO>()
                 .ForMember(dest => dest.AuthorName,

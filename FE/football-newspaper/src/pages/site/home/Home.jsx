@@ -22,7 +22,7 @@ const Home = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const data = await ArticleService.getArticles();
+        const data = await ArticleService.getPublishedArticles();
         const sorted = data.sort(
           (a, b) => new Date(b.datePublished) - new Date(a.datePublished)
         );
