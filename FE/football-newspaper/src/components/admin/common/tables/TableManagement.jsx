@@ -89,6 +89,10 @@ const TableManagement = ({
             statusClass = "text-bg-warning";
             statusText = "Đang chờ duyệt";
             break;
+          case "PendingReview":
+            statusClass = "text-bg-warning";
+            statusText = "Đang chờ duyệt";
+            break;
           case "COMPLETED":
             statusClass = "text-bg-success";
             statusText = "Hoàn thành";
@@ -105,11 +109,8 @@ const TableManagement = ({
             statusClass = "text-bg-secondary";
             statusText = "Đã xem";
             break;
-          case 1:
-            statusClass = "text-bg-warning";
-            statusText = "Đang chờ duyệt";
           default:
-            statusClass = "text-bg-muted"; // Trường hợp mặc định
+            statusClass = "text-bg-muted"; 
             statusText = "Không xác định";
         }
 

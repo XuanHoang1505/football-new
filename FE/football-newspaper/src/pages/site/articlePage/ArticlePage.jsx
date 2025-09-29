@@ -29,8 +29,9 @@ function ArticlePage() {
   useEffect(() => {
     fetchArticle();
   }, []);
+
   console.log(articleDetail);
-  
+
   return (
     <>
       {loading ? (
@@ -88,7 +89,8 @@ function ArticlePage() {
                   </div>
                 </div>
                 <div className={styles.article_content}>
-                  <ArticleContentRenderer contents={articleDetail.contents}/>
+                  <p className="fs-3 fw-bold my-4">{articleDetail.summary}</p>
+                  <ArticleContentRenderer contents={articleDetail.contents} />
                 </div>
               </div>
             </div>

@@ -11,6 +11,7 @@ namespace footballnew.Repositories.Interfaces
         Task<Article?> GetByIdAsync(int id);
         Task<Article?> GetBySlugAsync(string slug);
         Task<IEnumerable<Article>> GetAllAsync();
+        Task<IEnumerable<Article>> GetPublishArticle();
         Task<Article> AddAsync(Article article);
         Task UpdateAsync(Article article);
         Task DeleteAsync(int id);

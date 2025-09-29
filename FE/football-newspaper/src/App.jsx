@@ -57,7 +57,6 @@ import LatestPage from "./pages/site/latest/LatestPage";
 import routes from "./routes/admin/adminRoutes";
 
 function App() {
-  
   const { user } = useContext(UserContext);
 
   return (
@@ -95,7 +94,14 @@ function App() {
             </Route>
             <Route path="/" element={<SiteLayout />}>
               <Route index element={<Home />} />
-              <Route path="submit" element={<Submit />} />
+              <Route
+                path="submit"
+                element={
+                  <PrivateRoute roles={"USER"}>
+                    <Submit />
+                  </PrivateRoute>
+                }
+              />
               <Route path="latest" element={<LatestPage />} />
               <Route path="category/:slug" element={<NewsCategory />} />
               <Route path="news/:slug" element={<ArticlePage />} />

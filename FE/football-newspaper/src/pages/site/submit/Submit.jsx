@@ -1,47 +1,122 @@
-import { Helmet } from "react-helmet-async";
-import styles from "./Submit.module.scss";
-import DynamicBreadcrumb from "../../../components/site/breadcrumb/Breadcrumb";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import {
+  Form,
+  Input,
+  Upload,
+  Button,
+  Card,
+  Typography,
+  Select,
+  Space,
+  Dropdown,
+  Row,
+  Col,
+  Steps,
+  Divider,
+  Tag,
+  Progress,
+} from "antd";
+import {
+  PlusOutlined,
+  UploadOutlined,
+  FileTextOutlined,
+  PictureOutlined,
+  DeleteOutlined,
+  CheckCircleOutlined,
+  EditOutlined,
+  EyeOutlined,
+  SendOutlined,
+} from "@ant-design/icons";
 import ReactQuill from "react-quill";
-import { Button } from "antd";
+import { toast } from "react-toastify";
 import CategoryService from "../../../services/admin/CategoryService";
 import ArticleService from "../../../services/admin/ArticleService";
-import { toast } from "react-toastify";
+import DynamicBreadcrumb from "../../../components/site/breadcrumb/Breadcrumb";
+
 import "react-quill/dist/quill.snow.css";
-import Select from "react-select";
+import styles from "./Submit.module.scss";
 
+const { Title, Text, Paragraph } = Typography;
 
-// --- Toolbar mặc định với font + size ---
+// --- Toolbar cho Quill ---
 const modules = {
   toolbar: [
-    [{ font: [] }, { size: [] }], // font + size dropdown
+    [{ font: [] }, { size: [] }],
     ["bold", "italic", "underline", "strike"],
     [{ color: [] }, { background: [] }],
     [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
     ["link"],
-    ["clean"]
-  ]
+    ["clean"],
+  ],
 };
 
 const formats = [
-  "font", "size",
-  "bold", "italic", "underline", "strike",
-  "color", "background",
-  "list", "bullet",
-  "link"
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "list",
+  "bullet",
+  "align",
+  "link",
 ];
+
+const contentTypeMap = {
+  paragraph: 0,
+  image: 1,
+  code: 2,
+};
 
 const Submit = () => {
   const [title, setTitle] = useState("");
   const [mainImage, setMainImage] = useState(null);
   const [summary, setSummary] = useState("");
-  const [blocks, setBlocks] = useState([{ text: "", image: null, caption: "", source: "" }]);
+  const [blocks, setBlocks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [updating, setUpdating] = useState(false);
-  const handleMainImageChange = (e) => setMainImage(e.target.files[0]);
-  const [mainCategory, setMainCategory] = useState("");   // danh mục chính
-  const [subCategories, setSubCategories] = useState([]); // danh mục phụ
+  const [mainCategory, setMainCategory] = useState("");
+  const [subCategories, setSubCategories] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const user = JSON.parse(localStorage.getItem("userDetail"));
+
+  // Tính toán % hoàn thành
+  const calculateProgress = () => {
+    let progress = 0;
+    if (title.trim()) progress += 20;
+    if (mainCategory) progress += 15;
+    if (mainImage) progress += 15;
+    if (summary.trim()) progress += 20;
+    if (blocks.length > 0) progress += 30;
+    return progress;
+  };
+
+  const handleAddBlock = (type) => {
+    setBlocks([
+      ...blocks,
+      {
+        type,
+        orderIndex: blocks.length,
+        text: "",
+        image: null,
+        caption: "",
+        source: "",
+      },
+    ]);
+  };
+
+  const handleRemoveBlock = (index) => {
+    const newBlocks = [...blocks];
+    newBlocks.splice(index, 1);
+    setBlocks(newBlocks);
+  };
 
   const handleTextChange = (index, value) => {
     const newBlocks = [...blocks];
@@ -67,98 +142,74 @@ const Submit = () => {
     setBlocks(newBlocks);
   };
 
-  const handleAddBlock = () => setBlocks([...blocks, { text: "", image: null, caption: "", source: "" }]);
-  const handleRemoveBlock = (index) => {
-    const newBlocks = [...blocks];
-    newBlocks.splice(index, 1);
-    setBlocks(newBlocks);
+  const handleFormSubmit = async () => {
+    if (!title.trim()) {
+      toast.error("Tiêu đề không được để trống!");
+      return;
+    }
+    if (!summary.trim()) {
+      toast.error("Tóm tắt không được để trống!");
+      return;
+    }
+    if (!mainCategory) {
+      toast.error("Vui lòng chọn danh mục chính!");
+      return;
+    }
+    if (!mainImage) {
+      toast.error("Vui lòng chọn ảnh đại diện!");
+      return;
+    }
+    if (blocks.length === 0) {
+      toast.error("Vui lòng thêm ít nhất 1 block nội dung!");
+      return;
+    }
+    if (!user?.userId) {
+      toast.error("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!");
+      return;
+    }
+
+    try {
+      setUpdating(true);
+
+      const generateSlug = (str) =>
+        str.toLowerCase().trim().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+
+      const articleData = {
+        title: title.trim(),
+        summary: summary.trim(),
+        slug: generateSlug(title),
+        authorId: user.userId,
+        mainCategoryId: mainCategory,
+        subCategoryIds: subCategories,
+        contents: blocks.map((b, idx) => ({
+          orderIndex: idx + 1,
+          type: contentTypeMap[b.type] ?? 0,
+          text: b.text,
+          caption: b.caption,
+          source: b.source,
+        })),
+      };
+
+      const contentImages = blocks
+        .map((b, idx) => (b.image ? { file: b.image, blockIndex: idx } : null))
+        .filter(Boolean);
+
+      await ArticleService.createArticle(articleData, mainImage, contentImages);
+      toast.success("Bài báo đã được gửi tới Admin, hãy chờ phê duyệt!");
+      resetFormData();
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi gửi bài!");
+      console.error("Submit error:", error);
+    } finally {
+      setUpdating(false);
+    }
   };
-
-  // Giả sử bạn có thông tin user hiện tại
-  const user = JSON.parse(localStorage.getItem("userDetail")); // Lấy user từ localStorage
-  
- const handleFormSubmit = async (e) => {
-  e.preventDefault();
-
-  // Kiểm tra dữ liệu bắt buộc
-  if (!title.trim()) {
-    toast.error("Tiêu đề không được để trống!");
-    return;
-  }
-  if (!summary.trim()) {
-    toast.error("Tóm tắt không được để trống!");
-    return;
-  }
-  if (!user?.userId) {
-    toast.error("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!");
-    return;
-  }
-
-  try {
-    setUpdating(true);
-
-     // Tạo slug từ title
-    const generateSlug = (str) => {
-      return str
-        .toLowerCase()
-        .trim()
-        .replace(/ /g, "-")
-        .replace(/[^\w-]+/g, ""); // loại bỏ ký tự đặc biệt
-    };
-
-    // Chuẩn bị articleData
-    const articleData = {
-    title: title.trim(),
-    summary: summary.trim(),
-    slug: generateSlug(title),
-    authorId: user.userId,
-    mainCategoryId: mainCategory,
-    subCategoryIds: subCategories,
-    contents: blocks.map(b => ({
-      text: b.text,
-      image: null,   // sẽ gán URL back-end
-      caption: b.caption,
-      source: b.source
-    })),
-  };
-
-    // Lấy tất cả ảnh block (File) để gửi riêng
-    const contentImages = blocks
-      .map(b => b.image)
-      .filter(Boolean);
-
-    // Gọi API
-    await ArticleService.createArticle(articleData, mainImage, contentImages);
-
-    console.log("Submitted articleData:", articleData);
-    
-    toast.success("Bài báo đã được gửi tới Admin, hãy chờ phê duyệt!");
-
-    // Reset form
-    setTitle("");
-    setSummary("");
-    setMainCategory("");
-    setSubCategories([]);
-    setMainImage(null);
-    setBlocks([{ text: "", image: null, caption: "", source: "" }]);
-  } catch (error) {
-    toast.error("Có lỗi xảy ra khi gửi bài!");
-    console.error("Submit error:", error);
-  } finally {
-    setUpdating(false);
-  }
-};
-
-
-
-
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
       const data = await CategoryService.getCategories();
       setCategories(data);
-
     } catch (error) {
       console.log("Lỗi khi fetch categories", error);
     } finally {
@@ -166,195 +217,645 @@ const Submit = () => {
     }
   };
 
+  const resetFormData = () => {
+    setTitle("");
+    setSummary("");
+    setMainCategory("");
+    setSubCategories([]);
+    setMainImage(null);
+    setBlocks([]);
+    setCurrentStep(0);
+  };
+
   useEffect(() => {
     fetchCategories();
   }, []);
 
+  const menuItems = [
+    {
+      key: "paragraph",
+      label: (
+        <Space>
+          <FileTextOutlined />
+          <span>Thêm đoạn văn</span>
+        </Space>
+      ),
+      onClick: () => handleAddBlock("paragraph"),
+    },
+    {
+      key: "image",
+      label: (
+        <Space>
+          <PictureOutlined />
+          <span>Thêm hình ảnh</span>
+        </Space>
+      ),
+      onClick: () => handleAddBlock("image"),
+    },
+  ];
+
+  const steps = [
+    {
+      title: "Thông tin cơ bản",
+      icon: <EditOutlined />,
+    },
+    {
+      title: "Nội dung bài viết",
+      icon: <FileTextOutlined />,
+    },
+    {
+      title: "Xem trước & Gửi",
+      icon: <SendOutlined />,
+    },
+  ];
+
+  const progress = calculateProgress();
+
+  // Validate step hiện tại
+  const validateCurrentStep = () => {
+    if (currentStep === 0) {
+      if (!title.trim()) {
+        toast.error("Vui lòng nhập tiêu đề!");
+        return false;
+      }
+      if (!mainCategory) {
+        toast.error("Vui lòng chọn danh mục chính!");
+        return false;
+      }
+      if (!mainImage) {
+        toast.error("Vui lòng chọn ảnh đại diện!");
+        return false;
+      }
+      if (!summary.trim()) {
+        toast.error("Vui lòng nhập tóm tắt!");
+        return false;
+      }
+    } else if (currentStep === 1) {
+      if (blocks.length === 0) {
+        toast.error("Vui lòng thêm ít nhất 1 block nội dung!");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleNext = () => {
+    if (validateCurrentStep()) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handlePrev = () => {
+    setCurrentStep(currentStep - 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <>
       <Helmet>
-        <title>Gửi bài</title>
+        <title>Gửi bài viết mới</title>
       </Helmet>
       <div className={styles.container}>
         <DynamicBreadcrumb />
-        <div className="container mt-3">
-          <div className="row">
-            <div className="col-12 col-lg-9">
-              <div className="p-3 rounded mb-3" style={{ backgroundColor: "#DCE7FF" }}>
-                <h2 className="mb-0">GỬI BÀI CHO TÒA SOẠN</h2>
-                <small className="text-muted">Chia sẻ tin tức và bài viết bóng đá của bạn</small>
-              </div>
 
-              <form onSubmit={handleFormSubmit} className="p-3 border rounded shadow-sm bg-white">
-                {/* Tiêu đề */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Tiêu đề bài viết</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* Danh mục */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Danh mục chính</label>
-                  <Select
-                    options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
-                    value={
-                      categories
-                        .filter((c) => mainCategory === String(c.id))
-                        .map((c) => ({ value: String(c.id), label: c.name }))[0] || null
-                    }
-                    onChange={(selected) => setMainCategory(selected ? String(selected.value) : "")}
-                    placeholder="-- Chọn danh mục chính --"
-                    isClearable
-                    noOptionsMessage={() => "Không có danh mục nào"}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Danh mục phụ</label>
-                  <Select
-                    isMulti
-                    options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
-                    value={categories
-                      .filter((c) => subCategories.includes(String(c.id)))
-                      .map((c) => ({ value: String(c.id), label: c.name }))}
-                    onChange={(selected) =>
-                      setSubCategories(selected.map((s) => String(s.value)))
-                    }
-                    placeholder="-- Chọn danh mục phụ --"
-                    noOptionsMessage={() => "Không có danh mục nào"}
-                  />
-                </div>
-
-
-                {/* Ảnh chính */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Ảnh chính (ảnh đại diện)</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    accept="image/*"
-                    onChange={handleMainImageChange}
-                  />
-                  {mainImage && (
-                    <div className="mt-2">
-                      <img
-                        src={URL.createObjectURL(mainImage)}
-                        alt="main preview"
-                        className="img-fluid rounded shadow-sm"
-                        style={{ maxHeight: "200px" }}
-                      />
-                    </div>
+        {/* Header Card với gradient đẹp hơn */}
+        <Card
+          className="shadow-lg mt-3 border-0"
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            borderRadius: "12px",
+          }}
+        >
+          <Row align="middle" justify="space-between">
+            <Col>
+              <Title level={2} className="mb-2" style={{ color: "white" }}>
+                ✍️ Tạo bài viết mới
+              </Title>
+              <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px" }}>
+                Chia sẻ những câu chuyện bóng đá độc đáo của bạn với cộng đồng
+              </Text>
+            </Col>
+            <Col>
+              <div style={{ textAlign: "center" }}>
+                <Progress
+                  type="circle"
+                  percent={progress}
+                  width={80}
+                  strokeColor={{
+                    "0%": "#52c41a",
+                    "100%": "#73d13d",
+                  }}
+                  format={(percent) => (
+                    <span style={{ color: "white", fontWeight: "bold" }}>
+                      {percent}%
+                    </span>
                   )}
+                />
+                <div style={{ color: "white", marginTop: 8, fontSize: 12 }}>
+                  Hoàn thành
                 </div>
+              </div>
+            </Col>
+          </Row>
+        </Card>
 
-                {/* Summary */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Tóm tắt bài viết</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    required
+        {/* Steps */}
+        <Card className="mt-4 shadow-sm" style={{ borderRadius: "12px" }}>
+          <Steps current={currentStep} items={steps} />
+        </Card>
+
+        {/* Form Content */}
+        <Card className="mt-4 shadow-sm" style={{ borderRadius: "12px" }}>
+          <Form layout="vertical" onFinish={handleFormSubmit}>
+            {/* Step 0: Thông tin cơ bản */}
+            {currentStep === 0 && (
+              <div>
+                <Title level={4} className="mb-3">
+                  <EditOutlined /> Thông tin cơ bản
+                </Title>
+                <Divider style={{ margin: "12px 0 24px 0" }} />
+
+              <Row gutter={16}>
+                <Col xs={24} lg={16}>
+                  <Form.Item
+                    label={
+                      <span style={{ fontSize: 15, fontWeight: 500 }}>
+                        Tiêu đề bài viết <span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                  >
+                    <Input
+                      size="large"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Nhập tiêu đề hấp dẫn cho bài viết của bạn..."
+                      maxLength={200}
+                    />
+                    <div style={{ marginTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        {title.length}/200 ký tự
+                      </Text>
+                      {title.trim() && (
+                        <Tag color="success" icon={<CheckCircleOutlined />}>
+                          Đã nhập
+                        </Tag>
+                      )}
+                    </div>
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} lg={8}>
+                  <Form.Item
+                    label={
+                      <span style={{ fontSize: 15, fontWeight: 500 }}>
+                        Danh mục chính <span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                  >
+                    <Select
+                      size="large"
+                      loading={loading}
+                      options={categories
+                        .filter((c) => !subCategories.includes(String(c.id)))
+                        .map((c) => ({ value: String(c.id), label: c.name }))}
+                      value={mainCategory || undefined}
+                      onChange={(val) => setMainCategory(val)}
+                      placeholder="Chọn danh mục"
+                      allowClear
+                      suffixIcon={
+                        mainCategory && (
+                          <CheckCircleOutlined style={{ color: "#52c41a" }} />
+                        )
+                      }
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Form.Item
+                label={
+                  <span style={{ fontSize: 15, fontWeight: 500 }}>
+                    Danh mục phụ
+                  </span>
+                }
+              >
+                <Select
+                  size="large"
+                  mode="multiple"
+                  loading={loading}
+                  options={categories
+                    .filter((c) => String(c.id) !== mainCategory)
+                    .map((c) => ({ value: String(c.id), label: c.name }))}
+                  value={subCategories}
+                  onChange={(vals) => setSubCategories(vals)}
+                  placeholder="Chọn các danh mục bổ sung (không bắt buộc)"
+                  maxTagCount="responsive"
+                />
+              </Form.Item>
+
+              <Row gutter={16}>
+                <Col xs={24} lg={12}>
+                  <Form.Item
+                    label={
+                      <span style={{ fontSize: 15, fontWeight: 500 }}>
+                        Ảnh đại diện <span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                  >
+                    <Upload.Dragger
+                      accept="image/*"
+                      beforeUpload={() => false}
+                      maxCount={1}
+                      onChange={(info) => setMainImage(info.file)}
+                      style={{ borderRadius: "8px" }}
+                    >
+                      <p className="ant-upload-drag-icon">
+                        <PictureOutlined style={{ fontSize: 48, color: "#1890ff" }} />
+                      </p>
+                      <p className="ant-upload-text" style={{ fontSize: 16 }}>
+                        Kéo & thả ảnh vào đây
+                      </p>
+                      <p className="ant-upload-hint">
+                        hoặc click để chọn ảnh từ thiết bị
+                      </p>
+                    </Upload.Dragger>
+                    {mainImage && (
+                      <div style={{ marginTop: 16, position: "relative" }}>
+                        <img
+                          src={URL.createObjectURL(mainImage)}
+                          alt="preview"
+                          className="rounded shadow"
+                          style={{
+                            maxHeight: 250,
+                            width: "100%",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                          }}
+                        />
+                        <Tag
+                          color="success"
+                          icon={<CheckCircleOutlined />}
+                          style={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                          }}
+                        >
+                          Đã chọn
+                        </Tag>
+                      </div>
+                    )}
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} lg={12}>
+                  <Form.Item
+                    label={
+                      <span style={{ fontSize: 15, fontWeight: 500 }}>
+                        Tóm tắt bài viết <span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                  >
+                    <Input.TextArea
+                      rows={6}
+                      value={summary}
+                      onChange={(e) => setSummary(e.target.value)}
+                      placeholder="Viết tóm tắt ngắn gọn, súc tích về nội dung bài viết..."
+                      showCount
+                      maxLength={500}
+                      style={{ borderRadius: "8px" }}
+                    />
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      Tóm tắt giúp độc giả nhanh chóng hiểu nội dung chính
+                    </Text>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </div>
+            )}
+
+            {/* Step 1: Nội dung bài viết */}
+            {currentStep === 1 && (
+              <div>
+                <Title level={4} className="mb-3">
+                  <FileTextOutlined /> Nội dung bài viết
+                </Title>
+                <Divider style={{ margin: "12px 0 24px 0" }} />
+
+              {blocks.length === 0 && (
+                <Card
+                  style={{
+                    background: "#f0f5ff",
+                    borderRadius: "8px",
+                    border: "2px dashed #1890ff",
+                    textAlign: "center",
+                    padding: "40px 20px",
+                  }}
+                >
+                  <FileTextOutlined
+                    style={{ fontSize: 48, color: "#1890ff", marginBottom: 16 }}
                   />
-                </div>
+                  <Paragraph style={{ fontSize: 16, marginBottom: 8 }}>
+                    Chưa có nội dung nào
+                  </Paragraph>
+                  <Text type="secondary">
+                    Nhấn nút "Thêm block" bên dưới để bắt đầu viết bài
+                  </Text>
+                </Card>
+              )}
 
-                {/* Blocks */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Nội dung bài viết</label>
-
-                  {blocks.map((block, index) => (
-                    <div key={index} className="border p-3 rounded mb-3 bg-light">
-                      <h6>Đoạn {index + 1}</h6>
-
+              {blocks.map((block, index) => (
+                <Card
+                  key={index}
+                  size="small"
+                  className="mb-3 shadow-sm"
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #e8e8e8",
+                  }}
+                  title={
+                    <Space>
+                      {block.type === "paragraph" ? (
+                        <FileTextOutlined style={{ color: "#1890ff" }} />
+                      ) : (
+                        <PictureOutlined style={{ color: "#52c41a" }} />
+                      )}
+                      <span style={{ fontWeight: 500 }}>
+                        {block.type === "paragraph" ? "Đoạn văn" : "Hình ảnh"} #{index + 1}
+                      </span>
+                    </Space>
+                  }
+                  extra={
+                    <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleRemoveBlock(index)}
+                    >
+                      Xóa
+                    </Button>
+                  }
+                >
+                  {block.type === "paragraph" && (
+                    <div style={{ minHeight: 200 }}>
                       <ReactQuill
                         theme="snow"
                         value={block.text}
                         onChange={(value) => handleTextChange(index, value)}
                         modules={modules}
                         formats={formats}
-                        style={{ minHeight: "200px" }}
+                        placeholder="Bắt đầu viết nội dung..."
+                        style={{ borderRadius: "8px" }}
                       />
+                    </div>
+                  )}
 
-                      <input
-                        type="file"
-                        className="form-control mb-2"
+                  {block.type === "image" && (
+                    <div>
+                      <Upload
                         accept="image/*"
-                        onChange={(e) => handleImageChange(index, e.target.files[0])}
-                      />
+                        beforeUpload={() => false}
+                        maxCount={1}
+                        onChange={(info) => handleImageChange(index, info.file)}
+                        listType="picture-card"
+                      >
+                        {!block.image && (
+                          <div>
+                            <PlusOutlined />
+                            <div style={{ marginTop: 8 }}>Chọn ảnh</div>
+                          </div>
+                        )}
+                      </Upload>
+
                       {block.image && (
-                        <img
-                          src={URL.createObjectURL(block.image)}
-                          alt="block preview"
-                          className="img-fluid rounded shadow-sm mb-2"
-                          style={{ maxHeight: "200px" }}
-                        />
+                        <div style={{ marginTop: 12 }}>
+                          <img
+                            src={URL.createObjectURL(block.image)}
+                            alt="block preview"
+                            className="rounded shadow"
+                            style={{
+                              maxHeight: 300,
+                              width: "100%",
+                              objectFit: "contain",
+                              borderRadius: "8px",
+                            }}
+                          />
+                        </div>
                       )}
 
-                      <div className="row">
-                        <div className="col-md-8">
-                          <label className="form-label">Chú thích ảnh</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Chú thích ảnh (nếu có)"
-                            value={block.caption}
-                            onChange={(e) => handleCaptionChange(index, e.target.value)}
-                          />
-                        </div>
-                        <div className="col-md-4">
-                          <label className="form-label">Nguồn</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Nguồn (nếu có)"
-                            value={block.source}
-                            onChange={(e) => handleSourceChange(index, e.target.value)}
-                          />
-                        </div>
-                      </div>
+                      <Input
+                        className="mt-3"
+                        placeholder="Nhập chú thích cho ảnh..."
+                        value={block.caption}
+                        onChange={(e) => handleCaptionChange(index, e.target.value)}
+                        prefix={<EditOutlined />}
+                      />
+                      <Input
+                        className="mt-2"
+                        placeholder="Nguồn ảnh (nếu có)..."
+                        value={block.source}
+                        onChange={(e) => handleSourceChange(index, e.target.value)}
+                        prefix={<FileTextOutlined />}
+                      />
+                    </div>
+                  )}
+                </Card>
+              ))}
 
-                      <div className="text-end mt-3">
-                        <Button
-                          type="primary"
-                          danger
-                          size="middle"
-                          onClick={() => handleRemoveBlock(index)}
-                        >
-                          Xóa
-                        </Button>
-                      </div>
+              <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
+                <Button
+                  type="dashed"
+                  icon={<PlusOutlined />}
+                  size="large"
+                  block
+                  style={{
+                    height: 60,
+                    fontSize: 16,
+                    borderRadius: "8px",
+                    borderWidth: 2,
+                  }}
+                >
+                  Thêm block nội dung
+                </Button>
+              </Dropdown>
+            </div>
+            )}
+
+            {/* Step 2: Xem trước & Gửi */}
+            {currentStep === 2 && (
+              <div>
+                <Title level={4} className="mb-3">
+                  <EyeOutlined /> Xem trước bài viết
+                </Title>
+                <Divider style={{ margin: "12px 0 24px 0" }} />
+
+                {/* Preview */}
+                <Card
+                  style={{
+                    background: "#fafafa",
+                    borderRadius: "8px",
+                  }}
+                >
+                  {/* Title */}
+                  <Title level={2} style={{ marginBottom: 16 }}>
+                    {title || "Chưa có tiêu đề"}
+                  </Title>
+
+                  {/* Meta info */}
+                  <Space size="large" style={{ marginBottom: 16 }}>
+                    <Text type="secondary">
+                      Danh mục: {categories.find(c => String(c.id) === mainCategory)?.name || "Chưa chọn"}
+                    </Text>
+                    <Text type="secondary">
+                      Số block: {blocks.length}
+                    </Text>
+                  </Space>
+
+                  <Divider />
+
+                  {/* Main Image */}
+                  {mainImage && (
+                    <div style={{ marginBottom: 24 }}>
+                      <img
+                        src={URL.createObjectURL(mainImage)}
+                        alt="preview"
+                        style={{
+                          width: "100%",
+                          maxHeight: 400,
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Summary */}
+                  <Paragraph
+                    style={{
+                      fontSize: 16,
+                      fontStyle: "italic",
+                      background: "#f0f5ff",
+                      padding: "16px",
+                      borderRadius: "8px",
+                      borderLeft: "4px solid #1890ff",
+                      marginBottom: 24,
+                    }}
+                  >
+                    {summary || "Chưa có tóm tắt"}
+                  </Paragraph>
+
+                  {/* Content Blocks */}
+                  {blocks.map((block, index) => (
+                    <div key={index} style={{ marginBottom: 24 }}>
+                      {block.type === "paragraph" && (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: block.text }}
+                          style={{ fontSize: 15, lineHeight: 1.8 }}
+                        />
+                      )}
+                      {block.type === "image" && block.image && (
+                        <div style={{ textAlign: "center" }}>
+                          <img
+                            src={URL.createObjectURL(block.image)}
+                            alt={`content-${index}`}
+                            style={{
+                              maxWidth: "100%",
+                              borderRadius: "8px",
+                              marginBottom: 8,
+                            }}
+                          />
+                          {block.caption && (
+                            <Text type="secondary" style={{ display: "block" }}>
+                              {block.caption}
+                            </Text>
+                          )}
+                          {block.source && (
+                            <Text type="secondary" style={{ fontSize: 12 }}>
+                              Nguồn: {block.source}
+                            </Text>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
+                </Card>
+              </div>
+            )}
 
+            <Divider />
 
-                  <Button type="dashed" onClick={handleAddBlock}>
-                    + Thêm đoạn mới
-                  </Button>
+            {/* Navigation Buttons */}
+            <Form.Item>
+              <Space size="middle" style={{ width: "100%", justifyContent: "space-between" }}>
+                <div>
+                  {currentStep > 0 && (
+                    <Button size="large" onClick={handlePrev} style={{ minWidth: 120 }}>
+                      ← Quay lại
+                    </Button>
+                  )}
                 </div>
 
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={updating} // khi updating=true thì hiển thị spinner
-                  className="mt-3 mb-5"
-                  size="large"
-                >
-                  {updating ? "Đang xử lý..." : "Gửi bài"}
-                </Button>
+                <div>
+                  {currentStep < 2 ? (
+                    <Button
+                      type="primary"
+                      size="large"
+                      onClick={handleNext}
+                      style={{
+                        minWidth: 150,
+                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        border: "none",
+                      }}
+                    >
+                      Tiếp theo →
+                    </Button>
+                  ) : (
+                    <Space>
+                      <Button size="large" onClick={resetFormData} style={{ minWidth: 120 }}>
+                        Hủy bỏ
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={updating}
+                        size="large"
+                        icon={<SendOutlined />}
+                        style={{
+                          minWidth: 200,
+                          background: "linear-gradient(135deg, #52c41a 0%, #73d13d 100%)",
+                          border: "none",
+                        }}
+                      >
+                        {updating ? "Đang gửi..." : "Gửi bài viết"}
+                      </Button>
+                    </Space>
+                  )}
+                </div>
+              </Space>
+            </Form.Item>
+          </Form>
+        </Card>
 
-
-              </form>
-            </div>
-          </div>
-        </div>
+        {/* Helper Tips */}
+        <Card
+          className="mt-4 shadow-sm"
+          style={{
+            borderRadius: "12px",
+            background: "#fffbe6",
+            borderColor: "#ffe58f",
+          }}
+        >
+          <Title level={5} style={{ color: "#faad14" }}>
+            💡 Mẹo viết bài hay
+          </Title>
+          <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
+            <li>Tiêu đề nên ngắn gọn, súc tích và thu hút</li>
+            <li>Sử dụng ảnh chất lượng cao, có bản quyền rõ ràng</li>
+            <li>Chia nhỏ nội dung thành các đoạn ngắn dễ đọc</li>
+            <li>Kiểm tra kỹ chính tả và ngữ pháp trước khi gửi</li>
+          </ul>
+        </Card>
       </div>
     </>
   );

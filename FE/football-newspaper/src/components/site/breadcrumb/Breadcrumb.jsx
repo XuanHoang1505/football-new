@@ -42,6 +42,9 @@ function DynamicBreadcrumb({ category }) {
           case "latest":
             label = "Tin tức mới nhất";
             break;  
+          case "submit":
+            label = "Gửi bài báo";
+            break;  
           default:
             label = name;
         }

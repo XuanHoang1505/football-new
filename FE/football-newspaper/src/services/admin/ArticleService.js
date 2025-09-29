@@ -13,6 +13,15 @@ const getArticles = async () => {
     throw error;
   }
 };
+const getPublishedArticles = async () => {
+  try {
+    const response = await axiosInstance.get(`${API_URL}/publish`);
+    return response.data;
+  } catch (error) {
+    handleErrorResponse(error);
+    throw error;
+  }
+};
 
 // Lấy article theo ID
 const getArticleById = async (id) => {
@@ -56,15 +65,13 @@ const getPagedArticles = async (
   }
 };
 
-
-// Tạo article (có upload ảnh chính + ảnh nội dung)
-const createArticle = async (articleData, mainImage, contentImages) => {
-  // Debug trước khi gửi
+const createArticle = async (articleData, mainImage, blocks) => {
   console.log("Sending articleData:", articleData);
 
-  // Kiểm tra authorId
   if (!articleData.authorId) {
-    throw new Error("authorId đang bị rỗng! Kiểm tra user.userId trước khi gửi.");
+    throw new Error(
+      "authorId đang bị rỗng! Kiểm tra user.userId trước khi gửi."
+    );
   }
 
   const formData = new FormData();
@@ -77,12 +84,13 @@ const createArticle = async (articleData, mainImage, contentImages) => {
     formData.append("mainImage", mainImage);
   }
 
-  // Ảnh block (nếu có nhiều)
-  if (contentImages && contentImages.length > 0) {
-    contentImages.forEach((file, index) => {
-      formData.append("contentImages", file);
-    });
-  }
+  // Ảnh trong blocks
+  blocks.forEach((b) => {
+    if (b.file) {
+      formData.append("contentImages", b.file);
+      formData.append("contentImageIndexes", b.blockIndex.toString());
+    }
+  });
 
   try {
     const response = await axiosInstance.post(`${API_URL}/create`, formData, {
@@ -92,17 +100,16 @@ const createArticle = async (articleData, mainImage, contentImages) => {
     });
 
     console.log("Server response:", response.data);
-    return response.data; // ✅ trả về article vừa tạo
+    return response.data;
   } catch (error) {
-    console.error("Error uploading article:", error.response?.data || error.message);
+    console.error(
+      "Error uploading article:",
+      error.response?.data || error.message
+    );
     handleErrorResponse(error);
     throw error;
   }
 };
-
-
-
-
 
 // Cập nhật article
 const updateArticle = async (id, articleData) => {
@@ -257,6 +264,7 @@ const rejectArticle = async (id, reason = null) => {
 // Export service
 const ArticleService = {
   getArticles,
+  getPublishedArticles,
   getArticleById,
   getArticleBySlug,
   getPagedArticles,

@@ -53,6 +53,17 @@ namespace footballnew.Repositories.Implementations
                 .OrderByDescending(a => a.DatePublished)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Article>> GetPublishArticle()
+        {
+            return await _context.Articles
+                .Where(a => a.Status == ArticleStatus.Published)
+                .Include(a => a.Author)
+                .Include(a => a.Images) // nạp luôn ảnh
+                .Include(a => a.ArticleCategories)
+                    .ThenInclude(ac => ac.Category) // nạp luôn Category
+                .OrderByDescending(a => a.DatePublished)
+                .ToListAsync();
+        }
 
 
         public async Task<Article> AddAsync(Article article)
