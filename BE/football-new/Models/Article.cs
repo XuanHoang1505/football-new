@@ -17,7 +17,7 @@ namespace footballnew.Models
         public string? MetaTitle { get; set; }
         public string? MetaDescription { get; set; }
         public string? CanonicalUrl { get; set; }
-        public ArticleStatus Status { get; set; } = ArticleStatus.Draft;
+        public ArticleStatus Status { get; set; } = ArticleStatus.DRAFT;
         public string? UpdatedBy { get; set; }
         public ApplicationUser? UpdatedByUser { get; set; }
 
@@ -30,9 +30,9 @@ namespace footballnew.Models
         public DateTime? RejectedDate { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
-        public DateTime? SubmitDate { get; set; }     
-        public DateTime? ApprovedDate { get; set; }   
-        public DateTime? DatePublished { get; set; }  
+        public DateTime? SubmitDate { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+        public DateTime? DatePublished { get; set; }
         public int ViewCount { get; set; } = 0;
         public int ShareCount { get; set; } = 0;
         public int CommentCount { get; set; } = 0;
@@ -46,5 +46,7 @@ namespace footballnew.Models
         public ICollection<ArticleTag> ArticleTags { get; set; } = new List<ArticleTag>();
         public ICollection<ArticleViewHistory> ViewHistories { get; set; } = new List<ArticleViewHistory>();
         public ICollection<Content> Contents { get; set; } = new List<Content>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     }
 }

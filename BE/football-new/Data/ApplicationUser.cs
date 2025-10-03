@@ -39,5 +39,7 @@ namespace footballnew.Data
         public ICollection<Article> ArticlesRejected { get; set; } = new List<Article>();
 
         public ICollection<ArticleViewHistory> ArticleViewHistories { get; set; } = new List<ArticleViewHistory>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     }
 }

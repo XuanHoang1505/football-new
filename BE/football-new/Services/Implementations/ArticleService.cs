@@ -13,11 +13,15 @@ namespace footballnew.Services.Implementations
     {
         private readonly IArticleRepository _repository;
         private readonly IMapper _mapper;
+        private readonly CloudinaryService _cloudinaryService;
+        private readonly ILogger<ArticleService> _logger;
 
-        public ArticleService(IArticleRepository repository, IMapper mapper)
+        public ArticleService(IArticleRepository repository, IMapper mapper, CloudinaryService service, ILogger<ArticleService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _cloudinaryService = service;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<ArticleListDTO>> GetAllAsync()
@@ -58,7 +62,7 @@ namespace footballnew.Services.Implementations
             var article = _mapper.Map<Article>(dto);
 
             // Trạng thái & thời gian
-            article.Status = ArticleStatus.PendingReview;
+            article.Status = ArticleStatus.PENDING;
             article.SubmitDate = DateTime.UtcNow;
             article.DatePublished = null;
 
@@ -88,7 +92,7 @@ namespace footballnew.Services.Implementations
                     }
                     else
                     {
-                        content.Image = null; // ❌ Fix: bỏ ảnh rỗng
+                        content.Image = null;
                     }
 
                     article.Contents.Add(content);
@@ -142,37 +146,103 @@ namespace footballnew.Services.Implementations
 
             // 6️⃣ Lưu Article
             var createdArticle = await _repository.AddAsync(article);
-
-            Console.WriteLine("=== [DEBUG] Sau khi AddAsync ===");
-            foreach (var c in createdArticle.Contents)
-            {
-                Console.WriteLine($"Created Content: Type={c.Type}, ImageUrl={c.Image?.Url}");
-            }
-            foreach (var img in createdArticle.Images)
-            {
-                Console.WriteLine($"Created Article Image: Url={img.Url}, IsMain={img.IsMain}");
-            }
-
             // 7️⃣ Map entity -> DTO
             var resultDto = _mapper.Map<ArticleDetailDTO>(createdArticle);
-
-            Console.WriteLine("=== [DEBUG] Result DTO ===");
-            Console.WriteLine(JsonSerializer.Serialize(resultDto, new JsonSerializerOptions { WriteIndented = true }));
-
-            Console.WriteLine("=== [DEBUG] KẾT THÚC CreateAsync ===");
-
             return resultDto;
         }
 
 
 
-        public async Task<bool> UpdateAsync(int id, ArticleDetailDTO dto)
+        public async Task<bool> UpdateAsync(int id, UpdateArticleDTO dto, string? newMainImageUrl)
         {
             var article = await _repository.GetByIdAsync(id);
             if (article == null)
                 throw new AppException(ErrorCode.ArticleNotFound, "Bài viết không tồn tại!");
 
-            _mapper.Map(dto, article);
+            article.Title = dto.Title;
+            article.Summary = dto.Summary;
+
+            if (!string.IsNullOrWhiteSpace(newMainImageUrl))
+            {
+                var oldMainImage = article.Images.FirstOrDefault(img => img.IsMain);
+                if (oldMainImage != null)
+                {
+                    try
+                    {
+                        var publicId = CloudinaryService.ExtractPublicId(oldMainImage.Url);
+                        if (!string.IsNullOrEmpty(publicId))
+                        {
+                            await _cloudinaryService.DeleteImageAsync(publicId);
+                            _logger.LogInformation($"Đã xóa ảnh cũ: {publicId}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning($"Không thể xóa ảnh cũ: {ex.Message}");
+                    }
+
+                    // Xóa record trong DB
+                    article.Images.Remove(oldMainImage);
+                }
+
+                // Thêm ảnh mới
+                article.Images.Add(new Image
+                {
+                    Url = newMainImageUrl,
+                    IsMain = true,
+                    UploadDate = DateTime.UtcNow,
+                    Article = article
+                });
+            }
+
+            // 3️⃣ Cập nhật Contents
+            if (dto.Contents != null && dto.Contents.Any())
+            {
+                foreach (var oldContent in article.Contents.Where(c => c.Image != null))
+                {
+                    try
+                    {
+                        var publicId = CloudinaryService.ExtractPublicId(oldContent.Image.Url);
+                        if (!string.IsNullOrEmpty(publicId))
+                        {
+                            await _cloudinaryService.DeleteImageAsync(publicId);
+                            _logger.LogInformation($"Đã xóa ảnh content cũ: {publicId}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning($"Không thể xóa ảnh content cũ: {ex.Message}");
+                    }
+                }
+
+                // Clear và thêm contents mới
+                article.Contents.Clear();
+
+                for (int i = 0; i < dto.Contents.Count; i++)
+                {
+                    var contentDto = dto.Contents[i];
+                    var content = _mapper.Map<Content>(contentDto);
+                    content.OrderIndex = contentDto.OrderIndex;
+                    content.Article = article;
+
+                    if (contentDto.Image != null && !string.IsNullOrWhiteSpace(contentDto.Image.Url))
+                    {
+                        content.Image = new Image
+                        {
+                            Url = contentDto.Image.Url,
+                            Caption = contentDto.Image.Caption,
+                            Credits = contentDto.Image.Credits,
+                            IsMain = false,
+                            UploadDate = DateTime.UtcNow,
+                            Content = content
+                        };
+                    }
+
+                    article.Contents.Add(content);
+                }
+            }
+
+            // 5️⃣ Lưu thay đổi
             await _repository.UpdateAsync(article);
             return true;
         }
@@ -302,7 +372,7 @@ namespace footballnew.Services.Implementations
             {
                 // Publish ngay
                 article.DatePublished = DateTime.UtcNow;
-                article.Status = ArticleStatus.Published;
+                article.Status = ArticleStatus.PUBLISHED;
             }
             else
             {
@@ -313,12 +383,12 @@ namespace footballnew.Services.Implementations
                 if (publishDate <= DateTime.UtcNow)
                 {
                     article.DatePublished = DateTime.UtcNow;
-                    article.Status = ArticleStatus.Published;
+                    article.Status = ArticleStatus.PUBLISHED;
                 }
                 else
                 {
                     article.DatePublished = publishDate;
-                    article.Status = ArticleStatus.Approved;
+                    article.Status = ArticleStatus.APPROVED;
                 }
             }
 
@@ -341,7 +411,7 @@ namespace footballnew.Services.Implementations
             if (article == null)
                 throw new AppException(ErrorCode.ArticleNotFound, $"Không tìm thấy bài viết với Id = {id}");
 
-            article.Status = ArticleStatus.Rejected;
+            article.Status = ArticleStatus.REJECTED;
             article.RejectedBy = rejectedBy;
             article.RejectedDate = DateTime.UtcNow;
             article.RejectionReason = reason;

@@ -60,12 +60,16 @@ namespace footballnew.Mappings
                 .ForMember(dest => dest.CategoryName,
                            opt => opt.MapFrom(src => src.ArticleCategories
                                .Select(ac => ac.Category.Name)
-                               .FirstOrDefault()));
+                               .FirstOrDefault()))
+                .ForMember(dest => dest.ApprovedBy,
+                        opt => opt.MapFrom(src => src.ApprovedByUser != null ? src.ApprovedByUser.FullName : null))
+                .ForMember(dest => dest.RejectedBy,
+                        opt => opt.MapFrom(src => src.RejectedByUser != null ? src.RejectedByUser.FullName : null));
 
             CreateMap<Article, ArticlePendingDTO>()
                 .ForMember(dest => dest.AuthorName,
                            opt => opt.MapFrom(src => src.Author.UserName))
-                .ForMember(dest => dest.Thumbnail,
+                .ForMember(dest => dest.ImageUrl,
                            opt => opt.MapFrom(src => src.Images
                                .Where(i => i.IsMain)
                                .Select(i => i.Url)
@@ -73,9 +77,7 @@ namespace footballnew.Mappings
                 .ForMember(dest => dest.CategoryName,
                            opt => opt.MapFrom(src => src.ArticleCategories
                                .Select(ac => ac.Category.Name)
-                               .FirstOrDefault()))
-                .ForMember(dest => dest.SubmittedDate,
-                           opt => opt.MapFrom(src => src.SubmitDate));
+                               .FirstOrDefault()));
 
             // ============================
             // 🔹 Article Detail Mapping
@@ -85,7 +87,14 @@ namespace footballnew.Mappings
                 .ForMember(dest => dest.ArticleCategories, opt => opt.Ignore())
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.Author, opt => opt.Ignore())
-                .ForMember(dest => dest.Contents, opt => opt.Ignore()); // 🚀 Ignore luôn
+                .ForMember(dest => dest.Contents, opt => opt.Ignore());
+
+            CreateMap<UpdateArticleDTO, Article>()
+                .ForMember(dest => dest.ArticleTags, opt => opt.Ignore())
+                .ForMember(dest => dest.ArticleCategories, opt => opt.Ignore())
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.Author, opt => opt.Ignore())
+                .ForMember(dest => dest.Contents, opt => opt.Ignore());
 
 
             CreateMap<Article, ArticleDetailDTO>()
@@ -127,6 +136,19 @@ namespace footballnew.Mappings
                                .FirstOrDefault()))
                 .ForMember(dest => dest.ViewAt,
                            opt => opt.MapFrom(src => src.ViewAt));
+
+            CreateMap<Comment, CommentDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.UserAvatar, opt => opt.MapFrom(src => src.User.Avatar))
+                .ForMember(dest => dest.Replies, opt => opt.MapFrom(src => src.Replies));
+
+            // DTO -> Entity
+            CreateMap<CreateCommentDTO, Comment>();
+            CreateMap<UpdateCommentDTO, Comment>();
+
+            // Like
+            CreateMap<CommentLike, CommentLikeDTO>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
         }
     }
 }

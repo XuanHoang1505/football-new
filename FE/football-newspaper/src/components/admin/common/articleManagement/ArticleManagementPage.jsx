@@ -1,41 +1,28 @@
+// ArticleManagementPage.jsx
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { Spinner } from "react-bootstrap";
-import { TableManagement } from "../../../components/admin/index";
-import ArticleService from "../../../services/admin/ArticleService";
-import Page500 from "../../../pages/site/page500/Page500";
-import { formatDateTimeToDMY } from "../../../utils/formatDate";
+import { TableManagement } from "../../index";
+import ArticleService from "../../../../services/admin/ArticleService";
+import Page500 from "../../../../pages/site/page500/Page500";
+import { formatDateTimeToDMY } from "../../../../utils/formatDate";
+import { useNavigate } from "react-router-dom";
 
-const ArticleListPage = () => {
+const ArticleManagementPage = ({
+  pageTitle = "Quản lý bài viết",
+  tableTitle = "Danh sách bài viết",
+  fetchMethod = "getAllArticles",
+  buttons = {},
+  articleColumns = [],
+  keysToRemove = [],
+}) => {
+  const navigate = useNavigate();
   const [articleData, setArticleData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
   const [errorServer, setErrorServer] = useState(null);
 
-  const button = {
-    btnAdd: false,
-    btnEdit: false,
-    btnDelete: false,
-    btnDetail: true,
-    btnSetting: false,
-    btnReject: true,
-    btnApprove: true,
-  };
-
-  // Cột hiển thị cho bài viết
-  const articleColumns = [
-    { key: "id", label: "ID" },
-    { key: "thumbnail", label: "Ảnh chính" },
-    { key: "title", label: "Tiêu đề" },
-    { key: "authorName", label: "Tác giả" },
-    { key: "categoryName", label: "Danh mục" },
-    { key: "status", label: "Trạng thái" },
-    { key: "submittedDate", label: "Ngày nộp bài" },
-    { key: "summary", label: "Tóm tắt" },
-  ];
-
-  const keysToRemove = ["summary", "id"];
   const defaultColumns = articleColumns.filter(
     (column) => !keysToRemove.includes(column.key)
   );
@@ -43,14 +30,12 @@ const ArticleListPage = () => {
   const fetchArticleData = async () => {
     setLoadingPage(true);
     try {
-      const data = await ArticleService.getPendingArticles();
-
+      const data = await ArticleService[fetchMethod]();
       const formatData = data.map((d) => ({
         ...d,
-        submittedDate: formatDateTimeToDMY(d.submittedDate),
+        submitDate: formatDateTimeToDMY(d.submitDate),
+        datePublished: formatDateTimeToDMY(d.datePublished),
       }));
-
-
       setArticleData(formatData);
     } catch (err) {
       setErrorServer(err.message);
@@ -93,11 +78,41 @@ const ArticleListPage = () => {
     }
   };
 
+  const handleEdit = async (slug) => {
+    navigate(`/admin/article/${slug}`, {
+      state: {
+        initEditMode: true,
+      },
+    });
+  };
+
+  const handleDelete = async (id) => {
+    if (!id) return;
+    setIsLoading(true);
+    try {
+      await ArticleService.deleteArticle(id);
+      setArticleData((prev) => prev.filter((a) => a.id !== id));
+      toast.success("Xóa bài viết thành công!");
+    } catch (error) {
+      const msg = error?.response?.data?.message || "Xóa bài thất bại.";
+      toast.error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleViewDetail = (slug) => {
+    navigate(`/admin/article/${slug}`, {
+      state: {
+        initEditMode: false,
+      },
+    });
+  };
 
   return (
     <>
       <Helmet>
-        <title>Danh sách bài viết chờ duyệt - Thể Thao 247</title>
+        <title>{pageTitle} - Thể Thao 247</title>
       </Helmet>
       {loadingPage ? (
         <div className="w-100 h-100 d-flex justify-content-center align-items-center">
@@ -110,12 +125,15 @@ const ArticleListPage = () => {
           <TableManagement
             columns={articleColumns}
             data={articleData}
-            title="Danh sách bài viết yêu cầu duyệt"
+            title={tableTitle}
             defaultColumns={defaultColumns}
             isLoading={isLoading}
-            buttonCustom={button}
+            buttonCustom={buttons}
             onApprove={handleApprove}
             onReject={handleReject}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onViewDetail={handleViewDetail}
           />
         </section>
       )}
@@ -123,4 +141,4 @@ const ArticleListPage = () => {
   );
 };
 
-export default ArticleListPage;
+export default ArticleManagementPage;

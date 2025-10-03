@@ -1,7 +1,7 @@
 import { useState } from "react";
-import CustomModal from "../CustomModal";
-import ImageModal from "../ImageModal";
-import DeleteModal from "../DeleteModal";
+import CustomModal from "../modals/CustomModal";
+import ImageModal from "../modals/ImageModal";
+import DeleteModal from "../modals/DeleteModal";
 import "../../../../assets/admin/css/table-management.css";
 import defaultImage from "../../../../assets/admin/images/defaultImage.png";
 import defaultVideo from "../../../../assets/admin/images/defaultVideo.png";
@@ -9,9 +9,9 @@ import TableHeader from "./TableHeader";
 import TableBody from "./TableBody";
 import TableFooter from "./TableFooter";
 import { Badge } from "react-bootstrap";
-import VideoModal from "../VideoModal";
-import ApproveModal from "../ApproveModal";
-import RejectModal from "../RejectModal";
+import VideoModal from "../modals/VideoModal";
+import ApproveModal from "../modals/ApproveModal";
+import RejectModal from "../modals/RejectModal";
 
 const TableManagement = ({
   data,
@@ -81,15 +81,19 @@ const TableManagement = ({
             statusClass = "text-bg-success";
             statusText = "Hoạt động";
             break;
+          case "PUBLISHED":
+            statusClass = "text-bg-success";
+            statusText = "Đã xuất bản";
+            break;
+          case "REJECTED":
+            statusClass = "text-bg-danger";
+            statusText = "Đã từ chối";
+            break;
           case "DISABLED":
             statusClass = "text-bg-secondary";
             statusText = "Vô hiệu hóa";
             break;
           case "PENDING":
-            statusClass = "text-bg-warning";
-            statusText = "Đang chờ duyệt";
-            break;
-          case "PendingReview":
             statusClass = "text-bg-warning";
             statusText = "Đang chờ duyệt";
             break;
@@ -110,7 +114,7 @@ const TableManagement = ({
             statusText = "Đã xem";
             break;
           default:
-            statusClass = "text-bg-muted"; 
+            statusClass = "text-bg-muted";
             statusText = "Không xác định";
         }
 
@@ -136,7 +140,7 @@ const TableManagement = ({
             }}
           />
         );
-      case "thumbnail":
+      case "imageUrl":
         return (
           <img
             src={item[column.key] || defaultImage} // Nếu item[column.key] không có, hiển thị ảnh mặc định

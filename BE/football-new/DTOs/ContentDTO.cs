@@ -10,6 +10,8 @@ namespace footballnew.DTOs
         public string? Text { get; set; }
 
         public string? Caption { get; set; }
+
+        public string? Credits { get; set; }
         // Nếu type = Image => có ImageDTO
         public ImageDTO? Image { get; set; }
     }

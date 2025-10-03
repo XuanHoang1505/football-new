@@ -39,7 +39,8 @@ namespace footballnew.Utils
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("userId", userId.ToString())
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()), 
+                new Claim("userId", userId.ToString()) 
             };
 
             // Thêm danh sách quyền (roles)

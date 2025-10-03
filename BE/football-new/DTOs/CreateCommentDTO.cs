@@ -1,0 +1,9 @@
+namespace footballnew.DTOs
+{
+        public class CreateCommentDTO
+    {
+        public string Content { get; set; } = null!;
+        public int ArticleId { get; set; }
+        public int? ParentId { get; set; }
+    }
+}

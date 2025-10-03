@@ -7,6 +7,7 @@ import Breadcrumb from "../../../components/site/breadcrumb/Breadcrumb";
 import styles from "./ArticlePage.module.scss";
 import { formatDateTimeToDMY } from "../../../utils/formatDate";
 import ArticleContentRenderer from "./ArticleContentRender";
+import CommentSection from "../../../components/site/comment/CommentSection";
 
 function ArticlePage() {
   const { slug } = useParams();
@@ -29,8 +30,6 @@ function ArticlePage() {
   useEffect(() => {
     fetchArticle();
   }, []);
-
-  console.log(articleDetail);
 
   return (
     <>
@@ -92,6 +91,7 @@ function ArticlePage() {
                   <p className="fs-3 fw-bold my-4">{articleDetail.summary}</p>
                   <ArticleContentRenderer contents={articleDetail.contents} />
                 </div>
+                <CommentSection articleId={articleDetail.id} />
               </div>
             </div>
             <div className="col-md-3"></div>
