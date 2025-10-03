@@ -49,14 +49,15 @@ namespace footballnew.Repositories.Implementations
                 .Include(a => a.Author)
                 .Include(a => a.Images) // nạp luôn ảnh
                 .Include(a => a.ArticleCategories)
-                    .ThenInclude(ac => ac.Category) // nạp luôn Category
-                .OrderByDescending(a => a.DatePublished)
+                    .ThenInclude(ac => ac.Category)
+                .Include(a => a.ApprovedByUser)
+                .Include(a => a.RejectedByUser)
                 .ToListAsync();
         }
         public async Task<IEnumerable<Article>> GetPublishArticle()
         {
             return await _context.Articles
-                .Where(a => a.Status == ArticleStatus.Published)
+                .Where(a => a.Status == ArticleStatus.PUBLISHED)
                 .Include(a => a.Author)
                 .Include(a => a.Images) // nạp luôn ảnh
                 .Include(a => a.ArticleCategories)
@@ -192,7 +193,7 @@ namespace footballnew.Repositories.Implementations
         {
             return await _context.Articles
                 .Where(a => a.DatePublished.HasValue
-                         && a.Status == ArticleStatus.Published
+                         && a.Status == ArticleStatus.PUBLISHED
                          && a.DatePublished.Value.Date == date.Date)
                 .Include(a => a.Images)
                 .ToListAsync();
@@ -226,7 +227,7 @@ namespace footballnew.Repositories.Implementations
         public async Task<IEnumerable<Article>> GetPendingAsync()
         {
             return await _context.Articles
-                .Where(a => a.Status == ArticleStatus.PendingReview)
+                .Where(a => a.Status == ArticleStatus.PENDING)
                 .Include(a => a.Author)
                 .Include(a => a.Images)
                 .Include(a => a.ArticleCategories)
@@ -238,8 +239,7 @@ namespace footballnew.Repositories.Implementations
         public async Task<List<Article>> GetArticlesToPublishAsync()
         {
             return await _context.Articles
-                .Where(a => a.Status == ArticleStatus.Approved
-                            )
+                .Where(a => a.Status == ArticleStatus.APPROVED)
                 .ToListAsync();
         }
     }

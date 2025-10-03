@@ -19,6 +19,8 @@ namespace footballnew.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ArticleTag> ArticleTags { get; set; }
         public DbSet<ArticleViewHistory> ArticleViewHistories { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<CommentLike> CommentLikes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -59,14 +61,14 @@ namespace footballnew.Data
 
             modelBuilder.Entity<Article>()
                 .HasOne(a => a.ApprovedByUser)
-                .WithMany(u => u.ArticlesApproved)   
+                .WithMany(u => u.ArticlesApproved)
                 .HasForeignKey(a => a.ApprovedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Article - RejectedByUser (1 User -> nhiều Articles Rejected)
             modelBuilder.Entity<Article>()
                 .HasOne(a => a.RejectedByUser)
-                .WithMany(u => u.ArticlesRejected)   
+                .WithMany(u => u.ArticlesRejected)
                 .HasForeignKey(a => a.RejectedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -152,6 +154,50 @@ namespace footballnew.Data
                 .WithOne(i => i.Content)
                 .HasForeignKey<Image>(i => i.ContentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // User - Comment (1 user -> nhiều comment)
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Article - Comment (1 article -> nhiều comment)
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Article)
+                .WithMany(a => a.Comments)
+                .HasForeignKey(c => c.ArticleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Comment self reference (Parent - Replies)
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Parent)
+                .WithMany(c => c.Replies)
+                .HasForeignKey(c => c.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // =====================
+            // CommentLike Config
+            // =====================
+
+            // User - CommentLike (1 user -> nhiều like)
+            modelBuilder.Entity<CommentLike>()
+                .HasOne(cl => cl.User)
+                .WithMany()
+                .HasForeignKey(cl => cl.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Comment - CommentLike (1 comment -> nhiều like)
+            modelBuilder.Entity<CommentLike>()
+                .HasOne(cl => cl.Comment)
+                .WithMany(c => c.Likes)
+                .HasForeignKey(cl => cl.CommentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unique: mỗi User chỉ được like 1 comment 1 lần
+            modelBuilder.Entity<CommentLike>()
+                .HasIndex(cl => new { cl.UserId, cl.CommentId })
+                .IsUnique();
         }
     }
 }

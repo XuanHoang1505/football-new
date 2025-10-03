@@ -113,7 +113,7 @@ const TableBody = ({
                                 className="btn btn__edit me-3 my-2"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  onEdit(item);
+                                  onEdit(item.slug);
                                   handleShowModal();
                                 }}
                               >
@@ -137,8 +137,7 @@ const TableBody = ({
                                 className="btn btn__detail p-1 me-3"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  onViewDetail(item);
-                                  handleShowModal();
+                                  onViewDetail(item.slug);
                                 }}
                               >
                                 <i className="bi bi-card-list"></i> Xem chi tiết

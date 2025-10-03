@@ -66,8 +66,6 @@ const getPagedArticles = async (
 };
 
 const createArticle = async (articleData, mainImage, blocks) => {
-  console.log("Sending articleData:", articleData);
-
   if (!articleData.authorId) {
     throw new Error(
       "authorId đang bị rỗng! Kiểm tra user.userId trước khi gửi."
@@ -112,11 +110,39 @@ const createArticle = async (articleData, mainImage, blocks) => {
 };
 
 // Cập nhật article
-const updateArticle = async (id, articleData) => {
+const updateArticle = async (articleId, articleData, mainImage = null, blocks = []) => {
+  if (!articleId) {
+    throw new Error("articleId là bắt buộc!");
+  }
+
+  const formData = new FormData();
+  formData.append("article", JSON.stringify(articleData));
+  
+  // Chỉ append ảnh nếu có
+  if (mainImage instanceof File) {
+    formData.append("mainImage", mainImage);
+  }
+  
+  blocks.forEach((b) => {
+    if (b.file instanceof File) {
+      formData.append("contentImages", b.file);
+      formData.append("contentImageIndexes", b.blockIndex.toString());
+    }
+  });
+  
   try {
-    const response = await axiosInstance.put(`${API_URL}/${id}`, articleData);
+    const response = await axiosInstance.put(
+      `${API_URL}/${articleId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
+    console.error("Error updating article:", error.response?.data || error.message);
     handleErrorResponse(error);
     throw error;
   }

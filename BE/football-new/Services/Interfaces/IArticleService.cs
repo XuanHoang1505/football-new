@@ -10,7 +10,7 @@ namespace footballnew.Services.Interfaces
         Task<IEnumerable<ArticleListDTO>> GetAllAsync();
         Task<IEnumerable<ArticleListDTO>> GetPublishArticleAsync();
         Task<ArticleDetailDTO> CreateAsync(ArticleDetailDTO dto);
-        Task<bool> UpdateAsync(int id, ArticleDetailDTO dto);
+        Task<bool> UpdateAsync(int id, UpdateArticleDTO dto, string? newMainImageUrl);
         Task<bool> DeleteAsync(int id);
 
         Task<(IEnumerable<ArticleListDTO> Articles, int TotalCount)> GetPagedAsync(

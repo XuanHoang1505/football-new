@@ -2,5 +2,7 @@ import Dashboard from "./dashboard/Dashboard";
 import CategoryManagement from "./category/CategoryManagement";
 import UserManagement from "./user/UserManagement";
 import MyProfile from "./adminProfile/MyProfile";
-import ArticleListPage from "./articleApproval/ArticleListPage";
-export { Dashboard, CategoryManagement, UserManagement, MyProfile, ArticleListPage };
+import AllArticlesPage from "./articleManagement/AllArticlesPage";
+import PendingArticlesPage from "./articleApproval/PendingArticlesPage";
+import ArticleDetailPage from "./articleApproval/ArticleDetailPage"
+export { Dashboard, CategoryManagement, UserManagement, MyProfile,AllArticlesPage, PendingArticlesPage, ArticleDetailPage };

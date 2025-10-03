@@ -2,15 +2,23 @@ import {
   Dashboard,
   CategoryManagement,
   UserManagement,
-  ArticleListPage,
+  PendingArticlesPage,
   MyProfile,
+  ArticleDetailPage,
+  AllArticlesPage,
 } from "../../pages/admin";
 
 const routes = [
   { path: "", name: "Bảng điều khiển", element: Dashboard },
   { path: "category", name: "Danh mục", element: CategoryManagement },
   { path: "user", name: "Người dùng", element: UserManagement },
-  { path: "article", name: "Duyệt bài viết", element: ArticleListPage },
+  { path: "articles", name: "Tất cả bài viết", element: AllArticlesPage },
+  { path: "articles/pending", name: "Duyệt bài viết", element: PendingArticlesPage },
+  {
+    path: "article/:slug",
+    name: "Chi tiết bài viết",
+    element: ArticleDetailPage,
+  },
   { path: "myProfile", name: "Hồ sơ của tôi", element: MyProfile },
 ];
 

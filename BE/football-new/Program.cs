@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using footballnew.Data;
 using footballnew.Utils;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using footballnew.Services.Interfaces;
 using footballnew.Services.Implementations;
 using footballnew.Services;
@@ -146,10 +145,12 @@ builder.Services.AddHttpClient<IApiFootballService, ApiFootballService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 // Đăng ký Service (Business Logic Layer)
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 // Đăng ký CloudinaryService
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));

@@ -27,12 +27,12 @@ namespace footballnew.Services
 
                 foreach (var article in articlesToPublish)
                 {
-                    article.Status = ArticleStatus.Published;
+                    article.Status = ArticleStatus.PUBLISHED;
                     article.DatePublished = DateTime.UtcNow;
                     await repo.UpdateAsync(article);
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(60), stoppingToken);
             }
         }
     }

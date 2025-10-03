@@ -121,18 +121,16 @@ namespace footballnew.Controllers.admin
                         if (idx >= dto.Contents.Count) continue;
 
                         var url = await _cloudinaryService.UploadImageAsync(contentImages[i], "articles/contents");
-                        Console.WriteLine($"[DEBUG] Uploaded image {i} => {url}");
                         dto.Contents[idx].Image = new ImageDTO
                         {
                             Url = url,
                             IsMain = false,
                             UploadDate = DateTime.UtcNow,
-                            Caption = dto.Contents[idx].Caption
+                            Caption = dto.Contents[idx].Caption,
+                            Credits = dto.Contents[idx].Credits
                         };
                     }
                 }
-
-
                 // 3️⃣ Gọi service để tạo article
                 var created = await _service.CreateAsync(dto);
 
@@ -151,11 +149,75 @@ namespace footballnew.Controllers.admin
 
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ArticleDetailDTO dto)
+        public async Task<IActionResult> Update(
+            int id,
+            [FromForm] string article,
+            [FromForm] IFormFile? mainImage,
+            [FromForm] List<IFormFile>? contentImages,
+            [FromForm] List<int>? contentImageIndexes)
         {
-            var success = await _service.UpdateAsync(id, dto);
-            if (!success) return NotFound();
-            return NoContent();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(article))
+                    return BadRequest("Dữ liệu bài viết không hợp lệ!");
+
+                // Deserialize JSON
+                var dto = JsonSerializer.Deserialize<UpdateArticleDTO>(article, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (dto == null)
+                    return BadRequest("Không thể đọc dữ liệu bài viết.");
+
+                // Khởi tạo danh sách nếu null
+                dto.Contents ??= new List<ContentDTO>();
+
+                // 1️⃣ Upload main image mới (nếu có)
+                string? newMainImageUrl = null;
+                if (mainImage != null)
+                {
+                    newMainImageUrl = await _cloudinaryService.UploadImageAsync(mainImage, "articles");
+                }
+
+                // 2️⃣ Upload content images mới (nếu có)
+                if (contentImages != null && contentImageIndexes != null)
+                {
+                    for (int i = 0; i < contentImages.Count; i++)
+                    {
+                        var idx = contentImageIndexes[i];
+                        if (idx >= dto.Contents.Count) continue;
+
+                        var url = await _cloudinaryService.UploadImageAsync(contentImages[i], "articles/contents");
+
+                        // Gán URL mới vào Content
+                        dto.Contents[idx].Image = new ImageDTO
+                        {
+                            Url = url,
+                            IsMain = false,
+                            UploadDate = DateTime.UtcNow,
+                            Caption = dto.Contents[idx].Caption,
+                            Credits = dto.Contents[idx].Credits
+                        };
+                    }
+                }
+
+                // 3️⃣ Gọi service để update
+                var success = await _service.UpdateAsync(id, dto, newMainImageUrl);
+
+                if (!success)
+                    return NotFound(new { message = "Không tìm thấy bài viết!" });
+
+                return Ok(new { message = "Cập nhật bài viết thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Server error: " + ex.Message,
+                    inner = ex.InnerException?.Message
+                });
+            }
         }
 
         [HttpDelete("{id:int}")]
