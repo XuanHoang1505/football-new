@@ -78,7 +78,7 @@ const ArticleManagementPage = ({
     }
   };
 
-  const handleEdit = async (slug) => {
+  const handleEdit = (slug) => {
     navigate(`/admin/article/${slug}`, {
       state: {
         initEditMode: true,
@@ -131,7 +131,7 @@ const ArticleManagementPage = ({
             buttonCustom={buttons}
             onApprove={handleApprove}
             onReject={handleReject}
-            onEdit={handleEdit}
+            onEditArticle={handleEdit}
             onDelete={handleDelete}
             onViewDetail={handleViewDetail}
           />

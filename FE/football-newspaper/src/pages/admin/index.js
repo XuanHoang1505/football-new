@@ -4,5 +4,15 @@ import UserManagement from "./user/UserManagement";
 import MyProfile from "./adminProfile/MyProfile";
 import AllArticlesPage from "./articleManagement/AllArticlesPage";
 import PendingArticlesPage from "./articleApproval/PendingArticlesPage";
-import ArticleDetailPage from "./articleApproval/ArticleDetailPage"
-export { Dashboard, CategoryManagement, UserManagement, MyProfile,AllArticlesPage, PendingArticlesPage, ArticleDetailPage };
+import ArticleDetailPage from "./articleApproval/ArticleDetailPage";
+import CommentManagement from "./comment/CommentManagement";
+export {
+  Dashboard,
+  CategoryManagement,
+  UserManagement,
+  MyProfile,
+  AllArticlesPage,
+  PendingArticlesPage,
+  ArticleDetailPage,
+  CommentManagement,
+};

@@ -117,37 +117,33 @@ const CategoryManagement = () => {
     setErrorFields({});
   };
 
-  const handleSaveItem = async () => {
-    if (!validateForm()) return false;
-    setIsLoading(true);
-    try {
-      if (statusFunction.isEditing) {
-        const updatedCategory = await CategoryService.updateCategory(
-          formData.id,
-          formData
-        );
-        console.log("updatedCategory", updatedCategory);
-
-        const updatedData = categoryData.map((c) =>
-          c.id === updatedCategory.id ? updatedCategory : c
-        );
-        setCategoryData(updatedData);
-        toast.success("Cập nhật thành công!");
-      } else if (statusFunction.isAdd) {
-        const newCategory = await CategoryService.createCategory(formData);
-        setCategoryData([...categoryData, newCategory]);
-        toast.success("Thêm mới thành công!");
-      }
-      handleReset();
-      return true;
-    } catch (error) {
-      const msg = error?.response?.data?.message || "Đã xảy ra lỗi khi xóa.";
-      toast.error(msg);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const handleSaveItem = async () => {
+  if (!validateForm()) return false;
+  
+  setIsLoading(true);
+  try {
+    const service = statusFunction.isEditing 
+      ? () => CategoryService.updateCategory(formData.id, formData)
+      : () => CategoryService.createCategory(formData);
+    
+    const result = await service();
+    
+    setCategoryData(prev => 
+      statusFunction.isEditing
+        ? prev.map(c => c.id === result.id ? result : c)
+        : [...prev, result]
+    );
+    
+    toast.success(statusFunction.isEditing ? "Cập nhật thành công!" : "Thêm mới thành công!");
+    handleReset();
+    return true;
+  } catch (error) {
+    toast.error(error?.response?.data?.message || "Đã xảy ra lỗi.");
+    return false;
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleDelete = async (deleteId) => {
     if (!deleteId) return;

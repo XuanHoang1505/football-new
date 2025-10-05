@@ -20,6 +20,16 @@ namespace footballnew.Services.Implementations
             _mapper = mapper;
         }
 
+        public async Task<IEnumerable<CommentListDTO>> GetAllCommentAsync()
+        {
+            var comments = await _repo.GetAllCommentAsync();
+            return _mapper.Map<IEnumerable<CommentListDTO>>(comments);
+        }
+        public async Task<IEnumerable<CommentDTO>> GetParentCommentAsync()
+        {
+            var comments = await _repo.GetParentCommentAsync();
+            return _mapper.Map<IEnumerable<CommentDTO>>(comments);
+        }
         public async Task<IEnumerable<CommentDTO>> GetCommentsByArticleAsync(int articleId)
         {
             var comments = await _repo.GetByArticleIdAsync(articleId);
@@ -41,6 +51,7 @@ namespace footballnew.Services.Implementations
             var comment = _mapper.Map<Comment>(dto);
             comment.UserId = userId;
             comment.CreatedAt = DateTime.UtcNow;
+            comment.IsHidden = false;
 
             await _repo.AddAsync(comment);
 
@@ -61,6 +72,7 @@ namespace footballnew.Services.Implementations
 
             comment.IsEdited = true;
             comment.UpdatedAt = DateTime.UtcNow;
+            comment.Content = dto.Content;
 
             _mapper.Map(dto, comment);
 

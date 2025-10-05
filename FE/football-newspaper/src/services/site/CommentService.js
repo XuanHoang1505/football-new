@@ -1,8 +1,29 @@
-import axiosInstance from "../../config/axiosInstance"; 
+import axiosInstance from "../../config/axiosInstance";
 import handleErrorResponse from "../../utils/errors/ErrorHandler";
 
 // URL chung cho Comment API
 const API_URL = "/comments"; // vì controller [Route("api/comments")]
+
+const getAllComments = async () => {
+  try {
+    const response = await axiosInstance.get(API_URL);
+    return response.data;
+  } catch (error) {
+    handleErrorResponse(error);
+    throw error;
+  }
+};
+
+//Lấy danh sách bình luận cha
+const getRootComments = async () => {
+  try {
+    const response = await axiosInstance.get(`${API_URL}/parent`);
+    return response.data;
+  } catch (error) {
+    handleErrorResponse(error);
+    throw error;
+  }
+};
 
 /**
  * Lấy danh sách comment theo bài viết
@@ -69,7 +90,10 @@ const toggleLikeComment = async (id) => {
   }
 };
 
+
 export default {
+  getAllComments,
+  getRootComments,
   getCommentsByArticleId,
   createComment,
   updateComment,

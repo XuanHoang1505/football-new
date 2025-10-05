@@ -6,6 +6,7 @@ import {
   MyProfile,
   ArticleDetailPage,
   AllArticlesPage,
+  CommentManagement
 } from "../../pages/admin";
 
 const routes = [
@@ -20,6 +21,7 @@ const routes = [
     element: ArticleDetailPage,
   },
   { path: "myProfile", name: "Hồ sơ của tôi", element: MyProfile },
+  { path: "comments", name: "Quản lý bình luận", element: CommentManagement },
 ];
 
 export default routes;

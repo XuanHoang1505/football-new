@@ -18,6 +18,8 @@ namespace footballnew.Models
         public DateTime? UpdatedAt { get; set; }
         public bool IsEdited { get; set; } = false;
 
+        public bool IsHidden { get; set; } = false;
+
         public int LikeCount { get; set; } = 0;
 
         // Navigation

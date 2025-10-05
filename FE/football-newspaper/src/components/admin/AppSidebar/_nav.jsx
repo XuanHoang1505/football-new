@@ -5,8 +5,8 @@ import {
   cilSpeedometer,
   cilList,
   cilUser,
-  cilTask,
   cilNewspaper,
+  cilCommentBubble
 } from "@coreui/icons";
 
 import { CNavGroup, CNavItem, CNavTitle } from "@coreui/react";
@@ -51,6 +51,12 @@ const _nav = [
         to: "articles/pending",
       },
     ],
+  },
+    {
+    component: CNavItem,
+    name: "Bình luận",
+    to: "comments",
+    icon: <CIcon icon={cilCommentBubble} customClassName="nav-icon" />,
   },
 ];
 

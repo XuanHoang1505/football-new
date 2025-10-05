@@ -24,11 +24,27 @@ namespace footballnew.Controllers.site
             return Ok(result);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllComments()
+        {
+            var result = await _service.GetAllCommentAsync();
+            return Ok(result);
+        }
+
+
+        [HttpGet("parent")]
+        public async Task<IActionResult> GetParentComments()
+        {
+            var result = await _service.GetParentCommentAsync();
+            return Ok(result);
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCommentDTO dto)
         {
-            var userId = User.FindFirst("userId")?.Value;
+            var isAdmin = User.IsInRole("ADMIN");
+            var userId = isAdmin ? dto.UserId : User.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized("Không tìm thấy thông tin người dùng");

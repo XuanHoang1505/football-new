@@ -141,6 +141,9 @@ namespace footballnew.Mappings
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName))
                 .ForMember(dest => dest.UserAvatar, opt => opt.MapFrom(src => src.User.Avatar))
                 .ForMember(dest => dest.Replies, opt => opt.MapFrom(src => src.Replies));
+            CreateMap<Comment, CommentListDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.ArticleTitle, opt => opt.MapFrom(src => src.Article.Title));
 
             // DTO -> Entity
             CreateMap<CreateCommentDTO, Comment>();
