@@ -21,7 +21,7 @@ const TableManagement = ({
   modalContent,
   statusFunction,
   handleReset,
-  onEdit,
+  onEdit = () => {},
   onViewDetail,
   handleSaveItem,
   onDelete,
@@ -31,6 +31,7 @@ const TableManagement = ({
   onResetStatus,
   onReject,
   onApprove,
+  onEditArticle = () => {},
 }) => {
   // State management
   const [visibleColumns, setVisibleColumns] = useState(
@@ -126,7 +127,16 @@ const TableManagement = ({
             {statusText}
           </span>
         );
-      case "image":
+      case "isHidden":
+        return (
+          <span
+            className={`rounded-3 fw-bold px-2 py-1 ${
+              item.isHidden ? "text-bg-secondary" : "text-bg-success"
+            }`}
+          >
+            {item.isHidden ? "Đã ẩn" : "Hiển thị"}
+          </span>
+        );
       case "avatar":
         return (
           <img
@@ -571,6 +581,7 @@ const TableManagement = ({
         sortConfig={sortConfig}
         handleRenderBtn={handleRenderBtn}
         onEdit={onEdit}
+        onEditArticle={onEditArticle}
         handleShowModal={handleShowModal}
         handleShowConfirmModal={handleShowConfirmModal}
         handleShowApproveModal={handleShowApproveModal}

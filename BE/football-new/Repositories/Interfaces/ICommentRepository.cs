@@ -6,6 +6,8 @@ namespace footballnew.Repositories.Interfaces
     {
         Task<Comment> GetByIdAsync(int id);
         Task<IEnumerable<Comment>> GetByArticleIdAsync(int articleId);
+        Task<IEnumerable<Comment>> GetParentCommentAsync();
+        Task<IEnumerable<Comment>> GetAllCommentAsync();
         Task AddAsync(Comment comment);
         Task UpdateAsync(Comment comment);
         Task DeleteAsync(Comment comment);

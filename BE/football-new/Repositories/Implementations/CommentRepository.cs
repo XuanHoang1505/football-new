@@ -14,6 +14,20 @@ namespace footballnew.Repositories.Implementations
             _context = context;
         }
 
+        public async Task<IEnumerable<Comment>> GetAllCommentAsync()
+        {
+            return await _context.Comments
+                    .Include(c => c.User)
+                    .Include(c => c.Article)
+                    .Include(c => c.Likes)
+                    .ToListAsync();
+        }
+        public async Task<IEnumerable<Comment>> GetParentCommentAsync()
+        {
+            return await _context.Comments
+                    .Where(c => c.ParentId == null)
+                    .ToListAsync();
+        }
         public async Task<Comment> GetByIdAsync(int id)
         {
             return await _context.Comments
@@ -26,7 +40,7 @@ namespace footballnew.Repositories.Implementations
         public async Task<IEnumerable<Comment>> GetByArticleIdAsync(int articleId)
         {
             return await _context.Comments
-                .Where(c => c.ArticleId == articleId && c.ParentId == null)
+                .Where(c => c.ArticleId == articleId && c.ParentId == null && !c.IsHidden)
                 .Include(c => c.User)
                 .Include(c => c.Likes)
                 .Include(c => c.Replies)

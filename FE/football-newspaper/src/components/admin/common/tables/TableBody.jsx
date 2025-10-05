@@ -11,6 +11,7 @@ const TableBody = ({
   expandedRows,
   handleRenderBtn,
   onEdit,
+  onEditArticle,
   handleShowModal,
   handleShowConfirmModal,
   handleShowApproveModal,
@@ -113,7 +114,8 @@ const TableBody = ({
                                 className="btn btn__edit me-3 my-2"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  onEdit(item.slug);
+                                  onEdit(item);
+                                  onEditArticle(item.slug);
                                   handleShowModal();
                                 }}
                               >
