@@ -1,12 +1,13 @@
-import React from "react";
-import Header from "../../components/site/appHeader/Header";
-import Content from "../../components/site/appContent/Content";
+import { Outlet } from "react-router-dom";
+import AppHeader from "../../components/site/appHeader/AppHeader";
 import GlobalStyle from "../../assets/site/scss/GlobalStyles";
 const SiteLayout = () => {
   return (
     <GlobalStyle>
-      <Header />
-      <Content />
+      <AppHeader />
+      <div className="bg-light">
+        <Outlet />
+      </div>
     </GlobalStyle>
   );
 };

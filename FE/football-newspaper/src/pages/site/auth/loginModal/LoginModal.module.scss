@@ -1,5 +1,4 @@
 
-$green: #28a745;
 .loginButton{
     background-color: var(--primary) !important;
     border: none;
@@ -7,7 +6,7 @@ $green: #28a745;
     border-radius: 5px;
 
     &:hover{
-        background-color: #40df6a !important;
+        background-color: #3163c5 !important;
     }
 }
 .eyeButton {
@@ -33,7 +32,7 @@ $green: #28a745;
     cursor: pointer;
   }
  .signUpLink{
-  color: $green;
+  color: #244892;
   font-weight: 500 ;
   cursor: pointer;
  } 

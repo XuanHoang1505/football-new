@@ -9,6 +9,13 @@ using System.Text.Json.Serialization;
 using footballnew.Data;
 using footballnew.Utils;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using footballnew.Services.Interfaces;
+using footballnew.Services.Implementations;
+using footballnew.Services;
+using footballnew.Models;
+using footballnew.Configurations;
+using footballnew.Repositories.Interfaces;
+using footballnew.Repositories.Implementations;
 
 
 
@@ -112,35 +119,32 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
+builder.Services.AddAutoMapper(typeof(Program));
+
+
+// Đăng kí api footballService
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IFootballDataService, FootballDataService>();
+builder.Services.AddHttpClient<IApiFootballService, ApiFootballService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Nhập JWT Token ở đây (Bearer <your-token>)"
-    });
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-});
+// Đăng ký CloudinaryService
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddSingleton<CloudinaryService>();
+
+// Đăng ký dịch vụ JWT
+builder.Services.AddScoped<JwtTokenProvider>();
+
+// Đăng ký dịch vụ Email
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<ISendMailService, SendMailService>();
+
+// Đăng ký dịch vụ OTP
+builder.Services.AddTransient<OtpService>();
+
+// Đăng ký MemoryCache
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
