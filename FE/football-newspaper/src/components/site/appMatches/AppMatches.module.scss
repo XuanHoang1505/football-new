@@ -1,0 +1,74 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+p{
+    margin: 0;
+}
+.container{
+    border: 1px solid #EFEFEF;
+}
+.title{
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 10px 5px;
+  color: #fff;
+  margin-bottom: 5px;
+  background-color: #BC0137;
+}
+
+.matchesWrapper {
+    max-height: 400px; 
+    overflow-y: auto;
+}
+.match{
+    .matchName{
+        margin: 0; 
+        padding-left: 5px;
+        color: #1a4599;
+        width: fit-content;
+        height: 35px;
+        font-weight: bold;
+        align-content: center;
+        border-bottom: 1px solid #BC0137;
+    }
+    .matches{
+        display: flex;
+        align-items: center;
+        width:100%;
+        padding: 10px 20px; 
+        border: 1px solid #EFEFEF;
+        .matchTime{
+            flex: 0 0 60px;
+            text-align: center;
+        }
+        .matchContent{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            gap: 10px;
+        }
+    }
+}
+
+.teamLogo{
+    width: 30px;
+    height: 30px;
+}
+.teamName {
+    width: 200px;
+    text-align: right; // căn p sang phải
+}
+
+.teamName2 {
+    width: 200px;
+    text-align: left;
+}
+.matchHour{
+    color: #004682;
+    font-weight: bold;
+}

@@ -58,15 +58,6 @@ const SignUpSelectionModal = ({
               Đăng nhập
             </span>
           </p>
-
-          <p className="m-2 text-muted" style={{ fontSize: "0.8rem" }}>
-            Nhấn chọn " Đăng ký " có nghĩa là bạn đã đọc và đồng ý{" "}
-            <a href="#" className="text-mute">
-              Thỏa thuận quyền riêng tư
-            </a>{" "}
-            & <a href="#">Điều khoản dịch vụ</a>, đồng thời có nghĩa là bạn xác
-            nhận đã tròn 18 tuổi có thể sử dụng dịch vụ của chúng tôi
-          </p>
         </Modal.Body>
       </Modal>
     </>

@@ -11,13 +11,19 @@ export function formatDateToDMY(inputDate) {
 }
 
 export const formatToDateInput = (dateStr) => {
+  if (!dateStr) return "";
+
   const date = new Date(dateStr);
-  // Kiểm tra nếu là ngày hợp lệ
-  if (!isNaN(date.getTime())) {
-    return date.toISOString().split("T")[0]; // "2025-04-03"
-  }
-  return "";
+  if (isNaN(date.getTime())) return "";
+
+  // Lấy năm, tháng, ngày theo local
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // tháng 0-11
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`; // "YYYY-MM-DD"
 };
+
 
 export function formatDateTimeToISO(inputDateTime) {
   if (!inputDateTime) return "";

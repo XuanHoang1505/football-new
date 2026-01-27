@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { CContainer, CSpinner } from "@coreui/react";
 
-import routes from "../../../routes/admin/adminRoutes";
+import routes from "../../../routes/admin/adminRoutes"
 
 const AppContent = () => {
   return (

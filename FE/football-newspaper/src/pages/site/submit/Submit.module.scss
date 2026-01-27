@@ -1,0 +1,70 @@
+.container {
+  width: 75%;
+  margin: 0 auto;
+  padding: 10px;
+
+  form {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+
+    .form-label {
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"],
+    select {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+      &:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
+        outline: none;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .btn {
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-weight: 500;
+    }
+
+    .btn-success {
+      background-color: #198754;
+      border: none;
+
+      &:hover {
+        background-color: #157347;
+      }
+    }
+
+    .btn-outline-primary {
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .border {
+    border: 1px solid #d9e2f3 !important;
+  }
+
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+
+  img {
+    border-radius: 10px;
+    object-fit: cover;
+  }
+}
